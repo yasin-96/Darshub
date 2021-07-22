@@ -38,10 +38,10 @@ The following pre-selection can be used directly:
 - bug
 - ci/cd
 - dev
-- documentatiion/docs
+- docs
 - frontend
 - ops
-- question/faq
+- question
 
 multiple selection is possible :D
 
