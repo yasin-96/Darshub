@@ -1,13 +1,8 @@
 # Deployed Databases
 
-|Name  |  Version|  Region| CLUSTER TIER| BACKUPS|TYPE |
-|----  |---      |---     |---          |---     |---|
-|dhCluster001| 4.4.9| Azure / Netherlands| (westeurope)| M0 Sandbox (General)| Replica Set - 3 nodes|
-
-
-|DB| Access |  Username| Password | AUTH Type | Resources
-|--|--|--|--|--|--|
-|dhCluster001 | Allow Access from Anywhere |  
+|Name  |  Version|  Region| CLUSTER TIER| BACKUPS|TYPE |Access|
+|----  |---      |---     |---          |---     |---|---|
+|dhCluster001| 4.4.9| Azure / Netherlands| (westeurope)| M0 Sandbox (General)| Replica Set - 3 nodes|Allow Access from Anywhere |
 
 
 ## Connected with Mongosh
