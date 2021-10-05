@@ -39,3 +39,9 @@ if err != nil {
 |reports | 9zVjpzk3EuORJhnO | SCRAM  | Read only |
 
 
+## Network Access
+
+| IP-Address | Comment | Status  |
+|--|--|--|
+| 0.0.0.0/0  (includes your current IP address) |Any IP can access  | ACTIVE |
+
