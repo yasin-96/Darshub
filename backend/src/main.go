@@ -9,7 +9,11 @@ import (
 	"time"
 
 	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/handlers"
+	"github.com/gorilla/mux"
 	"github.com/nicholasjackson/env"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var bindAddress = env.String("BIND_ADDRESS", false, ":9090", "Bind address for the server")
@@ -20,12 +24,37 @@ func main() {
 
 	l := log.New(os.Stdout, "products-api ", log.LstdFlags)
 
+	client, err := mongo.NewClient(options.Client().
+		ApplyURI("mongodb+srv://dhub:OiPe7pU8kxaIVhBx@dhcluster001.c17aj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"))
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer client.Disconnect(ctx)
+
+	darshubDb := client.Database("darshub")
+	userCollection := darshubDb.Collection("user")
+	_, error := userCollection.InsertOne(ctx, bson.D{
+		{Key: "title", Value: "Dev"},
+	})
+
+	if error != nil {
+		log.Fatal(error)
+	}
+
 	// create the handlers
 	ph := handlers.NewProducts(l)
 
 	// create a new serve mux and register the handlers
-	sm := http.NewServeMux()
-	sm.Handle("/", ph)
+	sm := mux.NewRouter()
+
+	getRouter := sm.Methods(http.MethodGet).Subrouter()
+	getRouter.HandleFunc("/", ph.GetProducts)
 
 	// create a new server
 	s := http.Server{
@@ -58,6 +87,6 @@ func main() {
 	log.Println("Got signal:", sig)
 
 	// gracefully shutdown the server, waiting max 30 seconds for current operations to complete
-	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
-	s.Shutdown(ctx)
+	context, _ := context.WithTimeout(context.Background(), 30*time.Second)
+	s.Shutdown(context)
 }
