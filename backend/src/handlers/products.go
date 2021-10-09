@@ -15,18 +15,14 @@ func NewProducts(l *log.Logger) *Products {
 	return &Products{l}
 }
 
-func (p *Products) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodGet {
-		p.getProducts(rw, r)
-		return
-	}
-	rw.WriteHeader(http.StatusMethodNotAllowed)
-}
+func (p *Products) AddTestProduct(rw http.ResponseWriter, r *http.Request) {
+	prod := &data.Product{}
 
-func (p *Products) getProducts(rw http.ResponseWriter, r *http.Request) {
-	lp := data.GetProducts()
-	err := lp.ToJSON(rw)
+	err := prod.FromJSON(r.Body)
 	if err != nil {
-		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
+		http.Error(rw, "Unable to unmarshal", http.StatusBadRequest)
 	}
+
+	data.AddTestProduct(prod)
+
 }

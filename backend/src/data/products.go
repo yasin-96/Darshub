@@ -3,48 +3,33 @@ package data
 import (
 	"encoding/json"
 	"io"
-	"time"
+	"log"
+
+	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/config"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Product struct {
-	ID          int     `json:"id"`
-	Name        string  `json:"name"`
-	Description string  `json:"description"`
-	Price       float32 `json:"price"`
-	SKU         string  `json:"sku"`
-	CreatedOn   string  `json:"-"`
-	UpdatedOn   string  `json:"-"`
-	DeletedOn   string  `json:"-"`
+	ID          primitive.ObjectID `bson:"_id"`
+	Name        string             `bson:"name"`
+	Description string             `bson:"description"`
 }
 
-type Products []*Product
+func AddTestProduct(p *Product) (primitive.ObjectID, error) {
+	ctx, cancel, client := config.GetConnection()
+	defer cancel()
+	defer client.Disconnect(ctx)
+	p.ID = primitive.NewObjectID()
 
-func (p *Products) ToJSON(w io.Writer) error {
-	e := json.NewEncoder(w)
-	return e.Encode(p)
+	res, err := client.Database("darshub").Collection("user").InsertOne(ctx, p)
+	if err != nil {
+		log.Printf("Could not save Product: %v", err)
+	}
+	oid := res.InsertedID.(primitive.ObjectID)
+	return oid, nil
+
 }
-
-func GetProducts() Products {
-	return productList
-}
-
-var productList = []*Product{
-	{
-		ID:          1,
-		Name:        "Latte",
-		Description: "Frothy milky coffee",
-		Price:       2.45,
-		SKU:         "abc323",
-		CreatedOn:   time.Now().UTC().String(),
-		UpdatedOn:   time.Now().UTC().String(),
-	},
-	{
-		ID:          2,
-		Name:        "Espresso",
-		Description: "Short and strong coffee without milk",
-		Price:       1.99,
-		SKU:         "fjd34",
-		CreatedOn:   time.Now().UTC().String(),
-		UpdatedOn:   time.Now().UTC().String(),
-	},
+func (p *Product) FromJSON(r io.Reader) error {
+	e := json.NewDecoder(r)
+	return e.Decode(p)
 }
