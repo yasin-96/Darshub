@@ -10,6 +10,7 @@ require (
 	github.com/rogpeppe/godef v1.1.2 // indirect
 	github.com/uudashr/gopkgs/v2 v2.1.2 // indirect
 	go.mongodb.org/mongo-driver v1.7.3
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
 	golang.org/x/tools v0.1.6 // indirect
 	golang.org/x/tools/gopls v0.7.2 // indirect
 )

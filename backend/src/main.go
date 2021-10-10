@@ -23,7 +23,7 @@ func main() {
 	l := log.New(os.Stdout, "products-api ", log.LstdFlags)
 
 	// create the handlers
-	ph := handlers.NewProducts(l)
+	ph := handlers.NewUserStruct(l)
 
 	// create a new serve mux and register the handlers
 	sm := mux.NewRouter()
