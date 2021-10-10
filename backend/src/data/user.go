@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/config"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -43,23 +44,48 @@ type UserRequest struct {
 	Country    string             `json:"country"`
 }
 
-func AddTestProduct(userRequest *UserRequest) (primitive.ObjectID, error) {
+func Create(userRequest *UserRequest) {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 	userRequest.ID = primitive.NewObjectID()
 
-	res, err := client.Database("darshub").Collection("user").InsertOne(ctx, userRequest.toUser())
+	_, err := client.Database("darshub").Collection("user").InsertOne(ctx, userRequest.toUser())
 	if err != nil {
 		log.Printf("Could not save Product: %v", err)
 	}
-	oid := res.InsertedID.(primitive.ObjectID)
-	return oid, nil
 }
 
-func (userRequest *UserRequest) FromJSON(r io.Reader) error {
+func Find(email string) User {
+	log.Println("in find func")
+	var user User
+	ctx, cancel, client := config.GetConnection()
+	defer cancel()
+	defer client.Disconnect(ctx)
+
+	err := client.Database("darshub").Collection("user").FindOne(ctx, bson.M{"email": email}).Decode(&user)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return user
+}
+
+func FromJSON(i interface{}, r io.Reader) error {
 	e := json.NewDecoder(r)
-	return e.Decode(userRequest)
+	return e.Decode(i)
+}
+
+func ToJSON(i interface{}, w io.Writer) error {
+	e := json.NewEncoder(w)
+	return e.Encode(i)
+}
+
+func CheckIfPasswordsMatch(user User, password string) bool {
+	err := bcrypt.CompareHashAndPassword(user.Password, []byte(password))
+	if err != nil {
+		return false
+	}
+	return true
 }
 
 func getEncryptedPassword(password []byte) []byte {

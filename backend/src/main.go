@@ -32,7 +32,8 @@ func main() {
 	//getRouter.HandleFunc("/", ph.GetProducts)
 
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
-	postRouter.HandleFunc("/products", ph.AddTestProduct)
+	postRouter.HandleFunc("/user", ph.RegisterUser)
+	postRouter.HandleFunc("/session", ph.Login)
 
 	// create a new server
 	s := http.Server{
