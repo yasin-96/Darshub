@@ -16,7 +16,7 @@ func NewUserStruct(l *log.Logger) *Users {
 }
 
 func (u *Users) AddTestProduct(rw http.ResponseWriter, r *http.Request) {
-	prod := &data.User{}
+	prod := &data.UserRequest{}
 
 	err := prod.FromJSON(r.Body)
 	if err != nil {

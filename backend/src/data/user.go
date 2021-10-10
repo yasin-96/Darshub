@@ -13,9 +13,9 @@ import (
 
 type User struct {
 	ID         primitive.ObjectID `bson:"_id"`
-	Password   string             `bson:"password"`
-	First_Name string             `bson:"name"`
-	Last_Name  string             `bson:"description"`
+	Password   []byte             `bson:"password"`
+	First_Name string             `bson:"first_name"`
+	Last_Name  string             `bson:"last_name"`
 	Birthday   time.Time          `bson:"birthday"`
 	Avatar     string             `bson:"avatar"`
 	Email      string             `bson:"email"`
@@ -27,25 +27,39 @@ type User struct {
 	Country    string             `bson:"country"`
 }
 
-func AddTestProduct(u *User) (primitive.ObjectID, error) {
+type UserRequest struct {
+	ID         primitive.ObjectID `json:"id"`
+	Password   string             `json:"password"`
+	First_Name string             `json:"first_name"`
+	Last_Name  string             `json:"last_name"`
+	Birthday   time.Time          `json:"birthday"`
+	Avatar     string             `json:"avatar"`
+	Email      string             `json:"email"`
+	TelNr      string             `json:"telNr"`
+	Company    string             `json:"company"`
+	Occupation string             `json:"occupation"`
+	School     string             `json:"school"`
+	Subject    string             `json:"subject"`
+	Country    string             `json:"country"`
+}
+
+func AddTestProduct(userRequest *UserRequest) (primitive.ObjectID, error) {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
-	u.ID = primitive.NewObjectID()
-	hashedPw := getEncryptedPassword([]byte(u.Password))
-	hashedStringPassword := toString(hashedPw)
-	u.Password = hashedStringPassword
+	userRequest.ID = primitive.NewObjectID()
 
-	res, err := client.Database("darshub").Collection("user").InsertOne(ctx, u)
+	res, err := client.Database("darshub").Collection("user").InsertOne(ctx, userRequest.toUser())
 	if err != nil {
 		log.Printf("Could not save Product: %v", err)
 	}
 	oid := res.InsertedID.(primitive.ObjectID)
 	return oid, nil
 }
-func (u *User) FromJSON(r io.Reader) error {
+
+func (userRequest *UserRequest) FromJSON(r io.Reader) error {
 	e := json.NewDecoder(r)
-	return e.Decode(u)
+	return e.Decode(userRequest)
 }
 
 func getEncryptedPassword(password []byte) []byte {
@@ -57,6 +71,21 @@ func getEncryptedPassword(password []byte) []byte {
 	return hashedPassword
 }
 
-func toString(bytes []byte) string {
-	return string(bytes)
+func (userRequest *UserRequest) toUser() User {
+	user := User{}
+	user.ID = userRequest.ID
+	user.Password = getEncryptedPassword([]byte(userRequest.Password))
+	user.First_Name = userRequest.First_Name
+	user.Last_Name = userRequest.Last_Name
+	user.Birthday = userRequest.Birthday
+	user.Avatar = userRequest.Avatar
+	user.Email = userRequest.Email
+	user.TelNr = userRequest.TelNr
+	user.Company = userRequest.Company
+	user.Occupation = userRequest.Occupation
+	user.School = userRequest.School
+	user.Subject = userRequest.Subject
+	user.Country = userRequest.Country
+
+	return user
 }
