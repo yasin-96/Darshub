@@ -1,36 +1,29 @@
-// ROLE ={
-//     1 = USER,
-//     2 = Author,
-//     3 = ADMIN,
-//     ...
-// }
-
-// in userModel = [1,2,3]
-// in userModel = [3]
-// in userModel = [1]
-
-
 const registrationModule = {
+  namespaced: true,
   state: () => ({
     newUser: {
       firstName: "",
       lastName: "",
+      name: "",
       birthday: "", //date
-      profileImage: "",
+      avatar: "",
       email: "",
-      telNr: "", //need to discuss for that the need the tel number
+      telNr: "",
       occupation: "",
       company: "",
       school: "",
-      subject: "", //stand for that?
+      subject: "",
       country: "",
-      bio:"",
-      role: [], //define roles as numbers (enum)
+      bio: "",
+      role: [0], //define roles as numbers (enum)
     },
   }),
   actions: {
     act_setFirstName: function ({ commit }, newFirstName) {
       commit("MUT_SET_FIRSTNAME", newFirstName);
+    },
+    act_setName: function ({ commit }, newName) {
+      commit("MUT_SET_NAME", newName);
     },
     act_setLastName: function ({ commit }, newLastName) {
       commit("MUT_SET_LASTNAME", newLastName);
@@ -62,9 +55,14 @@ const registrationModule = {
     act_setCountry: function ({ commit }, newCountry) {
       commit("MUT_SET_COUNTRY", newCountry);
     },
-
+    act_setBio: function ({ commit }, newBio) {
+      commit("MUT_SET_BIO", newBio);
+    },
+    act_setRole: function ({ commit }, newRole) {
+      commit("MUT_SET_ROLE", newRole);
+    },
     // act_createNewUser: function({commit, state}){
-        
+
     // }
   },
   mutations: {
@@ -74,11 +72,14 @@ const registrationModule = {
     MUT_SET_LASTNAME: function (state, newLastname) {
       state.newUser.lastname = newLastname;
     },
+    MUT_SET_NAME: function (state, newName) {
+      state.newUser.name = newName;
+    },
     MUT_SET_BIRTHDAY: function (state, newBirthday) {
       state.newUser.birthday = newBirthday;
     },
     MUT_SET_PROFILEIMAGE: function (state, newProfileimage) {
-      state.newUser.profileimage = newProfileimage;
+      state.newUser.avatar = newProfileimage;
     },
     MUT_SET_EMAIL: function (state, newEmail) {
       state.newUser.email = newEmail;
@@ -100,6 +101,12 @@ const registrationModule = {
     },
     MUT_SET_COUNTRY: function (state, newCountry) {
       state.newUser.country = newCountry;
+    },
+    MUT_SET_BIO: function (state, newBio) {
+      state.newUser.bio = newBio;
+    },
+    MUT_SET_ROLE: function (state, newRole) {
+      state.newUser.role.add(newRole);
     },
   },
   getters: {},

@@ -11,7 +11,7 @@ const routes = [
     name: "Home",
     component: Home,
   },
-    {
+  {
     path: "/registry",
     name: "Registry",
     component: RegistrationView,
