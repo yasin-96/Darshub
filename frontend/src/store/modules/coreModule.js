@@ -7,6 +7,7 @@ const genderModule = {
       USER: 0,
       AUTHOR: 1,
     },
+    
   }),
   actions: {},
   mutations: {},
