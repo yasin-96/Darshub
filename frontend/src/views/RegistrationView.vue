@@ -43,7 +43,7 @@
               </v-row>
               <v-row dense>
                 <v-col cols="12" sm="12" md="6" lg="6" xl="6">
-                  <v-combobox v-model="country" :items="getCountriesWithFlags" item-text="name" label="Country" prepend-icon="mdi-earth">
+                  <v-combobox v-model="country" item-value="name" :items="getCountriesWithFlags" label="Country" prepend-icon="mdi-earth">
                     <template v-slot:item="{ index, item }">
                       <v-chip :key="index" label>
                         {{ item.name }}
@@ -52,7 +52,7 @@
                       <v-icon>{{ item.icon }}</v-icon>
                     </template>
                     <template v-slot:selection="data">
-                      <v-chip :key="JSON.stringify(data.item)" v-bind="data.attrs" label :input-value="data.selected" @click:close="data.parent.selectItem(data.item.name)">
+                      <v-chip>
                         <span class="mr-3">{{ data.item.icon }}</span>
                         <span>{{ data.item.name }}</span>
                       </v-chip>
@@ -108,6 +108,7 @@ export default {
       countries: (state) => state.externApi.countries,
     }),
     ...mapGetters("externApi", ["getCountriesWithFlags"]),
+    
     maxDate() {
       return new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10);
     },

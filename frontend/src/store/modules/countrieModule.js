@@ -13,6 +13,7 @@ const countrieModule = {
         .then((res) => {
           console.log("res.data", res.data);
           if (res && res.data && res.status == 200) {
+            res.data.sort((a, b) => (b.name.common > a.name.common ? -1 : 1));
             commit("MUT_SET_ALL_COUNTRIES", res.data);
           }
         })
@@ -30,9 +31,8 @@ const countrieModule = {
     getCountriesWithFlags: function (state) {
       return state.countries.map((item) => {
         const name = item.name.common;
-        const flag = item.flags.svg ? item.flags.svg : item.flags.png;
         const icon = item.flag;
-        return { icon, flag, name };
+        return { icon, name };
       });
     },
   },
