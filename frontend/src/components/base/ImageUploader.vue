@@ -53,7 +53,7 @@ export default {
     checkFileType(typeToCheck) {
       const result = this.allowedTypes.find((t) => t == typeToCheck);
       console.log(result);
-      if (!result) {
+      if (result) {
         this.hasError = true;
         this.displayErrorMessage = `File type [${typeToCheck.split('/')}] is not allowed.`;
         return false;
@@ -92,7 +92,7 @@ export default {
       },
     },
     allowedTypes(){
-        return this.allowedImagesTypes.map(t => t.split("image/")).map(t => t + ' ')
+        return this.allowedImagesTypes.map(t => t.split("/")).map(t => t + ' ')
     }
   },
 };

@@ -13,17 +13,15 @@ const registrationModule = {
       company: "",
       school: "",
       subject: "",
-      country: "",
+      country: null,
       bio: "",
       role: [0], //define roles as numbers (enum)
+      isActive: true
     },
   }),
   actions: {
     act_setFirstName: function ({ commit }, newFirstName) {
       commit("MUT_SET_FIRSTNAME", newFirstName);
-    },
-    act_setName: function ({ commit }, newName) {
-      commit("MUT_SET_NAME", newName);
     },
     act_setLastName: function ({ commit }, newLastName) {
       commit("MUT_SET_LASTNAME", newLastName);
@@ -70,10 +68,7 @@ const registrationModule = {
       state.newUser.firstName = newFirstName;
     },
     MUT_SET_LASTNAME: function (state, newLastname) {
-      state.newUser.lastname = newLastname;
-    },
-    MUT_SET_NAME: function (state, newName) {
-      state.newUser.name = newName;
+      state.newUser.lastName = newLastname;
     },
     MUT_SET_BIRTHDAY: function (state, newBirthday) {
       state.newUser.birthday = newBirthday;

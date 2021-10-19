@@ -1,7 +1,7 @@
 const genderModule = {
   namespaced: true,
   state: () => ({
-    genders: ["MALE", "FEMALE"],
+    genders: [{sex: "MALE", icon:"mdi-gender-male"}, {sex: "FEMALE", icon: "mdi-gender-female"}],
     role: {
       ADMIN: -41,
       USER: 0,
