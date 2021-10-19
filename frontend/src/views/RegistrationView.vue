@@ -21,13 +21,7 @@
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field v-model="birthday" label="Birthday" prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on"></v-text-field>
                     </template>
-                    <v-date-picker
-                      v-model="birthday"
-                      :active-picker.sync="birthdayPicker"
-                      :max="maxDate"
-                      min=""
-                      @change="saveBirthday"
-                    ></v-date-picker>
+                    <v-date-picker v-model="birthday" :active-picker.sync="birthdayPicker" :max="maxDate" min="" @change="saveBirthday"></v-date-picker>
                   </v-menu>
                 </v-col>
                 <v-col cols="12" sm="12" md="3" lg="3" xl="3">
@@ -47,6 +41,25 @@
                   <ImageUploader />
                 </v-col>
               </v-row>
+              <v-row dense>
+                <v-col cols="12" sm="12" md="6" lg="6" xl="6">
+                  <v-combobox v-model="country" :items="getCountriesWithFlags" item-text="name" label="Country" prepend-icon="mdi-earth">
+                    <template v-slot:item="{ index, item }">
+                      <v-chip :key="index" label>
+                        {{ item.name }}
+                      </v-chip>
+                      <v-spacer> </v-spacer>
+                      <v-icon>{{ item.icon }}</v-icon>
+                    </template>
+                    <template v-slot:selection="data">
+                      <v-chip :key="JSON.stringify(data.item)" v-bind="data.attrs" label :input-value="data.selected" @click:close="data.parent.selectItem(data.item.name)">
+                        <span class="mr-3">{{ data.item.icon }}</span>
+                        <span>{{ data.item.name }}</span>
+                      </v-chip>
+                    </template>
+                  </v-combobox>
+                </v-col>
+              </v-row>
             </v-form>
           </v-card-text>
           <v-card-actions>
@@ -61,12 +74,12 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-import ImageUploader from "@/components/base/ImageUploader"
+import { mapState, mapGetters } from "vuex";
+import ImageUploader from "@/components/base/ImageUploader";
 export default {
   name: "RegistrationView",
-  components:{
-    ImageUploader
+  components: {
+    ImageUploader,
   },
   data: () => ({
     valid: null,
@@ -92,7 +105,9 @@ export default {
     ...mapState({
       newUser: (state) => state.registry.newUser,
       genders: (state) => state.core.genders,
+      countries: (state) => state.externApi.countries,
     }),
+    ...mapGetters("externApi", ["getCountriesWithFlags"]),
     maxDate() {
       return new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10);
     },

@@ -1,18 +1,19 @@
 import axios from "axios";
 
-function clientCall(method, location, { data, params }, options) {
+function clientCall(method, location, data, options) {
   return axios({
     method: method,
     url: location,
-    params: params ? params : null,
     data: data ? data : null,
     ...options,
   })
     .then((resp) => {
       console.log("clientCall ->", resp);
+      return resp;
     })
     .catch((error) => {
       console.error("clientCall", error);
+      return -1;
     });
 }
 
@@ -25,13 +26,9 @@ export default {
     console.debug("doPutRequest was called");
     return clientCall("put", location, { data: payload }, options);
   },
-  doGetRequest(location, payload, options) {
+  doGetRequest(location, options) {
     console.debug("doGetRequest was called");
-    if (payload.params) {
-      return clientCall("get", location, { params: payload }, options);
-    } else {
-      return clientCall("get", location, null, options);
-    }
+    return clientCall("get", location, null, options);
   },
   doPatchRequest(location, payload, options) {
     console.debug("doPatchRequest was called");

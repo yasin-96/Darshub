@@ -1,7 +1,6 @@
 <template>
   <div>
     <hello-world />
-    <Formular title="test"/>
   </div>
 </template>
 
