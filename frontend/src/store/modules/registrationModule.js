@@ -80,7 +80,7 @@ const registrationModule = {
       state.newUser.email = newEmail;
     },
     MUT_SET_TELNR: function (state, newTelnr) {
-      state.newUser.telnr = newTelnr;
+      state.newUser.telNr = newTelnr;
     },
     MUT_SET_OCCUPATION: function (state, newOccupation) {
       state.newUser.occupation = newOccupation;

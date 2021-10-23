@@ -72,7 +72,7 @@
                     <v-text-field outlined v-model="email" label="E-mail" required prepend-inner-icon="mdi-email"> </v-text-field>
                   </v-col>
                   <v-col cols="12" sm="12" md="6" lg="6" xl="6">
-                    <v-text-field outlined v-model="telNr" label="Mobile" required prepend-inner-icon="mdi-cellphone-basic"> </v-text-field>
+                    <v-text-field outlined v-model="telNr" type="Number" label="Mobile" required prepend-inner-icon="mdi-cellphone-basic"> </v-text-field>
                   </v-col>
                 </v-row>
                 <v-row dense>
@@ -86,7 +86,7 @@
           </v-card-text>
           <!-- <v-divider></v-divider> -->
           <v-card-actions>
-            <v-btn text :disabled="!valid" color="success" class="ml-2" @click="validate"> Erstellen </v-btn>
+            <v-btn text :disabled="!checkInputFields" color="success" class="ml-2" @click="validate"> Erstellen </v-btn>
             <v-spacer></v-spacer>
             <v-btn text color="error" class="mx-auto text-right mr-2" @click="reset"> Abbrechen </v-btn>
           </v-card-actions>
@@ -105,7 +105,7 @@ export default {
     ImageUploader,
   },
   data: () => ({
-    valid: null,
+    valid: false,
     date: null,
     birthdayModel: false,
     birthdayPicker: null,
@@ -124,6 +124,9 @@ export default {
       console.log(newDate);
       this.$refs.ref_birthday.save(newDate);
     },
+  },
+  mounted(){
+    this.$refs.reg_registryForm.validate();
   },
   computed: {
     ...mapState({
@@ -176,6 +179,7 @@ export default {
         return this.newUser.telNr;
       },
       set(newValue) {
+        console.log(newValue)
         this.$store.dispatch("registry/act_setTelNr", newValue);
       },
     },
@@ -233,12 +237,12 @@ export default {
       }
       return null;
     },
-    // valid() {
-    //   if (!this.firstName && !this.lastName && !this.email) {
-    //     return false;
-    //   }
-    //   return true;
-    // },
+    checkInputFields() {
+      if (!this.firstName || !this.lastName && !this.email || !this.birthday || !this.bio || this.country.name || !this.telNr) {
+        return false;
+      }
+      return true;
+    },
   },
   watch: {
     birthdayModel(event) {

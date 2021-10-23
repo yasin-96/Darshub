@@ -2,7 +2,7 @@
   <v-container class="pl-0 pr-0 mr-0">
     <v-row>
       <v-col cols="12" sm="12" md="6" lg="6" xl="6">
-        <v-file-input show-size label="Avatar " @change="selectFile" @input="hasError = false" prepend-icon="mdi-badge-account" @click:clear="resetInput()" :error="hasError" :error-messages="hasError ? displayErrorMessage : ''" :persistent-hint='true' :hint='allowedTypes'></v-file-input>
+        <v-file-input show-size label="Avatar " @change="selectFile" @input="hasError = false" prepend-icon="mdi-badge-account" @click:clear="resetInput()" :error="hasError" :error-messages="hasError ? displayErrorMessage : ''" :persistent-hint="true" :hint="allowedTypes"></v-file-input>
       </v-col>
       <v-col cols="12" sm="12" md="6" lg="6" xl="6">
         <v-card class="mx-auto" :width="maxWidth" :height="maxHeight" v-if="avatar">
@@ -41,7 +41,11 @@ export default {
   },
   methods: {
     checkFileSize(fileSizeToCheck) {
-      if (fileSizeToCheck > this.maxFileSize) {
+      if (fileSizeToCheck == null || fileSizeToCheck == 0 || fileSizeToCheck == "") {
+        this.hasError = true;
+        this.displayErrorMessage = `File is empty!`;
+        return false;
+      } else if (fileSizeToCheck > this.maxFileSize) {
         this.hasError = true;
         this.displayErrorMessage = `Max file size is 2MB!`;
         return false;
@@ -51,11 +55,11 @@ export default {
       }
     },
     checkFileType(typeToCheck) {
-      const result = this.allowedTypes.find((t) => t == typeToCheck);
-      console.log(result);
-      if (result) {
+      const result = this.allowedTypes.includes(typeToCheck);
+      console.log("result", result);
+      if (!result) {
         this.hasError = true;
-        this.displayErrorMessage = `File type [${typeToCheck.split('/')}] is not allowed.`;
+        this.displayErrorMessage = `File type [${typeToCheck.split("/")[1]}] is not allowed.`;
         return false;
       } else {
         return true;
@@ -91,9 +95,9 @@ export default {
         this.$store.dispatch("registry/act_setProfileImage", newValue);
       },
     },
-    allowedTypes(){
-        return this.allowedImagesTypes.map(t => t.split("/")).map(t => t + ' ')
-    }
+    allowedTypes() {
+      return this.allowedImagesTypes.map((t) => t.split("image/")[1]).toString();
+    },
   },
 };
 </script>
