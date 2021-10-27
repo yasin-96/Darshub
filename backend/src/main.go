@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/handlers"
+	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/UserService/handlers"
 	"github.com/gorilla/mux"
 	"github.com/nicholasjackson/env"
 )
