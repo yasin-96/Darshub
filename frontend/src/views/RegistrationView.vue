@@ -238,7 +238,7 @@ export default {
       return null;
     },
     checkInputFields() {
-      if (!this.firstName || !this.lastName && !this.email || !this.birthday || !this.bio || this.country.name || !this.telNr) {
+      if (!this.firstName || !this.lastName && !this.email || !this.birthday || !this.bio || !this.country.name || !this.telNr) {
         return false;
       }
       return true;
