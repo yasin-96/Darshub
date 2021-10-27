@@ -1,6 +1,6 @@
-# Contributing to learn-website
+# Contributing to DarsHub
 
-A big welcome and thank you for considering contributing to learn-website projects!
+A big welcome and thank you for considering contributing to DarsHub projects!
 
 Reading and following these guidelines will help us make the contribution process easy and effective for everyone involved. It also communicates that you agree to respect the time of the developers managing and developing these projects. In return, we will reciprocate that respect by addressing your issue, assessing changes, and helping you finalize your pull requests.
 
@@ -8,15 +8,16 @@ Reading and following these guidelines will help us make the contribution proces
 
 ## Getting Started
 
-Contributions are made to this repo via Issues and Pull Requests (PRs). A few general guidelines that cover both:
+Contributions are made to this repo via [Issues](https://dev.azure.com/DarsHub-Orga/DarsHub/_workitems/assignedtome/) and Pull Requests ([PRs](https://dev.azure.com/DarsHub-Orga/_git/DarsHub/pullrequests?_a=mine)). A few general guidelines that cover both:
 
 - Search for existing Issues and PRs before creating your own.
 - We work hard to makes sure issues are handled in a timely manner but, depending on the impact, it could take a while to investigate the root cause. A friendly ping in the comment thread to the submitter or a contributor can help draw attention if your issue is blocking.
 
 ---
+
 ## Issues
 
-All issues are collected in **Open( Backlog )**.
+All issues are collected in [**Open( Backlog )**](https://dev.azure.com/DarsHub-Orga/DarsHub/_backlogs/backlog/Developers/Backlog%20items).
 If an issue was selected, then you move it to **wip(Work-In-Progess)**. This way the team members know that this issue is being worked on.
 
 Each issue includes a meaningful **title** and a good **description** of what exactly is being done.
@@ -24,7 +25,7 @@ Each issue includes a meaningful **title** and a good **description** of what ex
 In the description you are welcome to use Markdown to make the text better, e.g. with tables, images, links or other Markdown features.
 
 - the first heading should start with '#'.
-- if needed, a checkbock to check off the tasks also helps 
+- if needed, a checkbock to check off the tasks also helps
   ```
   [x] done
   [ ] open
@@ -34,14 +35,10 @@ To better manage the issues, **labels** should be used to mark them.
 
 The following pre-selection can be used directly:
 
-- backend
-- bug
+- backend/frontend/test
 - ci/cd
-- dev
 - docs
-- frontend
 - ops
-- question
 
 multiple selection is possible :D
 
@@ -78,26 +75,32 @@ If an issue has been fixed, the issue number should appear in the commit message
 
 ```
 fix(#7): TestIssue
+
+//or
+
+fix: TestIssue (#7)
+
 ```
+
 ### Type
 
-
-| type | description |
-| ------------ | ----------------------------------------------------------------------------------- |
-| dev | changes for backend and frontend |
-| ops | changes for containers, CI/CD pipeline, etc. |
-| doc | changes to docs (README, GUIDES, WIKI) |
-| fix | a bugfix, compilation of the project/ YAML files of the pipeline |
+| type                  | description                                                      |
+| --------------------- | ---------------------------------------------------------------- |
+| ops                   | changes for containers, CI/CD pipeline, etc.                     |
+| doc                   | changes to docs (README, GUIDES, WIKI)                           |
+| fix                   | a bugfix, compilation of the project/ YAML files of the pipeline |
+| backend/frontend/test | changes on code for frontend/backend and tests                   |
 
 ---
 
 ## Branch
+
 Create a branch locally with a succinct but descriptive name
 
 ### Switch to the desired branch
 
 ```shell
-$ git switch master
+$ git switch main
 
 $ git checkout dev
 ```
@@ -110,10 +113,22 @@ $ git pull
 ```
 
 ### Create and switch to a new branch
+
+If an issue is edited, a new branch should be created.
+The only requirement would be that either the issue number is in the branch name or that the comments always contain an issue number so that they can be traced later.
+
 ```
 $ git switch --create 1234-commit-analysis
 
 $ git checkout -b 1234-commit-analysis
+```
+
+```
+$ git switch --create commit-analysis
+$ git checkout -b commit-analysis
+$ git commit -m "fix: stuf (#1234)"
+//or
+$ git commit -m "fix(#1234): stuf (#1234)"
 ```
 
 In general, we follow the [Git-flow-Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow#:~:text=Der%20Git-flow-Workflow%20ist,Release%20des%20Projekts%20konzipiert%20wurde.&text=Git-flow%20ist%20hervorragend%20f%C3%BCr,Release-Zyklus%20nach%20Zeitplan%20geeignet)
