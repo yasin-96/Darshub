@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/data"
+	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/UserService/data"
 )
 
 type Users struct {

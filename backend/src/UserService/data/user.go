@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/config"
+	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/UserService/config"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
