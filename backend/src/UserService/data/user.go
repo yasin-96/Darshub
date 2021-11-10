@@ -1,8 +1,6 @@
 package data
 
 import (
-	"encoding/json"
-	"io"
 	"log"
 	"time"
 
@@ -11,6 +9,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
+
+//Abstraction to MVC, this are the service functions
 
 type User struct {
 	ID         primitive.ObjectID `bson:"_id"`
@@ -57,7 +57,6 @@ func Create(userRequest *UserRequest) {
 }
 
 func Find(email string) User {
-	log.Println("in find func")
 	var user User
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
@@ -70,22 +69,23 @@ func Find(email string) User {
 	return user
 }
 
-func FromJSON(i interface{}, r io.Reader) error {
-	e := json.NewDecoder(r)
-	return e.Decode(i)
-}
+func FindById(id primitive.ObjectID) User {
+	var user User
+	ctx, cancel, client := config.GetConnection()
+	defer cancel()
+	defer client.Disconnect(ctx)
 
-func ToJSON(i interface{}, w io.Writer) error {
-	e := json.NewEncoder(w)
-	return e.Encode(i)
+	err := client.Database("darshub").Collection("user").FindOne(ctx, bson.M{"_id": id}).Decode(&user)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return user
 }
 
 func CheckIfPasswordsMatch(user User, password string) bool {
 	err := bcrypt.CompareHashAndPassword(user.Password, []byte(password))
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 func getEncryptedPassword(password []byte) []byte {

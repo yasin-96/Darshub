@@ -5,41 +5,48 @@ import (
 	"net/http"
 
 	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/UserService/data"
+	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/util"
+	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
-
-type Users struct {
-	l *log.Logger
-}
 
 type LoginRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-func NewUserStruct(l *log.Logger) *Users {
-	return &Users{l}
-}
-
-func (u *Users) RegisterUser(rw http.ResponseWriter, r *http.Request) {
+func RegisterUser(rw http.ResponseWriter, r *http.Request) {
 	user := &data.UserRequest{}
 
-	err := data.FromJSON(user, r.Body)
+	err := util.FromJSON(user, r.Body)
 	if err != nil {
-		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
+		log.Fatal(err)
 	}
 
 	data.Create(user)
 	rw.WriteHeader(http.StatusCreated)
 }
 
-func (u *Users) Login(rw http.ResponseWriter, r *http.Request) {
-	loginRequest := &LoginRequest{}
-	err := data.FromJSON(loginRequest, r.Body)
+func FindById(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userId, err := primitive.ObjectIDFromHex(vars["userId"])
 	if err != nil {
 		log.Fatal(err)
 	}
+	user := data.FindById(userId)
+	rw.WriteHeader(http.StatusOK)
+	parseErr := util.ToJSON(user, rw)
+	if parseErr != nil {
+		log.Fatal(err)
+	}
+}
 
-	log.Println(loginRequest.Email)
+func Login(rw http.ResponseWriter, r *http.Request) {
+	loginRequest := &LoginRequest{}
+	err := util.FromJSON(loginRequest, r.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	user := data.Find(loginRequest.Email)
 
