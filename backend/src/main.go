@@ -35,7 +35,7 @@ func main() {
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/user", userHandler.RegisterUser)
 	postRouter.HandleFunc("/session", userHandler.Login)
-	postRouter.HandleFunc("/course", courseHandler.FindCourse)
+	postRouter.HandleFunc("/course", courseHandler.InsertCourse)
 
 	// create a new server
 	s := http.Server{
