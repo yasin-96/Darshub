@@ -24,7 +24,7 @@ func InsertCourse(rw http.ResponseWriter, r *http.Request) {
 
 func FindCourse(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	userId, err := primitive.ObjectIDFromHex(vars["userId"])
+	userId, err := primitive.ObjectIDFromHex(vars["courseId"])
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -34,5 +34,4 @@ func FindCourse(rw http.ResponseWriter, r *http.Request) {
 	if parseErr != nil {
 		log.Fatal(parseErr)
 	}
-
 }
