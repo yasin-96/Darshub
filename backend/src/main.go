@@ -37,6 +37,9 @@ func main() {
 	postRouter.HandleFunc("/session", userHandler.Login)
 	postRouter.HandleFunc("/course", courseHandler.InsertCourse)
 
+	putRouter := sm.Methods(http.MethodPut).Subrouter()
+	putRouter.HandleFunc("/course/{courseId}", courseHandler.UpdateCourse)
+
 	// create a new server
 	s := http.Server{
 		Addr:         *bindAddress,      // configure the bind address

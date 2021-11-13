@@ -21,6 +21,17 @@ type Course struct {
 	LastUpdate  time.Time            `bson:"lastUpdate"`
 }
 
+type UpdateCourseRequest struct {
+	Name        string               `json:"name"`
+	Description string               `sson:"description"`
+	Duration    time.Time            `json:"duration"`
+	Level       string               `json:"level"`
+	Content     []primitive.ObjectID `json:"content"`
+	Author      string               `json:"author"`
+	Released    time.Time            `json:"released"`
+	LastUpdate  time.Time            `json:"lastUpdate"`
+}
+
 func Create(course *Course) {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
@@ -44,4 +55,28 @@ func Find(courseId primitive.ObjectID) Course {
 		log.Fatal(err)
 	}
 	return course
+}
+
+func Update(courseId primitive.ObjectID, updatedCourse *UpdateCourseRequest) Course {
+	ctx, cancel, client := config.GetConnection()
+	defer cancel()
+	defer client.Disconnect(ctx)
+
+	update := bson.M{
+		"name":        updatedCourse.Name,
+		"description": updatedCourse.Description,
+		"duration":    updatedCourse.Duration,
+		"level":       updatedCourse.Level,
+		"content":     updatedCourse.Content,
+		"author":      updatedCourse.Author,
+		"released":    updatedCourse.Released,
+		"lastUpdate":  updatedCourse.LastUpdate,
+	}
+
+	_, err := client.Database("darshub").Collection("course").ReplaceOne(ctx, bson.M{"_id": courseId}, update)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return Find(courseId)
 }
