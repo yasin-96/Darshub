@@ -11,6 +11,7 @@ import (
 
 	courseHandler "dev.azure.com/learn-website-orga/_git/learn-website/backend/src/CourseService/handlers"
 	userHandler "dev.azure.com/learn-website-orga/_git/learn-website/backend/src/UserService/handlers"
+	goHandler "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/nicholasjackson/env"
 )
@@ -39,6 +40,8 @@ func main() {
 
 	putRouter := sm.Methods(http.MethodPut).Subrouter()
 	putRouter.HandleFunc("/course/{courseId}", courseHandler.UpdateCourse)
+
+	goHandler.CORS(goHandler.AllowedOrigins([]string{"*"}))
 
 	// create a new server
 	s := http.Server{
