@@ -32,13 +32,19 @@ func main() {
 	//getRouter.HandleFunc("/", ph.GetProducts)
 
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
-	postRouter.HandleFunc("/user", ph.RegisterUser)
-	postRouter.HandleFunc("/session", ph.Login)
+	postRouter.HandleFunc("/user", userHandler.RegisterUser)
+	postRouter.HandleFunc("/session", userHandler.Login)
+	postRouter.HandleFunc("/course", courseHandler.InsertCourse)
+
+	putRouter := sm.Methods(http.MethodPut).Subrouter()
+	putRouter.HandleFunc("/course/{courseId}", courseHandler.UpdateCourse)
+
+	ch := goHandler.CORS(goHandler.AllowedOrigins([]string{"*"}))
 
 	// create a new server
 	s := http.Server{
 		Addr:         *bindAddress,      // configure the bind address
-		Handler:      sm,                // set the default handler
+		Handler:      ch(sm),            // set the default handler
 		ErrorLog:     l,                 // set the logger for the server
 		ReadTimeout:  5 * time.Second,   // max time to read request from the client
 		WriteTimeout: 10 * time.Second,  // max time to write response to the client
