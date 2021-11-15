@@ -9,7 +9,9 @@ import (
 	"syscall"
 	"time"
 
-	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/UserService/handlers"
+	courseHandler "dev.azure.com/learn-website-orga/_git/learn-website/backend/src/CourseService/handlers"
+	userHandler "dev.azure.com/learn-website-orga/_git/learn-website/backend/src/UserService/handlers"
+	goHandler "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/nicholasjackson/env"
 )
@@ -23,13 +25,13 @@ func main() {
 	l := log.New(os.Stdout, "products-api ", log.LstdFlags)
 
 	// create the handlers
-	ph := handlers.NewUserStruct(l)
 
 	// create a new serve mux and register the handlers
 	sm := mux.NewRouter()
 
-	//getRouter := sm.Methods(http.MethodGet).Subrouter()
-	//getRouter.HandleFunc("/", ph.GetProducts)
+	getRouter := sm.Methods(http.MethodGet).Subrouter()
+	getRouter.HandleFunc("/user/{userId}", userHandler.FindById)
+	getRouter.HandleFunc("/course/{courseId}", courseHandler.FindCourse)
 
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/user", userHandler.RegisterUser)
