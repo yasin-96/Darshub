@@ -3,6 +3,7 @@ package handlers
 import (
 	"log"
 	"net/http"
+	"reflect"
 
 	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/UserService/data"
 	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/util"
@@ -34,6 +35,9 @@ func FindById(rw http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 	user := data.FindById(userId)
+	if reflect.ValueOf(user).IsZero() {
+		rw.WriteHeader(http.StatusNotFound)
+	}
 	rw.WriteHeader(http.StatusOK)
 	parseErr := util.ToJSON(user, rw)
 	if parseErr != nil {

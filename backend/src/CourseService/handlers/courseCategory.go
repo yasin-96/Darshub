@@ -11,54 +11,56 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func InsertCourse(rw http.ResponseWriter, r *http.Request) {
-	course := &data.CreateCourseRequest{}
+func InsertCourseCategory(rw http.ResponseWriter, r *http.Request) {
+	courseCategory := &data.CourseCategory{}
 
-	err := util.FromJSON(course, r.Body)
+	err := util.FromJSON(courseCategory, r.Body)
 	if err != nil {
 		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
 	}
 
-	data.Create(course)
+	data.CreateCourseCategory(courseCategory)
 	rw.WriteHeader(http.StatusCreated)
 }
 
-func FindCourse(rw http.ResponseWriter, r *http.Request) {
+func GetCourseCategory(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	courseId, err := primitive.ObjectIDFromHex(vars["courseId"])
+	courseCategoryId, err := primitive.ObjectIDFromHex(vars["courseCategoryId"])
 	if err != nil {
 		log.Fatal(err)
 	}
-	course := data.Find(courseId)
-	if reflect.ValueOf(course).IsZero() {
+
+	courseCategory := data.FindCourseCategory(courseCategoryId)
+	if reflect.ValueOf(courseCategory).IsZero() {
 		rw.WriteHeader(http.StatusNotFound)
 	}
+
 	rw.WriteHeader(http.StatusOK)
-	parseErr := util.ToJSON(course, rw)
+	parseErr := util.ToJSON(courseCategory, rw)
 	if parseErr != nil {
-		log.Fatal(parseErr)
+		log.Fatal(err)
 	}
 }
 
-func UpdateCourse(rw http.ResponseWriter, r *http.Request) {
-	updatedCourse := &data.UpdateCourseRequest{}
+func UpdateCourseCategory(rw http.ResponseWriter, r *http.Request) {
+	updatedCourseCategory := &data.UpdateCourseCategoryRequest{}
 	vars := mux.Vars(r)
-	courseId, err := primitive.ObjectIDFromHex(vars["courseId"])
+	courseCategoryId, err := primitive.ObjectIDFromHex(vars["courseId"])
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	parseErr := util.FromJSON(updatedCourse, r.Body)
+	parseErr := util.FromJSON(updatedCourseCategory, r.Body)
 	if parseErr != nil {
 		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
 	}
 
-	course := data.Update(courseId, updatedCourse)
+	course := data.UpdateCourseCategory(courseCategoryId, updatedCourseCategory)
 	rw.WriteHeader(http.StatusOK)
 	util.ToJSON(course, rw)
 }
 
-func DeleteCourse(rw http.ResponseWriter, r *http.Request) {
+func DeleteCourseCategory(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	courseId, err := primitive.ObjectIDFromHex(vars["courseId"])
 	if err != nil {
