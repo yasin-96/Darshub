@@ -32,14 +32,21 @@ func main() {
 	getRouter := sm.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/user/{userId}", userHandler.FindById)
 	getRouter.HandleFunc("/course/{courseId}", courseHandler.FindCourse)
+	getRouter.HandleFunc("/courseCategory/", courseHandler.GetCourseCategory)
 
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/user", userHandler.RegisterUser)
 	postRouter.HandleFunc("/session", userHandler.Login)
 	postRouter.HandleFunc("/course", courseHandler.InsertCourse)
+	postRouter.HandleFunc("/courseCategory", courseHandler.InsertCourseCategory)
 
 	putRouter := sm.Methods(http.MethodPut).Subrouter()
 	putRouter.HandleFunc("/course/{courseId}", courseHandler.UpdateCourse)
+	putRouter.HandleFunc("/courseCategory/{courseCategoryId}", courseHandler.UpdateCourseCategory)
+
+	deleteRouter := sm.Methods(http.MethodDelete).Subrouter()
+	deleteRouter.HandleFunc("/course/{courseId}", courseHandler.DeleteCourse)
+	deleteRouter.HandleFunc("/courseCategory/{courseCategoryId}", courseHandler.DeleteCourseCategory)
 
 	ch := goHandler.CORS(goHandler.AllowedOrigins([]string{"*"}))
 
