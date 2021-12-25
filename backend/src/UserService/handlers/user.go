@@ -45,6 +45,35 @@ func FindById(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func UpdateUser(rw http.ResponseWriter, r *http.Request) {
+	updatedUser := &data.UpdateUserRequest{}
+	vars := mux.Vars(r)
+	userId, err := primitive.ObjectIDFromHex(vars["userId"])
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	parseErr := util.FromJSON(updatedUser, r.Body)
+	if parseErr != nil {
+		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
+	}
+
+	course := data.UpdateUser(userId, updatedUser)
+	rw.WriteHeader(http.StatusOK)
+	util.ToJSON(course, rw)
+}
+
+func DeleteUser(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userId, err := primitive.ObjectIDFromHex(vars["userId"])
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	data.DeleteUser(userId)
+	rw.WriteHeader(http.StatusNoContent)
+}
+
 func Login(rw http.ResponseWriter, r *http.Request) {
 	loginRequest := &LoginRequest{}
 	err := util.FromJSON(loginRequest, r.Body)

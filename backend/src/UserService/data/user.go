@@ -44,6 +44,21 @@ type UserRequest struct {
 	Country    string             `json:"country"`
 }
 
+type UpdateUserRequest struct {
+	Password   string    `json:"password"`
+	First_Name string    `json:"first_name"`
+	Last_Name  string    `json:"last_name"`
+	Birthday   time.Time `json:"birthday"`
+	Avatar     string    `json:"avatar"`
+	Email      string    `json:"email"`
+	TelNr      string    `json:"telNr"`
+	Company    string    `json:"company"`
+	Occupation string    `json:"occupation"`
+	School     string    `json:"school"`
+	Subject    string    `json:"subject"`
+	Country    string    `json:"country"`
+}
+
 func Create(userRequest *UserRequest) {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
@@ -69,18 +84,57 @@ func Find(email string) User {
 	return user
 }
 
-func FindById(id primitive.ObjectID) User {
+func FindById(userId primitive.ObjectID) User {
 	var user User
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
-	err := client.Database("darshub").Collection("user").FindOne(ctx, bson.M{"_id": id}).Decode(&user)
+	err := client.Database("darshub").Collection("user").FindOne(ctx, bson.M{"_id": userId}).Decode(&user)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	return user
+}
+
+func UpdateUser(userId primitive.ObjectID, updatedUser *UpdateUserRequest) User {
+	ctx, cancel, client := config.GetConnection()
+	defer cancel()
+	defer client.Disconnect(ctx)
+
+	update := bson.M{
+		"password":   updatedUser.Password,
+		"first_name": updatedUser.First_Name,
+		"last_name":  updatedUser.Last_Name,
+		"birthday":   updatedUser.Birthday,
+		"avatar":     updatedUser.Avatar,
+		"email":      updatedUser.Email,
+		"tel_nr":     updatedUser.TelNr,
+		"company":    updatedUser.Company,
+		"occupation": updatedUser.Occupation,
+		"school":     updatedUser.School,
+		"subject":    updatedUser.Subject,
+		"country":    updatedUser.Country,
+	}
+
+	_, err := client.Database("darshub").Collection("course").ReplaceOne(ctx, bson.M{"_id": userId}, update)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return FindById(userId)
+}
+
+func DeleteUser(userId primitive.ObjectID) {
+	ctx, cancel, client := config.GetConnection()
+	defer cancel()
+	defer client.Disconnect(ctx)
+
+	_, err := client.Database("darshub").Collection("course").DeleteOne(ctx, bson.M{"_id": userId})
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func CheckIfPasswordsMatch(user User, password string) bool {

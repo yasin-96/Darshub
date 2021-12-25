@@ -12,7 +12,7 @@ import (
 )
 
 func InsertCourseCategory(rw http.ResponseWriter, r *http.Request) {
-	courseCategory := &data.CourseCategory{}
+	courseCategory := &data.CreateCourseCategoryRequest{}
 
 	err := util.FromJSON(courseCategory, r.Body)
 	if err != nil {
