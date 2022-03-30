@@ -22,7 +22,7 @@ func main() {
 
 	env.Parse()
 
-	l := log.New(os.Stdout, "products-api ", log.LstdFlags)
+	l := log.New(os.Stdout, "darshub-api", log.LstdFlags)
 
 	// create the handlers
 
@@ -32,7 +32,7 @@ func main() {
 	getRouter := sm.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/user/{userId}", userHandler.FindById)
 	getRouter.HandleFunc("/course/{courseId}", courseHandler.FindCourse)
-	getRouter.HandleFunc("/courseCategory/", courseHandler.GetCourseCategory)
+	getRouter.HandleFunc("/courseCategory/{courseCategoryId}", courseHandler.GetCourseCategory)
 
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/user", userHandler.RegisterUser)
