@@ -32,23 +32,31 @@ func main() {
 	getRouter := sm.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/user/{userId}", userHandler.FindById)
 	getRouter.HandleFunc("/course/{courseId}", courseHandler.FindCourse)
-	getRouter.HandleFunc("/courseCategory/{courseCategoryId}", courseHandler.GetCourseCategory)
+	getRouter.HandleFunc("/courseCategory/{courseCategoryId}", courseHandler.FindCourseCategory)
+	getRouter.HandleFunc("/chapter/{chapterId}", courseHandler.FindChapter)
+	getRouter.HandleFunc("/subchapter/{subchapterId}", courseHandler.FindSubchapter)
 
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/user", userHandler.RegisterUser)
 	postRouter.HandleFunc("/session", userHandler.Login)
 	postRouter.HandleFunc("/course", courseHandler.InsertCourse)
 	postRouter.HandleFunc("/courseCategory", courseHandler.InsertCourseCategory)
+	postRouter.HandleFunc("/chapter", courseHandler.InsertChapter)
+	postRouter.HandleFunc("/subchapter", courseHandler.InsertSubchapter)
 
 	putRouter := sm.Methods(http.MethodPut).Subrouter()
 	putRouter.HandleFunc("/course/{courseId}", courseHandler.UpdateCourse)
 	putRouter.HandleFunc("/courseCategory/{courseCategoryId}", courseHandler.UpdateCourseCategory)
-	putRouter.HandleFunc("/use/{userId}", userHandler.UpdateUser)
+	putRouter.HandleFunc("/user/{userId}", userHandler.UpdateUser)
+	putRouter.HandleFunc("/chapter/{chapterId}", courseHandler.UpdateChapter)
+	putRouter.HandleFunc("/subchapter/{subchapterId}", courseHandler.UpdateSubchapter)
 
 	deleteRouter := sm.Methods(http.MethodDelete).Subrouter()
 	deleteRouter.HandleFunc("/course/{courseId}", courseHandler.DeleteCourse)
 	deleteRouter.HandleFunc("/courseCategory/{courseCategoryId}", courseHandler.DeleteCourseCategory)
 	deleteRouter.HandleFunc("/user/{userId}", userHandler.DeleteUser)
+	deleteRouter.HandleFunc("/chapter/{chapterId}", courseHandler.DeleteChapter)
+	deleteRouter.HandleFunc("/subchapter/{subchapterId}", courseHandler.DeleteSubchapter)
 
 	ch := goHandler.CORS(goHandler.AllowedOrigins([]string{"*"}))
 

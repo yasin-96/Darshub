@@ -23,7 +23,7 @@ func InsertCourseCategory(rw http.ResponseWriter, r *http.Request) {
 	rw.WriteHeader(http.StatusCreated)
 }
 
-func GetCourseCategory(rw http.ResponseWriter, r *http.Request) {
+func FindCourseCategory(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	courseCategoryId, err := primitive.ObjectIDFromHex(vars["courseCategoryId"])
 	if err != nil {
