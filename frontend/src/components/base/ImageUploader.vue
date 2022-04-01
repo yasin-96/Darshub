@@ -2,13 +2,39 @@
   <v-container class="pl-0 pr-0 mr-0">
     <v-row>
       <v-col cols="12" sm="12" md="6" lg="6" xl="6">
-        <v-file-input show-size label="Avatar " @change="selectFile" @input="hasError = false" prepend-icon="mdi-badge-account" @click:clear="resetInput()" :error="hasError" :error-messages="hasError ? displayErrorMessage : ''" :persistent-hint="true" :hint="allowedTypes"></v-file-input>
+        <v-file-input
+          show-size
+          label="Avatar "
+          @change="selectFile"
+          @input="hasError = false"
+          prepend-icon="mdi-badge-account"
+          @click:clear="resetInput()"
+          :error="hasError"
+          :error-messages="hasError ? displayErrorMessage : ''"
+          :persistent-hint="true"
+          :hint="allowedTypes"
+        ></v-file-input>
       </v-col>
       <v-col cols="12" sm="12" md="6" lg="6" xl="6">
-        <v-card class="mx-auto" :width="maxWidth" :height="maxHeight" v-if="avatar">
-          <v-img :src="avatar" :max-width="maxWidth" :max-height="maxHeight"></v-img>
+        <v-card
+          class="mx-auto"
+          :width="maxWidth"
+          :height="maxHeight"
+          v-if="avatar"
+        >
+          <v-img
+            :src="avatar"
+            :max-width="maxWidth"
+            :max-height="maxHeight"
+          ></v-img>
         </v-card>
-        <v-skeleton-loader class="mx-auto" v-else :max-width="maxWidth" :max-height="maxHeight" type="card"></v-skeleton-loader>
+        <v-skeleton-loader
+          class="mx-auto"
+          v-else
+          :max-width="maxWidth"
+          :max-height="maxHeight"
+          type="card"
+        ></v-skeleton-loader>
       </v-col>
     </v-row>
   </v-container>
@@ -41,7 +67,11 @@ export default {
   },
   methods: {
     checkFileSize(fileSizeToCheck) {
-      if (fileSizeToCheck == null || fileSizeToCheck == 0 || fileSizeToCheck == "") {
+      if (
+        fileSizeToCheck == null ||
+        fileSizeToCheck == 0 ||
+        fileSizeToCheck == ""
+      ) {
         this.hasError = true;
         this.displayErrorMessage = `File is empty!`;
         return false;
@@ -55,11 +85,16 @@ export default {
       }
     },
     checkFileType(typeToCheck) {
-      const result = this.allowedTypes.includes(typeToCheck);
+      console.log("this.allowedTypes", this.allowedTypes);
+      console.log("typeToCheck", typeToCheck);
+      const result = this.allowedImagesTypes.includes(typeToCheck);
       console.log("result", result);
       if (!result) {
         this.hasError = true;
-        this.displayErrorMessage = `File type [${typeToCheck.split("/")[1]}] is not allowed.`;
+        this.displayErrorMessage = `File type [${
+          typeToCheck.split("/")[1]
+        }] is not allowed.`;
+
         return false;
       } else {
         return true;
@@ -96,7 +131,10 @@ export default {
       },
     },
     allowedTypes() {
-      return this.allowedImagesTypes.map((t) => t.split("image/")[1]).toString();
+      // return this.allowedImagesTypes.map((t) => t.split("image/")[1]).toString();
+      return this.allowedImagesTypes
+        .map((t) => t.split("image/")[1])
+        .toString();
     },
   },
 };
