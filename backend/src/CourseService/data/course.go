@@ -22,7 +22,7 @@ type Course struct {
 }
 
 type CreateCourseRequest struct {
-	ID          primitive.ObjectID   `json:"_id"`
+	ID          primitive.ObjectID   `json:"id"`
 	Name        string               `json:"name"`
 	Description string               `json:"description"`
 	Duration    time.Time            `json:"duration"`
@@ -35,7 +35,7 @@ type CreateCourseRequest struct {
 
 type UpdateCourseRequest struct {
 	Name        string               `json:"name"`
-	Description string               `sson:"description"`
+	Description string               `json:"description"`
 	Duration    time.Time            `json:"duration"`
 	Level       string               `json:"level"`
 	Content     []primitive.ObjectID `json:"content"`
