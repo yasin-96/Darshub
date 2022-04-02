@@ -41,6 +41,7 @@
                       <v-col cols="12" sm="12" md="12" lg="12" xl="12">
                         <v-text-field
                           outlined
+                          data-test="first_name"
                           v-model="first_name"
                           label="First Name"
                           required
@@ -50,6 +51,7 @@
                       <v-col cols="12" sm="12" md="12" lg="12" xl="12">
                         <v-text-field
                           outlined
+                          data-test="last_name"
                           v-model="last_name"
                           label="Last Name"
                           required
@@ -68,6 +70,7 @@
                           <template v-slot:activator="{ on, attrs }">
                             <v-text-field
                               outlined
+                              data-test="birthday_input"
                               v-model="selectedBirthday"
                               label="Birthday"
                               prepend-inner-icon="mdi-calendar"
@@ -79,6 +82,8 @@
                           <v-date-picker
                             v-model="selectedBirthday"
                             :active-picker.sync="birthdayPicker"
+                             data-test="birthday"
+
                             :max="maxDate"
                             min=""
                             @change="saveBirthday"
@@ -89,6 +94,7 @@
                         <v-combobox
                           outlined
                           v-model="bio"
+                          data-test="bio"
                           item-value="sex"
                           :items="genders"
                           prepend-inner-icon="mdi-gender-male-female"
@@ -110,6 +116,7 @@
                         <v-combobox
                           outlined
                           v-model="selectedCountry"
+                          data-test="country"
                           item-value="name"
                           :items="getCountriesWithFlags"
                           label="Country"
@@ -140,11 +147,14 @@
                   color="error"
                   class="mx-auto text-right mr-2"
                   @click="reset"
+                  data-test="abbort_baseData"
+
                 >
                   Abbrechen
                 </v-btn>
                 <v-spacer></v-spacer>
                 <v-btn
+                  data-test="next_baseData"
                   text
                   color="success"
                   class="ml-2"
@@ -176,6 +186,7 @@
                       <v-col cols="12" sm="12" md="12" lg="12" xl="12">
                         <v-text-field
                           outlined
+                          data-test="email"
                           v-model="email"
                           label="E-mail"
                           required
@@ -425,12 +436,12 @@ export default {
     },
     saveBirthday(newDate) {
       console.log(newDate);
-      this.birthday = new Date(newDate)
+      this.birthday = new Date(newDate);
       this.$refs.ref_birthday.save(newDate);
     },
     nextStep(nextStep) {
       this.currentStep = nextStep;
-    },  
+    },
   },
   mounted() {
     this.$refs.reg_registryForm.validate();
@@ -604,8 +615,8 @@ export default {
     birthdayModel(event) {
       event && setTimeout(() => (this.birthdayPicker = "YEAR"));
     },
-    selectedCountry(){
-      this.country = this.selectedCountry.name
+    selectedCountry() {
+      this.country = this.selectedCountry.name;
     },
   },
 };
