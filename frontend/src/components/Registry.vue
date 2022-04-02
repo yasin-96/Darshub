@@ -68,7 +68,7 @@
                           <template v-slot:activator="{ on, attrs }">
                             <v-text-field
                               outlined
-                              v-model="birthday"
+                              v-model="selectedBirthday"
                               label="Birthday"
                               prepend-inner-icon="mdi-calendar"
                               readonly
@@ -77,7 +77,7 @@
                             ></v-text-field>
                           </template>
                           <v-date-picker
-                            v-model="birthday"
+                            v-model="selectedBirthday"
                             :active-picker.sync="birthdayPicker"
                             :max="maxDate"
                             min=""
@@ -109,7 +109,7 @@
                       <v-col cols="12" sm="12" md="12" lg="12" xl="12">
                         <v-combobox
                           outlined
-                          v-model="country"
+                          v-model="selectedCountry"
                           item-value="name"
                           :items="getCountriesWithFlags"
                           label="Country"
@@ -406,6 +406,8 @@ export default {
     currentStep: 1,
     passwordRecheck: null,
     displayPassword: false,
+    selectedCountry: {},
+    selectedBirthday: null,
   }),
   methods: {
     validate() {
@@ -423,11 +425,12 @@ export default {
     },
     saveBirthday(newDate) {
       console.log(newDate);
+      this.birthday = new Date(newDate)
       this.$refs.ref_birthday.save(newDate);
     },
     nextStep(nextStep) {
       this.currentStep = nextStep;
-    },
+    },  
   },
   mounted() {
     this.$refs.reg_registryForm.validate();
@@ -560,7 +563,7 @@ export default {
         (!this.last_name && !this.email) ||
         !this.birthday ||
         !this.bio ||
-        !this.country.name ||
+        !this.country ||
         !this.telNr
       ) {
         return false;
@@ -600,6 +603,9 @@ export default {
   watch: {
     birthdayModel(event) {
       event && setTimeout(() => (this.birthdayPicker = "YEAR"));
+    },
+    selectedCountry(){
+      this.country = this.selectedCountry.name
     },
   },
 };

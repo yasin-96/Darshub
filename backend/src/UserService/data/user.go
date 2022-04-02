@@ -26,6 +26,9 @@ type User struct {
 	School     string             `bson:"school"`
 	Subject    string             `bson:"subject"`
 	Country    string             `bson:"country"`
+	IsActive   bool               `bson:"isActive"`
+	Bio        string             `bson:"bio"`
+	Role       []int              `bson:"role"`
 }
 
 type UserRequest struct {
@@ -42,6 +45,9 @@ type UserRequest struct {
 	School     string             `json:"school"`
 	Subject    string             `json:"subject"`
 	Country    string             `json:"country"`
+	IsActive   bool               `bson:"isActive"`
+	Bio        string             `bson:"bio"`
+	Role       []int              `bson:"role"`
 }
 
 type UpdateUserRequest struct {
@@ -59,7 +65,7 @@ type UpdateUserRequest struct {
 	Country    string    `json:"country"`
 }
 
-func Create(userRequest *UserRequest) {
+func Create(userRequest *UserRequest) string {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
@@ -69,6 +75,8 @@ func Create(userRequest *UserRequest) {
 	if err != nil {
 		log.Printf("Could not save Product: %v", err)
 	}
+	log.Println("User was created")
+	return userRequest.ID.Hex()
 }
 
 func Find(email string) User {

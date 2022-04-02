@@ -11,17 +11,19 @@ import (
 
 	courseHandler "dev.azure.com/learn-website-orga/_git/learn-website/backend/src/CourseService/handlers"
 	userHandler "dev.azure.com/learn-website-orga/_git/learn-website/backend/src/UserService/handlers"
-	goHandler "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/nicholasjackson/env"
 )
 
 var bindAddress = env.String("BIND_ADDRESS", false, ":9090", "Bind address for the server")
+var allowedMethods = "OPTIONS,POST,PUT,DELETE,GET"
+var allowedHeaders = "Origin, Content-Type"
 
 func main() {
 
 	env.Parse()
 
+	//logger
 	l := log.New(os.Stdout, "darshub-api", log.LstdFlags)
 
 	// create the handlers
@@ -29,14 +31,14 @@ func main() {
 	// create a new serve mux and register the handlers
 	sm := mux.NewRouter()
 
-	getRouter := sm.Methods(http.MethodGet).Subrouter()
+	getRouter := sm.Methods(http.MethodGet, http.MethodOptions).Subrouter()
 	getRouter.HandleFunc("/user/{userId}", userHandler.FindById)
 	getRouter.HandleFunc("/course/{courseId}", courseHandler.FindCourse)
 	getRouter.HandleFunc("/courseCategory/{courseCategoryId}", courseHandler.FindCourseCategory)
 	getRouter.HandleFunc("/chapter/{chapterId}", courseHandler.FindChapter)
 	getRouter.HandleFunc("/subchapter/{subchapterId}", courseHandler.FindSubchapter)
 
-	postRouter := sm.Methods(http.MethodPost).Subrouter()
+	postRouter := sm.Methods(http.MethodPost, http.MethodOptions).Subrouter()
 	postRouter.HandleFunc("/user", userHandler.RegisterUser)
 	postRouter.HandleFunc("/session", userHandler.Login)
 	postRouter.HandleFunc("/course", courseHandler.InsertCourse)
@@ -44,26 +46,27 @@ func main() {
 	postRouter.HandleFunc("/chapter", courseHandler.InsertChapter)
 	postRouter.HandleFunc("/subchapter", courseHandler.InsertSubchapter)
 
-	putRouter := sm.Methods(http.MethodPut).Subrouter()
+	putRouter := sm.Methods(http.MethodPut, http.MethodOptions).Subrouter()
 	putRouter.HandleFunc("/course/{courseId}", courseHandler.UpdateCourse)
 	putRouter.HandleFunc("/courseCategory/{courseCategoryId}", courseHandler.UpdateCourseCategory)
 	putRouter.HandleFunc("/user/{userId}", userHandler.UpdateUser)
 	putRouter.HandleFunc("/chapter/{chapterId}", courseHandler.UpdateChapter)
 	putRouter.HandleFunc("/subchapter/{subchapterId}", courseHandler.UpdateSubchapter)
 
-	deleteRouter := sm.Methods(http.MethodDelete).Subrouter()
+	deleteRouter := sm.Methods(http.MethodDelete, http.MethodOptions).Subrouter()
 	deleteRouter.HandleFunc("/course/{courseId}", courseHandler.DeleteCourse)
 	deleteRouter.HandleFunc("/courseCategory/{courseCategoryId}", courseHandler.DeleteCourseCategory)
 	deleteRouter.HandleFunc("/user/{userId}", userHandler.DeleteUser)
 	deleteRouter.HandleFunc("/chapter/{chapterId}", courseHandler.DeleteChapter)
 	deleteRouter.HandleFunc("/subchapter/{subchapterId}", courseHandler.DeleteSubchapter)
 
-	ch := goHandler.CORS(goHandler.AllowedOrigins([]string{"*"}))
+	//middlewar
+	sm.Use(corsMiddleware)
 
 	// create a new server
 	s := http.Server{
 		Addr:         *bindAddress,      // configure the bind address
-		Handler:      ch(sm),            // set the default handler
+		Handler:      sm,                // set the default handler
 		ErrorLog:     l,                 // set the logger for the server
 		ReadTimeout:  5 * time.Second,   // max time to read request from the client
 		WriteTimeout: 10 * time.Second,  // max time to write response to the client
@@ -92,4 +95,21 @@ func main() {
 	// gracefully shutdown the server, waiting max 30 seconds for current operations to complete
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 	s.Shutdown(ctx)
+}
+
+//All Request with Options will be ignored
+//TODO Specify the origins ans methods from const variable
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+		w.Header().Set("Access-Control-Allow-Methods", allowedMethods)
+		w.Header().Set("Access-Control-Allow-Headers", allowedHeaders)
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusCreated)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }

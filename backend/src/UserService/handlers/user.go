@@ -17,15 +17,24 @@ type LoginRequest struct {
 }
 
 func RegisterUser(rw http.ResponseWriter, r *http.Request) {
+	if r.Body == nil {
+		log.Println("Request is not valid.")
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	user := &data.UserRequest{}
 
 	err := util.FromJSON(user, r.Body)
 	if err != nil {
+		log.Println("Request body could not parsed")
 		log.Fatal(err)
+		rw.WriteHeader(http.StatusInternalServerError)
+		return
 	}
-
-	data.Create(user)
+	dbResponse := data.Create(user)
 	rw.WriteHeader(http.StatusCreated)
+	rw.Write([]byte(dbResponse))
 }
 
 func FindById(rw http.ResponseWriter, r *http.Request) {

@@ -4,10 +4,13 @@ const API_ENDPOINT = {
   user: `${BACKEN_URI}/user`,
 };
 
+import router from "@/router/index"
+
 const registrationModule = {
   namespaced: true,
   state: () => ({
     newUser: {
+      id: "",
       password: "",
       first_name: "",
       last_name: "",
@@ -69,16 +72,21 @@ const registrationModule = {
     act_setRole: function ({ commit }, newRole) {
       commit("MUT_SET_ROLE", newRole);
     },
-    act_createNewUser: function ({ commit, state }) {
+    act_createNewUser: function ({ commit, dispatch, state }) {
       RestBackendCalls.doPostRequest(API_ENDPOINT.user, state.newUser)
         .then((resp) => {
-          if (resp && resp.data && resp.status == 200) {
-            console.log(resp.data);
-            commit();
+          if (resp && resp.data && resp.data.length && resp.status == 201) {
+            dispatch(
+              "ui/notification/act_setSuccessNotification",
+              "User erstellt",
+              { root: true }
+            );
+            commit("MUT_CLEAR_STATE");
+            router.push({ name: "login" });
           }
         })
         .catch((err) => {
-          console.log(err)
+          console.log(err);
         });
     },
   },
@@ -124,6 +132,28 @@ const registrationModule = {
     },
     MUT_SET_ROLE: function (state, newRole) {
       state.newUser.role.add(newRole);
+    },
+    MUT_CLEAR_STATE(state) {
+      state.newUser = null;
+      state.newUser = {
+        id: "",
+        password: "",
+        first_name: "",
+        last_name: "",
+        name: "",
+        birthday: "", //date
+        avatar: "",
+        email: "",
+        telNr: "",
+        company: "",
+        occupation: "",
+        school: "",
+        subject: "",
+        country: null,
+        bio: "",
+        role: [0], //define roles as numbers (enum)
+        isActive: true,
+      };
     },
   },
   getters: {},

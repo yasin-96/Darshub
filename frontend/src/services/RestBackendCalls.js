@@ -4,7 +4,7 @@ function clientCall(method, location, data, options) {
   return axios({
     method: method,
     url: location,
-    data: data ? {...data} : null,
+    data: data,
     ...options,
   })
     .then((resp) => {

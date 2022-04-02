@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <NotificationPanel />
     <v-main>
       <router-view />
     </v-main>
@@ -7,8 +8,12 @@
 </template>
 
 <script>
+import NotificationPanel from "./components/base/NotificationPanel.vue"
 export default {
   name: "App",
+  components:{
+    NotificationPanel
+  },
   created() {
     this.$store.dispatch("externApi/act_loadAllCountries");
   },
