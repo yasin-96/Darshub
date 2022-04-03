@@ -28,10 +28,11 @@ func RegisterUser(rw http.ResponseWriter, r *http.Request) {
 	err := util.FromJSON(user, r.Body)
 	if err != nil {
 		log.Println("Request body could not parsed")
-		log.Fatal(err)
+		log.Println(err)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
 	dbResponse := data.Create(user)
 	rw.WriteHeader(http.StatusCreated)
 	rw.Write([]byte(dbResponse))
@@ -39,14 +40,25 @@ func RegisterUser(rw http.ResponseWriter, r *http.Request) {
 
 func FindById(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+
+	if vars == nil || vars["userId"] == "" {
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	userId, err := primitive.ObjectIDFromHex(vars["userId"])
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		rw.WriteHeader(http.StatusBadRequest)
+		return
 	}
+
 	user := data.FindById(userId)
 	if reflect.ValueOf(user).IsZero() {
 		rw.WriteHeader(http.StatusNotFound)
+		return
 	}
+
 	rw.WriteHeader(http.StatusOK)
 	parseErr := util.ToJSON(user, rw)
 	if parseErr != nil {
@@ -55,28 +67,56 @@ func FindById(rw http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateUser(rw http.ResponseWriter, r *http.Request) {
-	updatedUser := &data.UpdateUserRequest{}
 	vars := mux.Vars(r)
+
+	if vars == nil || vars["userId"] == "" {
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	updatedUser := &data.UpdateUserRequest{}
 	userId, err := primitive.ObjectIDFromHex(vars["userId"])
+
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		rw.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	parseErr := util.FromJSON(updatedUser, r.Body)
 	if parseErr != nil {
-		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
+		// http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
+		log.Println("Request body could not parsed")
+		log.Println(err)
+		rw.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
-	course := data.UpdateUser(userId, updatedUser)
+	changedUser := data.UpdateUser(userId, updatedUser)
+
+	// if course == nil {
+	// 	rw.WriteHeader(http.StatusInternalServerError)
+	// 	return
+	// }
+
 	rw.WriteHeader(http.StatusOK)
-	util.ToJSON(course, rw)
+	util.ToJSON(changedUser, rw)
 }
 
 func DeleteUser(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+
+	if vars == nil || vars["userId"] == "" {
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	userId, err := primitive.ObjectIDFromHex(vars["userId"])
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Request body could not parsed")
+		log.Println(err)
+		rw.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	data.DeleteUser(userId)
@@ -84,7 +124,15 @@ func DeleteUser(rw http.ResponseWriter, r *http.Request) {
 }
 
 func Login(rw http.ResponseWriter, r *http.Request) {
+
+	if r.Body == nil {
+		log.Println("Request is not valid.")
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	loginRequest := &LoginRequest{}
+
 	err := util.FromJSON(loginRequest, r.Body)
 	if err != nil {
 		log.Fatal(err)
