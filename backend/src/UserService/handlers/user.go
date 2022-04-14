@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"reflect"
+	"time"
 
 	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/UserService/data"
 	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/util"
@@ -17,9 +18,12 @@ type LoginRequest struct {
 }
 
 func RegisterUser(rw http.ResponseWriter, r *http.Request) {
-	if r.Body == nil {
-		log.Println("Request is not valid.")
+
+	if r.Body == http.NoBody {
+		log.Println("Request is not valid. Req Body is not valid.")
 		rw.WriteHeader(http.StatusBadRequest)
+		rw.Write([]byte("Request is not valid."))
+		// http.Error(rw, "Request is not valid.", http.StatusBadRequest)
 		return
 	}
 
@@ -27,9 +31,21 @@ func RegisterUser(rw http.ResponseWriter, r *http.Request) {
 
 	err := util.FromJSON(user, r.Body)
 	if err != nil {
-		log.Println("Request body could not parsed")
+		log.Println("Request body could not parsed [USER]")
 		log.Println(err)
-		rw.WriteHeader(http.StatusInternalServerError)
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if user.Password == "" ||
+		user.First_Name == "" ||
+		user.Last_Name == "" ||
+		&user.Birthday == new(time.Time) ||
+		user.Email == "" ||
+		user.TelNr == "" ||
+		user.Bio == "" {
+		rw.WriteHeader(http.StatusBadRequest)
+		rw.Write([]byte("Request is not valid. Requierd Information are missing"))
 		return
 	}
 
@@ -125,8 +141,12 @@ func DeleteUser(rw http.ResponseWriter, r *http.Request) {
 
 func Login(rw http.ResponseWriter, r *http.Request) {
 
-	if r.Body == nil {
-		log.Println("Request is not valid.")
+	if r.Body == http.NoBody {
+		log.Println("Request is not valid. Req Body is not valid or missing information")
+
+		http.Error(rw, "Request is not valid.", http.StatusBadRequest)
+
+		// http.Error(rw, "Request is not valid.", http.StatusBadRequest)
 		rw.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -136,6 +156,11 @@ func Login(rw http.ResponseWriter, r *http.Request) {
 	err := util.FromJSON(loginRequest, r.Body)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	if loginRequest.Email == "" || loginRequest.Password == "" {
+		rw.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	user := data.Find(loginRequest.Email)
