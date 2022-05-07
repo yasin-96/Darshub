@@ -33,15 +33,15 @@ steps:
   #     npm outdated
   #   displayName: 'npm outdated'
     
-  - script: |
-      cd frontend
-      npm run lint
-    displayName: 'npm run lint'
+  # - script: |
+  #     cd frontend
+  #     npm run lint
+  #   displayName: 'npm run lint'
     
-  - script: |
-      cd frontend
-      npm run test:unit
-    displayName: 'npm run test:unit'
+  # - script: |
+  #     cd frontend
+  #     npm run test:unit
+  #   displayName: 'npm run test:unit'
 
   - script: |
       cd frontend
