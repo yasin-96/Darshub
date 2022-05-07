@@ -1,0 +1,72 @@
+# Node.js with Vue
+# Build a Node.js project that uses Vue.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+  branches:
+    include:
+    - develop
+        
+  paths:
+    include:
+    - frontend/*
+
+name: $(SourceBranchName)_$(date:yyyyMMdd)$(rev:.r)
+
+pool:
+  vmImage: ubuntu-latest
+ 
+variables:
+  buildConfig: 'dev'
+  
+steps:        
+  - task: Npm@1
+    inputs:
+      command: 'custom'
+      customCommand: 'ci'
+      workingDir: '$(Build.SourcesDirectory)/frontend'
+    displayName: npm ci
+    
+  # - script: |
+  #     cd frontend
+  #     npm outdated
+  #   displayName: 'npm outdated'
+    
+  - script: |
+      cd frontend
+      npm run lint
+    displayName: 'npm run lint'
+    
+  - script: |
+      cd frontend
+      npm run test:unit
+    displayName: 'npm run test:unit'
+
+  - script: |
+      cd frontend
+      npm run build:$(buildConfig)
+    displayName: 'Build -$(buildConfig)- frontend'
+
+  # - script: |
+  #     cd frontend
+  #     npm run test:e2e
+  #   displayName: 'Run E2E tests'
+
+# TODO - publish test results
+
+# TODO - publish code coverage results
+
+
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: frontend/dist
+      includeRootFolder: false    
+      replaceExistingArchive: true  
+    displayName: 'Archive dist'
+      
+  - task: PublishBuildArtifacts@1
+    inputs: 
+      pathtoPublish: $(Build.ArtifactStagingDirectory)
+      ArtifactName: 'dist'
+    displayName: 'Publish artifact'
