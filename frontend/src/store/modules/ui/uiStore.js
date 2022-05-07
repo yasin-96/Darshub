@@ -1,13 +1,13 @@
-import notificationModule from "./modules/notificationModule"
+import notificationModule from "./modules/notificationModule";
 
 const uiStore = {
-    namespaced: true,
-    state: {},
-    mutations: {},
-    actions: {},
-    modules: {
-        notification: notificationModule
-    },
-}
+  namespaced: true,
+  state: {},
+  mutations: {},
+  actions: {},
+  modules: {
+    notification: notificationModule,
+  },
+};
 
 export default uiStore;

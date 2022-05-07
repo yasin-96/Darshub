@@ -7,7 +7,7 @@
       right
       shaped
       top
-      :color="color||defaultColor"
+      :color="color || defaultColor"
     >
       {{ message }}
     </v-snackbar>

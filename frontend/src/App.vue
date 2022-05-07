@@ -8,11 +8,11 @@
 </template>
 
 <script>
-import NotificationPanel from "./components/base/NotificationPanel.vue"
+import NotificationPanel from "./components/base/NotificationPanel.vue";
 export default {
   name: "App",
-  components:{
-    NotificationPanel
+  components: {
+    NotificationPanel,
   },
   created() {
     this.$store.dispatch("externApi/act_loadAllCountries");

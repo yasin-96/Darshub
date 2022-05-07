@@ -1,11 +1,11 @@
 <template>
   <v-container fill-height align="center" justify="center">
-  <Registry />
+    <Registry />
   </v-container>
 </template>
 
 <script>
-import Registry from "@/components/Registry"
+import Registry from "@/components/Registry";
 export default {
   name: "RegistrationView",
   components: {

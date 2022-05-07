@@ -4,7 +4,7 @@ const API_ENDPOINT = {
   user: `${BACKEN_URI}/user`,
 };
 
-import router from "@/router/index"
+import router from "@/router/index";
 
 const registrationModule = {
   namespaced: true,

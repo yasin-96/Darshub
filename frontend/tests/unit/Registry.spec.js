@@ -2,17 +2,17 @@ import { shallowMount } from "@vue/test-utils";
 import Registry from "@/components/Registry.vue";
 import ImageUploader from "@/components/base/ImageUploader";
 
-import {render, screen} from '@testing-library/vue';
+import { render, screen } from "@testing-library/vue";
 
-import Vue from "vue"
-import Vuetify from "vuetify"
-import Vuex from "vuex"
+import Vue from "vue";
+import Vuetify from "vuetify";
+import Vuex from "vuex";
 
-Vue.use(Vuetify).use(Vuex)
+Vue.use(Vuetify).use(Vuex);
 
 const renderWithVuetify = (component, options, callback) => {
-  const root = document.createElement('div')
-  root.setAttribute('data-app', 'true')
+  const root = document.createElement("div");
+  root.setAttribute("data-app", "true");
 
   return render(
     component,
@@ -22,10 +22,9 @@ const renderWithVuetify = (component, options, callback) => {
       vuetify: new Vuetify(),
       ...options,
     },
-    callback,
-  )
-}
-
+    callback
+  );
+};
 
 describe("Registry.vue", () => {
   let data = {
@@ -33,8 +32,8 @@ describe("Registry.vue", () => {
     date: null,
     birthdayModel: false,
     birthdayPicker: null,
-    minDate: "1950-01-01"
-  }
+    minDate: "1950-01-01",
+  };
 
   let store = {
     state: {
@@ -53,14 +52,12 @@ describe("Registry.vue", () => {
         country: null,
         bio: "",
         role: [0], //define roles as numbers (enum)
-        isActive: true
+        isActive: true,
       },
     },
-    actions:{
-
-    },
-    mutations:{}
-  }
+    actions: {},
+    mutations: {},
+  };
 
   // before(() =>{
 
@@ -69,10 +66,12 @@ describe("Registry.vue", () => {
   // afterEach(()=>{
 
   // })
-  
-  
+
   it("Should render the component", () => {
-	  const { getByText } = renderWithVuetify(ImageUploader, {data: ()=>data, store: store });
-    console.log(getByText)
+    const { getByText } = renderWithVuetify(ImageUploader, {
+      data: () => data,
+      store: store,
+    });
+    console.log(getByText);
   });
 });

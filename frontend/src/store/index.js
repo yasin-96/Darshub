@@ -6,7 +6,6 @@ import typeModule from "@/store/modules/typeModule";
 import countrieModule from "@/store/modules/countrieModule";
 import uiStore from "./modules/ui/uiStore";
 
-
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -18,6 +17,6 @@ export default new Vuex.Store({
     core: coreModule,
     types: typeModule,
     externApi: countrieModule,
-    ui: uiStore
+    ui: uiStore,
   },
 });

@@ -82,8 +82,7 @@
                           <v-date-picker
                             v-model="selectedBirthday"
                             :active-picker.sync="birthdayPicker"
-                             data-test="birthday"
-
+                            data-test="birthday"
                             :max="maxDate"
                             min=""
                             @change="saveBirthday"
@@ -148,7 +147,6 @@
                   class="mx-auto text-right mr-2"
                   @click="reset"
                   data-test="abbort_baseData"
-
                 >
                   Abbrechen
                 </v-btn>
