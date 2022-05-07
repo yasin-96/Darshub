@@ -71,16 +71,30 @@ func Create(userRequest *UserRequest) string {
 	defer client.Disconnect(ctx)
 	userRequest.ID = primitive.NewObjectID()
 
-	_, err := client.Database("darshub").Collection("user").InsertOne(ctx, userRequest.toUser())
+	resp, err := client.Database("darshub").Collection("user").InsertOne(ctx, userRequest.toUser())
 	if err != nil {
-		log.Printf("Could not save Product: %v", err)
+		log.Printf("Could not save the new user obj: %v\n", err)
 	}
+
+	//TODO hier noch mal schauen
+	log.Println(resp.InsertedID)
+
+	if resp.InsertedID == nil {
+		log.Println("User was not created")
+		return ""
+	}
+
 	log.Println("User was created")
 	return userRequest.ID.Hex()
 }
 
 func Find(email string) User {
+	if email == "" {
+		return User{}
+	}
+
 	var user User
+
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
@@ -100,13 +114,14 @@ func FindById(userId primitive.ObjectID) User {
 
 	err := client.Database("darshub").Collection("user").FindOne(ctx, bson.M{"_id": userId}).Decode(&user)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	return user
 }
 
 func UpdateUser(userId primitive.ObjectID, updatedUser *UpdateUserRequest) User {
+
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
@@ -126,23 +141,36 @@ func UpdateUser(userId primitive.ObjectID, updatedUser *UpdateUserRequest) User 
 		"country":    updatedUser.Country,
 	}
 
-	_, err := client.Database("darshub").Collection("course").ReplaceOne(ctx, bson.M{"_id": userId}, update)
+	resp, err := client.Database("darshub").Collection("course").ReplaceOne(ctx, bson.M{"_id": userId}, update)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return User{}
 	}
 
-	return FindById(userId)
+	//Check response if only one docuument was updated
+	if resp.MatchedCount == 1 && resp.ModifiedCount == 1 && resp.UpsertedCount == 1 {
+		return FindById(userId)
+	}
+
+	return User{}
 }
 
-func DeleteUser(userId primitive.ObjectID) {
+func DeleteUser(userId primitive.ObjectID) bool {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
-	_, err := client.Database("darshub").Collection("course").DeleteOne(ctx, bson.M{"_id": userId})
+	resp, err := client.Database("darshub").Collection("course").DeleteOne(ctx, bson.M{"_id": userId})
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	if resp.DeletedCount == 1 {
+		return true
+	}
+
+	return false
+
 }
 
 func CheckIfPasswordsMatch(user User, password string) bool {

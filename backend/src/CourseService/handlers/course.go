@@ -14,6 +14,11 @@ import (
 func InsertCourse(rw http.ResponseWriter, r *http.Request) {
 	course := &data.CreateCourseRequest{}
 
+	if r.Body == nil {
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	err := util.FromJSON(course, r.Body)
 	if err != nil {
 		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
@@ -25,6 +30,12 @@ func InsertCourse(rw http.ResponseWriter, r *http.Request) {
 
 func FindCourse(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+
+	if vars == nil || vars["courseId"] == "" {
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	courseId, err := primitive.ObjectIDFromHex(vars["courseId"])
 	if err != nil {
 		log.Fatal(err)
@@ -41,8 +52,14 @@ func FindCourse(rw http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateCourse(rw http.ResponseWriter, r *http.Request) {
-	updatedCourse := &data.UpdateCourseRequest{}
 	vars := mux.Vars(r)
+
+	if vars == nil || vars["courseId"] == "" {
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	updatedCourse := &data.UpdateCourseRequest{}
 	courseId, err := primitive.ObjectIDFromHex(vars["courseId"])
 	if err != nil {
 		log.Fatal(err)
@@ -60,6 +77,12 @@ func UpdateCourse(rw http.ResponseWriter, r *http.Request) {
 
 func DeleteCourse(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+
+	if vars == nil || vars["courseId"] == "" {
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	courseId, err := primitive.ObjectIDFromHex(vars["courseId"])
 	if err != nil {
 		log.Fatal(err)

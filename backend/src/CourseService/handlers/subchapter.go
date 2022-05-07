@@ -12,6 +12,12 @@ import (
 )
 
 func InsertSubchapter(rw http.ResponseWriter, r *http.Request) {
+
+	if r.Body == nil {
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	subchapter := &data.CreateSubchapterRequest{}
 
 	err := util.FromJSON(subchapter, r.Body)
@@ -25,6 +31,12 @@ func InsertSubchapter(rw http.ResponseWriter, r *http.Request) {
 
 func FindSubchapter(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+
+	if vars == nil || vars["courseId"] == "" {
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	subchapterId, err := primitive.ObjectIDFromHex(vars["courseId"])
 	if err != nil {
 		log.Fatal(err)
@@ -41,8 +53,14 @@ func FindSubchapter(rw http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateSubchapter(rw http.ResponseWriter, r *http.Request) {
-	updatedSubchapter := &data.UpdateSubchapterRequest{}
 	vars := mux.Vars(r)
+
+	if vars == nil || vars["subchapterId"] == "" {
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	updatedSubchapter := &data.UpdateSubchapterRequest{}
 	chapterId, err := primitive.ObjectIDFromHex(vars["subchapterId"])
 	if err != nil {
 		log.Fatal(err)
@@ -60,6 +78,12 @@ func UpdateSubchapter(rw http.ResponseWriter, r *http.Request) {
 
 func DeleteSubchapter(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+
+	if vars == nil || vars["subchapterId"] == "" {
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	subchapterId, err := primitive.ObjectIDFromHex(vars["subchapterId"])
 	if err != nil {
 		log.Fatal(err)
