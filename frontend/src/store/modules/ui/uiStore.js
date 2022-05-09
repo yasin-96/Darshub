@@ -1,4 +1,5 @@
 import notificationModule from "./modules/notificationModule";
+import sidebarLeftModule from "./modules/sidebarLeftModule";
 
 const uiStore = {
   namespaced: true,
@@ -7,6 +8,7 @@ const uiStore = {
   actions: {},
   modules: {
     notification: notificationModule,
+    sidebarLeft: sidebarLeftModule
   },
 };
 
