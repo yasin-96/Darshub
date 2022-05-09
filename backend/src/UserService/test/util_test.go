@@ -3,8 +3,8 @@ package UserServiceTest
 import (
 	"testing"
 
-	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/UserService/data"
-	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/util"
+	"dev.azure.com/learn-website-orga/_git/learn-website/src/UserService/data"
+	"dev.azure.com/learn-website-orga/_git/learn-website/src/util"
 )
 
 // func Test_FromJSON_WithNillShouldReturnError(t *testing.T) {
