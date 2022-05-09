@@ -1,4 +1,4 @@
-module dev.azure.com/learn-website-orga/_git/learn-website
+module dev.azure.com/learn-website-orga/_git/learn-website/backend/src
 
 go 1.16
 
