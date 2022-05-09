@@ -23,7 +23,7 @@ RUN ENVNAME=${envname} npm run build:${envname}
 
 #==================== Setting up stage ====================
 FROM nginx
-COPY --from=node /usr/src/app/build /usr/share/nginx/html
+COPY --from=node /usr/src/app/dist /usr/share/nginx/html
 
 # overriding default nginx config
 COPY --from=node /usr/src/app/nginx/default.conf /etc/nginx/conf.d/default.conf
