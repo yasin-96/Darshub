@@ -15,6 +15,8 @@ RUN go mod download
 # copy directory files i.e all files ending with .go
 COPY *.go ./
 
+COPY . ./
+
 # compile application
 RUN go build -o /godocker
  
