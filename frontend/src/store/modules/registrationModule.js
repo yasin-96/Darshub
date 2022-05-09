@@ -1,25 +1,38 @@
+import RestBackendCalls from "../../services/RestBackendCalls";
+const BACKEN_URI = process.env.VUE_APP_BACKEND_URI;
+const API_ENDPOINT = {
+  user: `${BACKEN_URI}/user`,
+};
+
+import router from "@/router/index";
+
 const registrationModule = {
   namespaced: true,
   state: () => ({
     newUser: {
-      firstName: "",
-      lastName: "",
+      id: "",
+      password: "",
+      first_name: "",
+      last_name: "",
       name: "",
       birthday: "", //date
       avatar: "",
       email: "",
       telNr: "",
-      occupation: "",
       company: "",
+      occupation: "",
       school: "",
       subject: "",
       country: null,
       bio: "",
       role: [0], //define roles as numbers (enum)
-      isActive: true
+      isActive: true,
     },
   }),
   actions: {
+    act_setPassword: function ({ commit }, newPassword) {
+      commit("MUT_SET_PW", newPassword);
+    },
     act_setFirstName: function ({ commit }, newFirstName) {
       commit("MUT_SET_FIRSTNAME", newFirstName);
     },
@@ -59,16 +72,33 @@ const registrationModule = {
     act_setRole: function ({ commit }, newRole) {
       commit("MUT_SET_ROLE", newRole);
     },
-    // act_createNewUser: function({commit, state}){
-
-    // }
+    act_createNewUser: function ({ commit, dispatch, state }) {
+      RestBackendCalls.doPostRequest(API_ENDPOINT.user, state.newUser)
+        .then((resp) => {
+          if (resp && resp.data && resp.data.length && resp.status == 201) {
+            dispatch(
+              "ui/notification/act_setSuccessNotification",
+              "User erstellt",
+              { root: true }
+            );
+            commit("MUT_CLEAR_STATE");
+            router.push({ name: "login" });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
   },
   mutations: {
+    MUT_SET_PW: function (state, newPassword) {
+      state.newUser.password = newPassword;
+    },
     MUT_SET_FIRSTNAME: function (state, newFirstName) {
-      state.newUser.firstName = newFirstName;
+      state.newUser.first_name = newFirstName;
     },
     MUT_SET_LASTNAME: function (state, newLastname) {
-      state.newUser.lastName = newLastname;
+      state.newUser.last_name = newLastname;
     },
     MUT_SET_BIRTHDAY: function (state, newBirthday) {
       state.newUser.birthday = newBirthday;
@@ -102,6 +132,28 @@ const registrationModule = {
     },
     MUT_SET_ROLE: function (state, newRole) {
       state.newUser.role.add(newRole);
+    },
+    MUT_CLEAR_STATE(state) {
+      state.newUser = null;
+      state.newUser = {
+        id: "",
+        password: "",
+        first_name: "",
+        last_name: "",
+        name: "",
+        birthday: "", //date
+        avatar: "",
+        email: "",
+        telNr: "",
+        company: "",
+        occupation: "",
+        school: "",
+        subject: "",
+        country: null,
+        bio: "",
+        role: [0], //define roles as numbers (enum)
+        isActive: true,
+      };
     },
   },
   getters: {},

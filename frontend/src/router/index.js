@@ -1,15 +1,22 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
+// import Home from "../views/Home.vue";
+import Rework from "../views/Rework.vue";
 import RegistrationView from "../views/RegistrationView.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
+  
+  // {
+  //   path: "/",
+  //   name: "home",
+  //   component: Home,
+  // },
   {
     path: "/",
-    name: "home",
-    component: Home,
+    name: "Rework",
+    component: Rework,
   },
   {
     path: "/registry",

@@ -4,7 +4,7 @@ function clientCall(method, location, data, options) {
   return axios({
     method: method,
     url: location,
-    data: data ? data : null,
+    data: data,
     ...options,
   })
     .then((resp) => {
@@ -12,6 +12,7 @@ function clientCall(method, location, data, options) {
       return resp;
     })
     .catch((error) => {
+      console.log({ method, location, data, options });
       console.error("clientCall", error);
       return -1;
     });
@@ -20,7 +21,7 @@ function clientCall(method, location, data, options) {
 export default {
   doPostRequest(location, payload, options) {
     console.debug("doPostRequest was called");
-    return clientCall("post", location, { data: payload }, options);
+    return clientCall("post", location, payload, options);
   },
   doPutRequest(location, payload, options) {
     console.debug("doPutRequest was called");
