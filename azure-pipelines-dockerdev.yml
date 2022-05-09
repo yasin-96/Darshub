@@ -32,7 +32,7 @@ stages:
         repository: $(imageRepository)
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
-        arguments: '--build-arg envname=development buildOption=dev'
+        arguments: '--build-arg envname=develop'
         tags: |
           $(tag)
     - task: Docker@2
