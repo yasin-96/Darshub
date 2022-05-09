@@ -9,8 +9,8 @@ import (
 	"syscall"
 	"time"
 
-	courseHandler "dev.azure.com/learn-website-orga/_git/learn-website/backend/src/CourseService/handlers"
-	userHandler "dev.azure.com/learn-website-orga/_git/learn-website/backend/src/UserService/handlers"
+	courseHandler "dev.azure.com/learn-website-orga/_git/learn-website/src/CourseService/handlers"
+	userHandler "dev.azure.com/learn-website-orga/_git/learn-website/src/UserService/handlers"
 	"github.com/gorilla/mux"
 	"github.com/nicholasjackson/env"
 )
