@@ -8,7 +8,7 @@ trigger:
 variables:
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: '0ea48d35-4539-47a0-8bc7-059824f4dc6c'
-  imageRepository: 'darshubfrontend'
+  imageRepository: 'darshubbackend'
   containerRegistry: 'dhacr01.azurecr.io'
   dockerfilePath: 'backend/Dockerfile'
   tag: '$(Build.BuildId)'
