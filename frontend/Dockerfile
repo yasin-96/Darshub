@@ -13,14 +13,13 @@ WORKDIR /usr/src/app
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
 ARG envname
-ARG buildOption
 
 COPY package*.json ./
 RUN npm install
 COPY . .
 
 RUN echo "Will now run npm run build:env with environment: -$envname-"
-RUN ENVNAME=${envname} npm run build:${buildOption}
+RUN ENVNAME=${envname} npm run build:${envname}
 
 #==================== Setting up stage ====================
 FROM nginx
