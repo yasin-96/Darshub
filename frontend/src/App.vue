@@ -1,8 +1,8 @@
 <template>
   <v-app>
-    <NotificationPanel />
     <Navbar />
     <v-main>
+      <NotificationPanel />
       <router-view />
     </v-main>
   </v-app>

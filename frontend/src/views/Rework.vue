@@ -1,15 +1,14 @@
 <template>
   <v-container fill-height align="center" justify="center">
     <v-row>
-      <v-col cols="12" sm="12" md="6" lg="6" xl="6" class="mx-auto">
+      <v-col cols="12" sm="12" md="12" lg="12" xl="12" class="mx-auto">
         <v-card elevation="5" outlined>
           <v-card-title>
             <h1 class="display pa-5">Umbau arbeiten</h1>
           </v-card-title>
-          <v-img :src="require('../assets/underConstruction.png')" alt="Rework">
-            <v-container class="ma-5">
+           <v-container class="ma-5">
               <v-row>
-                <v-col class="mx-auto" cols="5">
+                <v-col class="mx-auto" cols="6">
                   <p class="title">
                     Die Website ist aktuell im Aufbau und wird in Kürze
                     freigegeben. Wir bitten um etwas Geduld.
@@ -17,6 +16,7 @@
                 </v-col>
               </v-row>
             </v-container>
+          <v-img :src="require('../assets/underConstruction.png')" alt="Rework">
           </v-img>
         </v-card>
         <v-card-actions>

@@ -31,8 +31,8 @@ const countrieModule = {
     getCountriesWithFlags: function (state) {
       return state.countries.map((item) => {
         const name = item.name.common;
-        const icon = item.flag;
-        return { icon, name };
+        const icon = item.flags;
+        return { icon: icon.svg || icon.png, name };
       });
     },
   },

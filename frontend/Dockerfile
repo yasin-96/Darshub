@@ -26,4 +26,4 @@ FROM nginx
 COPY --from=node /usr/src/app/dist /usr/share/nginx/html
 
 # overriding default nginx config
-# COPY --from=node /usr/src/app/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY --from=node /usr/src/app/conf/nginx.conf /etc/nginx/conf.d/default.conf

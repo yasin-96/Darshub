@@ -126,11 +126,11 @@
                               {{ item.name }}
                             </v-chip>
                             <v-spacer> </v-spacer>
-                            <v-icon>{{ item.icon }}</v-icon>
+                            <!-- <v-icon>{{ item.icon }}</v-icon> -->
                           </template>
                           <template v-slot:selection="data">
                             <v-chip>
-                              <span class="mr-3">{{ data.item.icon }}</span>
+                              <!-- <v-img class="mr-3" :src="data.item.icon"></v-img> -->
                               <span>{{ data.item.name }}</span>
                             </v-chip>
                           </template>
@@ -388,12 +388,11 @@
         </v-stepper-items>
       </v-stepper>
     </v-col>
-    <v-col cols="12" sm="12" md="12" lg="8" xl="6" class="mx-auto">
+    <!-- <v-col cols="12" sm="12" md="12" lg="8" xl="6" class="mx-auto">
       <v-btn outlined>
-        <!-- TODO Alex -->
-        Data Privacy*
+       // Data Privacy*
       </v-btn>
-    </v-col>
+    </v-col> -->
   </v-row>
 </template>
 

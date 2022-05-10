@@ -17,6 +17,9 @@
       <div class="mx-2"></div>
 
       <v-spacer></v-spacer>
+      <v-btn color="info" outlined class="mr-5" @click="goToRegPage()">
+        Registrieren
+      </v-btn>
 
       <!-- <v-chip v-if="user && user.info.logId">
         <v-avatar left>
@@ -169,6 +172,11 @@ export default {
       },
     },
   },
+  methods:{
+    goToRegPage(){
+      this.$router.push({ name: "Registry" });
+    }
+  }
 };
 </script>
 

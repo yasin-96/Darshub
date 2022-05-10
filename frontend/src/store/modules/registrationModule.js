@@ -25,7 +25,7 @@ const registrationModule = {
       subject: "",
       country: null,
       bio: "",
-      role: [0], //define roles as numbers (enum)
+      // role: [0], //define roles as numbers (enum)
       isActive: true,
     },
   }),
@@ -78,11 +78,11 @@ const registrationModule = {
           if (resp && resp.data && resp.data.length && resp.status == 201) {
             dispatch(
               "ui/notification/act_setSuccessNotification",
-              "User erstellt",
+              `Es wurde ein neuer Benutzer erstellt. [${resp.data}]`,
               { root: true }
             );
             commit("MUT_CLEAR_STATE");
-            router.push({ name: "login" });
+            router.push({ name: "Rework" });
           }
         })
         .catch((err) => {
