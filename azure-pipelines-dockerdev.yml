@@ -1,20 +1,25 @@
-# Docker
-# Build and push an image to Azure Container Registry
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
-
 trigger:
-- develop
+  branches:
+    include:
+    - main
+    - develop
 
 variables:
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: '0ea48d35-4539-47a0-8bc7-059824f4dc6c'
   imageRepository: 'darshubfrontend'
   containerRegistry: 'dhacr01.azurecr.io'
   dockerfilePath: 'frontend/Dockerfile'
-  tag: '$(Build.BuildId)'
-
-  # Agent VM image name
-  vmImageName: 'ubuntu-latest'
+  
+  # master branch -->  production builds
+  ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
+    buildConfig: "production"
+    tag: 'production'
+  # develop branch --> development builds
+  ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+    tag: 'develop'
 
 stages:
 - stage: Build
