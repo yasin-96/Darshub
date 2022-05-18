@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	userHandler "dev.azure.com/learn-website-orga/_git/learn-website/backend/src/UserService/handlers"
+	userHandler "dev.azure.com/learn-website-orga/_git/learn-website/src/UserService/handlers"
 )
 
 func Test_Handler_CreatedNewUser_WithEmptyBodyShouldNotWork(t *testing.T) {

@@ -9,13 +9,13 @@ import (
 	"syscall"
 	"time"
 
-	courseHandler "dev.azure.com/learn-website-orga/_git/learn-website/backend/src/CourseService/handlers"
-	userHandler "dev.azure.com/learn-website-orga/_git/learn-website/backend/src/UserService/handlers"
+	courseHandler "dev.azure.com/learn-website-orga/_git/learn-website/src/CourseService/handlers"
+	userHandler "dev.azure.com/learn-website-orga/_git/learn-website/src/UserService/handlers"
 	"github.com/gorilla/mux"
 	"github.com/nicholasjackson/env"
 )
 
-var bindAddress = env.String("BIND_ADDRESS", false, ":9090", "Bind address for the server")
+var bindAddress = env.String("BIND_ADDRESS", false, ":8080", "Bind address for the server")
 var allowedMethods = "OPTIONS,POST,PUT,DELETE,GET"
 var allowedHeaders = "Origin, Content-Type"
 

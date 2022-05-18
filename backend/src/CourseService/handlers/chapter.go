@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"reflect"
 
-	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/CourseService/data"
-	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/util"
+	"dev.azure.com/learn-website-orga/_git/learn-website/src/CourseService/data"
+	"dev.azure.com/learn-website-orga/_git/learn-website/src/util"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

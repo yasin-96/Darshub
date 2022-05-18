@@ -1,26 +1,27 @@
-# Node.js with Vue
-# Build a Node.js project that uses Vue.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+name: $(SourceBranchName)_$(date:yyyyMMdd)$(rev:.r)
 
 trigger:
   branches:
     include:
+    - main
     - develop
         
   paths:
     include:
     - frontend/*
 
-name: $(SourceBranchName)_$(date:yyyyMMdd)$(rev:.r)
-
 pool:
   vmImage: ubuntu-latest
- 
+
 variables:
-  buildConfig: 'dev'
-  
-steps:        
+  # master branch -->  production builds
+  ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
+    buildConfig: "production"
+  # develop branch --> development builds
+  ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+    buildConfig: 'develop'
+
+steps:
   - task: Npm@1
     inputs:
       command: 'custom'
