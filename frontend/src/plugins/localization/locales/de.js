@@ -1,10 +1,10 @@
 export default {
   appName: "DarsHub",
   router: {
-      all:{
-          home: "Start",
-          dashboard: "Übersicht"
-      }
+    all: {
+      home: "Start",
+      courseOverview: "Übersicht der Kurse",
+    },
   },
   navigation: {
     lang: "Sprache",

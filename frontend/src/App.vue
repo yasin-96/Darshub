@@ -19,6 +19,7 @@ export default {
   },
   created() {
     this.$store.dispatch("externApi/act_loadAllCountries");
+    this.$store.dispatch("courseStore/general/act_loadAllCourses");
   },
   data: () => ({
     //

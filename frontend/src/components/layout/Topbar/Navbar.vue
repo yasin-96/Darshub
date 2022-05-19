@@ -39,6 +39,7 @@
               v-for="(aItem, i) in sidebarLeftNavigationLinks.all"
               :key="i"
               :link="aItem.route ? true : false"
+              :to="aItem.route"
             >
               <v-list-item-icon>
                 <v-icon>{{ aItem.icon }}</v-icon>
@@ -114,21 +115,23 @@
             </v-list-group>
           </v-list>
         </v-col>-->
-        <v-col class="12">
+        <!-- <v-col class="12">
           <v-divider></v-divider>
         </v-col>
-        <v-col cols="12">
-          <v-list dense>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon>mdi-domain</v-icon>
-              </v-list-item-icon>
-
-              <v-list-item-title>Über uns</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-col>
+        <v-col cols="12"> </v-col> -->
       </v-row>
+      <template v-slot:append>
+        <v-divider></v-divider>
+        <v-list dense>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-icon>mdi-domain</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-title>Über uns</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </template>
     </v-navigation-drawer>
   </div>
 </template>
@@ -172,11 +175,11 @@ export default {
       },
     },
   },
-  methods:{
-    goToRegPage(){
+  methods: {
+    goToRegPage() {
       this.$router.push({ name: "Registry" });
-    }
-  }
+    },
+  },
 };
 </script>
 

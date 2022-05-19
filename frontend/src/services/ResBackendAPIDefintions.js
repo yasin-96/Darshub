@@ -1,0 +1,23 @@
+const API_BASE_ENDPOINTS = {
+  backend: {
+    user: `${process.env.VUE_APP_BACKEND_URI}/usr`,
+    course: `${process.env.VUE_APP_BACKEND_URI}/course`,
+    courseCategory: `${process.env.VUE_APP_BACKEND_URI}/courseCategory`,
+    chapter: `${process.env.VUE_APP_BACKEND_URI}/chapter`,
+    subchapter: `${process.env.VUE_APP_BACKEND_URI}/subchapter`,
+  },
+};
+
+const api_endpoints = {
+  user: {
+    registry: `${API_BASE_ENDPOINTS.backend.user}/`,
+  },
+  course: {
+    getAll: `${API_BASE_ENDPOINTS.backend.course}/getAll`,
+    createOne: `${API_BASE_ENDPOINTS.backend.course}/getAll`,
+    updateOne: `${API_BASE_ENDPOINTS.backend.course}/getAll`,
+    deleteOne: `${API_BASE_ENDPOINTS.backend.course}/getAll`,
+  },
+};
+
+export default api_endpoints;

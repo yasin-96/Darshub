@@ -1,10 +1,7 @@
 import RestBackendCalls from "../../services/RestBackendCalls";
-const BACKEN_URI = process.env.VUE_APP_BACKEND_URI;
-const API_ENDPOINT = {
-  user: `${BACKEN_URI}/user`,
-};
 
 import router from "@/router/index";
+import api_endpoints from "../../services/ResBackendAPIDefintions";
 
 const registrationModule = {
   namespaced: true,
@@ -73,7 +70,7 @@ const registrationModule = {
       commit("MUT_SET_ROLE", newRole);
     },
     act_createNewUser: function ({ commit, dispatch, state }) {
-      RestBackendCalls.doPostRequest(API_ENDPOINT.user, state.newUser)
+      RestBackendCalls.doPostRequest(api_endpoints.user.registry, state.newUser)
         .then((resp) => {
           if (resp && resp.data && resp.data.length && resp.status == 201) {
             dispatch(

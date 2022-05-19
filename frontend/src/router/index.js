@@ -1,18 +1,19 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-// import Home from "../views/Home.vue";
+import Home from "../views/Home.vue";
 import Rework from "../views/Rework.vue";
 import RegistrationView from "../views/RegistrationView.vue";
+import View_CourseOverview from "../views/View_CourseOverview.vue";
+import store from "@/store/index.js";
 
 Vue.use(VueRouter);
 
 const routes = [
-  
-  // {
-  //   path: "/",
-  //   name: "home",
-  //   component: Home,
-  // },
+  {
+    path: "/",
+    name: "home",
+    component: Home,
+  },
   {
     path: "/",
     name: "Rework",
@@ -22,6 +23,25 @@ const routes = [
     path: "/registry",
     name: "Registry",
     component: RegistrationView,
+  },
+
+  {
+    path: "/course",
+    name: "Courses",
+    component: View_CourseOverview,
+    async beforeRouteEnter(to, from, next) {
+      console.log('store:', store);
+      
+      store.dispatch("courseStore/general/act_loadAllCourses");
+      next();
+    },
+    children: [
+      {
+        path: "List",
+        component: View_CourseOverview,
+        
+      },
+    ],
   },
   {
     path: "/about",
@@ -39,5 +59,18 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes,
 });
+
+// router.beforeEach(async (to, from, next) => {
+//   const allowedPages = ["login", "about", "notfound"];
+//   const isAuthenticated = store.getters["user/isAuthenticated"];
+
+//   if (allowedPages.includes(to.name)) {
+//     next();
+//   } else if (!isAuthenticated) {
+//     next({ name: "login" });
+//   } else {
+//     next();
+//   }
+// });
 
 export default router;

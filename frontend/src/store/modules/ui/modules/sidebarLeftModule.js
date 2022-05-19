@@ -5,8 +5,7 @@ const sidebarLeftModule = {
     sidebarLeftNavigationLinks: {
       all:[
         { title: "router.all.home", icon: "mdi-home", route: "/" },
-        { title: "router.all.dashboard", icon: "mdi-view-dashboard", route: "/" },
-
+        { title: "router.all.courseOverview", icon: "mdi-view-dashboard", route: "/course/List" },
       ],
       admin: {
         users: [],

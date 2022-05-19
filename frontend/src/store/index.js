@@ -5,6 +5,7 @@ import coreModule from "@/store/modules/coreModule";
 import typeModule from "@/store/modules/typeModule";
 import countrieModule from "@/store/modules/countrieModule";
 import uiStore from "./modules/ui/uiStore";
+import courseStore from "./modules/course/courseStore";
 
 Vue.use(Vuex);
 
@@ -18,5 +19,6 @@ export default new Vuex.Store({
     types: typeModule,
     externApi: countrieModule,
     ui: uiStore,
+    courseStore: courseStore
   },
 });
