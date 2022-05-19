@@ -37,6 +37,8 @@ func main() {
 	getRouter.HandleFunc("/courseCategory/{courseCategoryId}", courseHandler.FindCourseCategory)
 	getRouter.HandleFunc("/chapter/{chapterId}", courseHandler.FindChapter)
 	getRouter.HandleFunc("/subchapter/{subchapterId}", courseHandler.FindSubchapter)
+	getRouter.HandleFunc("/courses", courseHandler.GetAllCourses)
+	getRouter.HandleFunc("courseCategory", courseHandler.GetAllCourseCategoryNames)
 
 	postRouter := sm.Methods(http.MethodPost, http.MethodOptions).Subrouter()
 	postRouter.HandleFunc("/user", userHandler.RegisterUser)

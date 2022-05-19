@@ -51,6 +51,15 @@ func FindCourse(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func GetAllCourses(rw http.ResponseWriter, r *http.Request) {
+	courses := data.GetAllCourses()
+	rw.WriteHeader(http.StatusOK)
+	parseErr := util.ToJSON(courses, rw)
+	if parseErr != nil {
+		log.Fatal(parseErr)
+	}
+}
+
 func UpdateCourse(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 

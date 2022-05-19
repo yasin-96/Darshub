@@ -46,11 +46,25 @@ func FindCourseCategory(courseCategoryId primitive.ObjectID) CourseCategory {
 	defer cancel()
 	defer client.Disconnect(ctx)
 
-	err := client.Database("darshub").Collection("course").FindOne(ctx, bson.M{"_id": courseCategoryId}).Decode(&courseCategory)
+	err := client.Database("darshub").Collection("courseCategory").FindOne(ctx, bson.M{"_id": courseCategoryId}).Decode(&courseCategory)
 	if err != nil {
 		log.Fatal(err)
 	}
 	return courseCategory
+}
+
+func FindAllCourses() []CourseCategory {
+	var courseCategories []CourseCategory
+	ctx, cancel, client := config.GetConnection()
+	defer cancel()
+	defer client.Disconnect(ctx)
+
+	cur, err := client.Database("darshub").Collection("courseCategory").Find(ctx, bson.M{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	cur.All(ctx, &courseCategories)
+	return courseCategories
 }
 
 func UpdateCourseCategory(courseCategoryId primitive.ObjectID, updatedCourseCategory *UpdateCourseCategoryRequest) CourseCategory {
@@ -64,7 +78,7 @@ func UpdateCourseCategory(courseCategoryId primitive.ObjectID, updatedCourseCate
 		"status":      updatedCourseCategory.Skills,
 	}
 
-	_, err := client.Database("darshub").Collection("course").ReplaceOne(ctx, bson.M{"_id": courseCategoryId}, update)
+	_, err := client.Database("darshub").Collection("courseCategory").ReplaceOne(ctx, bson.M{"_id": courseCategoryId}, update)
 	if err != nil {
 		log.Fatal(err)
 	}

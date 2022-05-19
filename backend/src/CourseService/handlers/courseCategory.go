@@ -53,6 +53,19 @@ func FindCourseCategory(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func GetAllCourseCategoryNames(rw http.ResponseWriter, r *http.Request) {
+	courseCategories := data.FindAllCourses()
+	courseCategoryNames := make([]string, 0)
+	for _, v := range courseCategories {
+		courseCategoryNames = append(courseCategoryNames, v.Name)
+	}
+	rw.WriteHeader(http.StatusOK)
+	parseErr := util.ToJSON(courseCategoryNames, rw)
+	if parseErr != nil {
+		log.Fatal(parseErr)
+	}
+}
+
 func UpdateCourseCategory(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 

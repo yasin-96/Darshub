@@ -69,6 +69,21 @@ func Find(courseId primitive.ObjectID) Course {
 	return course
 }
 
+func GetAllCourses() []Course {
+	var courses []Course
+	ctx, cancel, client := config.GetConnection()
+	defer cancel()
+	defer client.Disconnect(ctx)
+
+	cur, err := client.Database("darshub").Collection("course").Find(ctx, bson.M{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	cur.All(ctx, &courses)
+
+	return courses
+}
+
 func Update(courseId primitive.ObjectID, updatedCourse *UpdateCourseRequest) Course {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
