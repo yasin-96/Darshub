@@ -4,6 +4,7 @@ import Home from "../views/Home.vue";
 import Rework from "../views/Rework.vue";
 import RegistrationView from "../views/RegistrationView.vue";
 import View_CourseOverview from "../views/View_CourseOverview.vue";
+import View_CourseDashboard from "../views/Admin/Course/View_CourseDashboard.vue";
 import store from "@/store/index.js";
 
 Vue.use(VueRouter);
@@ -29,19 +30,29 @@ const routes = [
     path: "/course",
     name: "Courses",
     component: View_CourseOverview,
-    async beforeRouteEnter(to, from, next) {
-      console.log('store:', store);
-      
+    beforeRouteEnter: async (to, from, next) => {
+      console.log("store:", store);
+
       store.dispatch("courseStore/general/act_loadAllCourses");
-      next();
+      next("/");
     },
     children: [
       {
         path: "List",
         component: View_CourseOverview,
-        
       },
     ],
+  },
+  {
+    path: "/admin/course",
+    name: "AdminCourseSite",
+    component: View_CourseDashboard,
+    beforeRouteEnter: async (to, from, next) => {
+      console.log("store:", store);
+
+      store.dispatch("courseStore/general/act_loadAllCourses");
+      next("");
+    },
   },
   {
     path: "/about",

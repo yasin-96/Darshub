@@ -17,9 +17,45 @@
       <div class="mx-2"></div>
 
       <v-spacer></v-spacer>
-      <v-btn color="info" outlined class="mr-5" @click="goToRegPage()">
-        Registrieren
-      </v-btn>
+      <v-menu
+      transition="slide-x-transition"
+      bottom
+      right
+      
+    >
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          dark
+          v-bind="attrs"
+          v-on="on"
+          color="info" outlined
+          
+        >
+          Anmelden/ Registrieren
+        </v-btn>
+      </template>
+
+      <v-list>
+        <v-list-item @click="goToRegPage()"
+        >
+         <v-list-item-icon>
+            <v-icon>mdi-account-plus</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title @click="goToRegPage()">
+            Registrieren</v-list-item-title>
+        </v-list-item>
+        <v-list-item  @click="goToLoginPage()"
+        >
+          <v-list-item-icon>
+            <v-icon>mdi-login-variant</v-icon>
+          </v-list-item-icon>
+            
+          <v-list-item-title @click="goToLoginPage()">
+            Anmelden</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+
 
       <!-- <v-chip v-if="user && user.info.logId">
         <v-avatar left>
@@ -52,73 +88,26 @@
         <v-col class="12">
           <v-divider></v-divider>
         </v-col>
-        <!-- 
+
         <v-col cols="12">
           <v-list dense>
-            <v-list-group :value="true" prepend-icon="mdi-account-group">
-              <template v-slot:activator>
-                <v-list-item-title>Benutzer</v-list-item-title>
-              </template>
+            <v-list-item
+              v-for="(aItem, i) in sidebarLeftNavigationLinks.admin"
+              :key="i"
+              :link="aItem.route ? true : false"
+              :to="aItem.route"
+            >
+              <v-list-item-icon>
+                <v-icon>{{ aItem.icon }}</v-icon>
+              </v-list-item-icon>
 
-              <v-list-group :value="true" no-action sub-group>
-                <template v-slot:activator>
-                  <v-list-item-content>
-                    <v-list-item-title>Admin</v-list-item-title>
-                  </v-list-item-content>
-                </template>
-
-                <v-list-item v-for="([title, icon], i) in admins" :key="i" link>
-                  <v-list-item-title v-text="title"></v-list-item-title>
-
-                  <v-list-item-icon>
-                    <v-icon v-text="icon"></v-icon>
-                  </v-list-item-icon>
-                </v-list-item>
-              </v-list-group>
-
-              <v-list-group no-action sub-group>
-                <template v-slot:activator>
-                  <v-list-item-content>
-                    <v-list-item-title>Actions</v-list-item-title>
-                  </v-list-item-content>
-                </template>
-
-                <v-list-item v-for="([title, icon], i) in cruds" :key="i" link>
-                  <v-list-item-title v-text="title"></v-list-item-title>
-
-                  <v-list-item-icon>
-                    <v-icon v-text="icon"></v-icon>
-                  </v-list-item-icon>
-                </v-list-item>
-              </v-list-group>
-            </v-list-group>
-            <v-list-group :value="true" prepend-icon="mdi-view-dashboard-edit">
-              <template v-slot:activator>
-                <v-list-item-content>
-                  <v-list-item-title>Kurse</v-list-item-title>
-                </v-list-item-content>
-              </template>
-
-              <v-list-item
-                v-for="([title, icon], i) in sidebarLeftNavigationLinks.admin
-                  .course"
-                :key="i"
-                link
-              >
-                <v-list-item-icon text="right">
-                  <v-icon v-text="icon"></v-icon>
-                  <span class="pl-2">
-                    {{ title }}
-                  </span>
-                </v-list-item-icon>
-              </v-list-item>
-            </v-list-group>
+              <v-list-item-title>{{ $t(aItem.title) }}</v-list-item-title>
+            </v-list-item>
           </v-list>
-        </v-col>-->
-        <!-- <v-col class="12">
+        </v-col>
+        <v-col class="12">
           <v-divider></v-divider>
         </v-col>
-        <v-col cols="12"> </v-col> -->
       </v-row>
       <template v-slot:append>
         <v-divider></v-divider>
@@ -179,6 +168,9 @@ export default {
     goToRegPage() {
       this.$router.push({ name: "Registry" });
     },
+    goToLoginPage(){
+      this.$router.push({ name: "Login" });
+    }
   },
 };
 </script>

@@ -1,4 +1,5 @@
 import envInfoModule from "./modules/envInfoModule";
+import gitModule from "./modules/gitModule";
 
 const uiStore = {
   namespaced: true,
@@ -9,6 +10,7 @@ const uiStore = {
   mutations: {},
   actions: {},
   modules: {
+    version: gitModule,
     envInfo: envInfoModule,
   },
 };

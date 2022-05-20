@@ -1,10 +1,17 @@
 export default {
   appName: "DarsHub",
   router: {
-    all: {
-      home: "Start",
-      courseOverview: "Übersicht der Kurse",
-    },
+    sidebar:{
+      all: {
+        home: "Start",
+        courseOverview: "Übersicht der Kurse",
+      },
+      admin:{
+        userSettings: "Benutzerverwaltung",
+        courseSettings: "Kursverwaltung"
+      }
+    }
+    
   },
   navigation: {
     lang: "Sprache",

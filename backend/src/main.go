@@ -38,7 +38,7 @@ func main() {
 	getRouter.HandleFunc("/chapter/{chapterId}", courseHandler.FindChapter)
 	getRouter.HandleFunc("/subchapter/{subchapterId}", courseHandler.FindSubchapter)
 	getRouter.HandleFunc("/courses", courseHandler.GetAllCourses)
-	getRouter.HandleFunc("courseCategory", courseHandler.GetAllCourseCategoryNames)
+	getRouter.HandleFunc("/courseCategory", courseHandler.GetAllCourseCategoryNames)
 
 	postRouter := sm.Methods(http.MethodPost, http.MethodOptions).Subrouter()
 	postRouter.HandleFunc("/user", userHandler.RegisterUser)
@@ -77,7 +77,7 @@ func main() {
 
 	// start the server
 
-	l.Println("Starting server on port 9090")
+	l.Println("Starting server on port 8080")
 
 	errLis := s.ListenAndServe()
 	if errLis != nil {
@@ -103,7 +103,7 @@ func main() {
 //TODO Specify the origins ans methods from const variable
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:88")
 		w.Header().Set("Access-Control-Allow-Methods", allowedMethods)
 		w.Header().Set("Access-Control-Allow-Headers", allowedHeaders)
 

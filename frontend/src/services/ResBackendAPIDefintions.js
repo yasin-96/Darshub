@@ -2,6 +2,7 @@ const API_BASE_ENDPOINTS = {
   backend: {
     user: `${process.env.VUE_APP_BACKEND_URI}/usr`,
     course: `${process.env.VUE_APP_BACKEND_URI}/course`,
+    courses: `${process.env.VUE_APP_BACKEND_URI}/courses`,
     courseCategory: `${process.env.VUE_APP_BACKEND_URI}/courseCategory`,
     chapter: `${process.env.VUE_APP_BACKEND_URI}/chapter`,
     subchapter: `${process.env.VUE_APP_BACKEND_URI}/subchapter`,
@@ -13,7 +14,7 @@ const api_endpoints = {
     registry: `${API_BASE_ENDPOINTS.backend.user}/`,
   },
   course: {
-    getAll: `${API_BASE_ENDPOINTS.backend.course}/getAll`,
+    getAll: `${API_BASE_ENDPOINTS.backend.courses}`,
     createOne: `${API_BASE_ENDPOINTS.backend.course}/getAll`,
     updateOne: `${API_BASE_ENDPOINTS.backend.course}/getAll`,
     deleteOne: `${API_BASE_ENDPOINTS.backend.course}/getAll`,

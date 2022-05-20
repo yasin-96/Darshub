@@ -3,16 +3,26 @@ const sidebarLeftModule = {
   state: {
     showSidebarLeftDrawer: false,
     sidebarLeftNavigationLinks: {
-      all:[
-        { title: "router.all.home", icon: "mdi-home", route: "/" },
-        { title: "router.all.courseOverview", icon: "mdi-view-dashboard", route: "/course/List" },
+      all: [
+        { title: "router.sidebar.all.home", icon: "mdi-home", route: "/" },
+        {
+          title: "router.sidebar.all.courseOverview",
+          icon: "mdi-view-dashboard",
+          route: "/course",
+        },
       ],
-      admin: {
-        users: [],
-        courses: [
-          { title: "router.dashboard", icon: "mdi-view-dashboard", route: "/" },
-        ],
-      },
+      admin: [
+        {
+          title: "router.sidebar.admin.userSettings",
+          icon: "mdi-account-cog-outline",
+          route: "/admin/users",
+        },
+        {
+          title: "router.sidebar.admin.courseSettings",
+          icon: "mdi-book-cog-outline",
+          route: "/admin/course",
+        },
+      ],
     },
 
     // [
