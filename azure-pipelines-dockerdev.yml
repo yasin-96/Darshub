@@ -19,6 +19,7 @@ variables:
     tag: 'production'
   # develop branch --> development builds
   ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+    buildConfig: "develop"
     tag: 'develop'
 
 stages:
@@ -37,7 +38,7 @@ stages:
         repository: $(imageRepository)
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
-        arguments: '--build-arg envname=develop'
+        arguments: '--build-arg envname=$buildConfig'
         tags: |
           $(tag)
     - task: Docker@2
