@@ -1,7 +1,7 @@
 <template>
   <v-menu offset-y>
     <template v-slot:activator="{ on, attrs }">
-      <v-btn v-bind="attrs" v-on="on" outlined elevation-0 class="px-2">
+      <v-btn rounded small v-bind="attrs" v-on="on" outlined elevation-0 :class="`px-2 ${cssStyle}`">
         <v-icon> mdi-web </v-icon>
         <p class="font-weight-bold mt-4 mr-3">
           {{ $i18n.locale }}
@@ -20,6 +20,11 @@
 import { loadLocaleMessagesAsync, supportedLocales } from '@/plugins/localization/i18n';
 
 export default {
+  props:{
+    cssStyle:{
+      type: String
+    }
+  },
   data() {
     return {
       locales: supportedLocales,

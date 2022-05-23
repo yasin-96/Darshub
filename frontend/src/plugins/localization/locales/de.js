@@ -9,6 +9,10 @@ export default {
       admin:{
         userSettings: "Benutzerverwaltung",
         courseSettings: "Kursverwaltung"
+      },
+      author:{
+        create: "Kurs erstellen",
+        dashboard: "Mein Kurse verwalten"
       }
     }
     

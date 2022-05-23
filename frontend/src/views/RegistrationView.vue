@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Registry from "@/components/Registry";
+import Registry from "@/components/signin_up/Registry";
 export default {
   name: "RegistrationView",
   components: {

@@ -1,3 +1,4 @@
+import dialogsModule from "./modules/dialogsModule";
 import notificationModule from "./modules/notificationModule";
 import sidebarLeftModule from "./modules/sidebarLeftModule";
 
@@ -8,7 +9,8 @@ const uiStore = {
   actions: {},
   modules: {
     notification: notificationModule,
-    sidebarLeft: sidebarLeftModule
+    sidebarLeft: sidebarLeftModule,
+    dialogs: dialogsModule
   },
 };
 

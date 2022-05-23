@@ -164,9 +164,9 @@ func Login(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	user := data.Find(loginRequest.Email)
-
 	if data.CheckIfPasswordsMatch(user, loginRequest.Password) {
 		rw.WriteHeader(http.StatusOK)
+		util.ToJSON(user, rw)
 	}
 	rw.WriteHeader(http.StatusUnauthorized)
 }

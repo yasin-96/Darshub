@@ -22,7 +22,7 @@ const registrationModule = {
       subject: "",
       country: null,
       bio: "",
-      // role: [0], //define roles as numbers (enum)
+      role: [0], //define roles as numbers (enum)
       isActive: true,
     },
   }),
@@ -70,7 +70,7 @@ const registrationModule = {
       commit("MUT_SET_ROLE", newRole);
     },
     act_createNewUser: function ({ commit, dispatch, state }) {
-      RestBackendCalls.doPostRequest(api_endpoints.user.registry, state.newUser)
+      RestBackendCalls.doPostRequest(api_endpoints.user.registry, null, state.newUser)
         .then((resp) => {
           if (resp && resp.data && resp.data.length && resp.status == 201) {
             dispatch(

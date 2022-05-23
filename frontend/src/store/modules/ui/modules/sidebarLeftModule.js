@@ -11,6 +11,33 @@ const sidebarLeftModule = {
           route: "/course",
         },
       ],
+     
+      author: [
+        {
+          title: "router.sidebar.author.dashboard",
+          icon: "mdi-book-cog-outline",
+          route: "/author/create",
+        },
+        {
+          title: "router.sidebar.author.create",
+          icon: "mdi-book-plus-outline",
+          route: "/author/dashboard",
+        },
+      ],
+      userManagement: [
+        {
+          title: "router.sidebar.admin.userSettings",
+          icon: "mdi-account-cog-outline",
+          route: "/admin/users",
+        },
+      ],
+      courseManagement: [
+        {
+          title: "router.sidebar.admin.courseSettings",
+          icon: "mdi-book-cog-outline",
+          route: "/admin/course",
+        },
+      ],
       admin: [
         {
           title: "router.sidebar.admin.userSettings",
@@ -21,6 +48,13 @@ const sidebarLeftModule = {
           title: "router.sidebar.admin.courseSettings",
           icon: "mdi-book-cog-outline",
           route: "/admin/course",
+        },
+      ],
+      app: [
+        {
+          title: "Über uns",
+          icon: "mdi-domain",
+          route: "/about-us",
         },
       ],
     },

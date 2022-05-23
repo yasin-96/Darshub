@@ -1,9 +1,10 @@
 <template>
-  <div>
+  <div id="courseList">
     <v-container fluid>
       <v-row dense>
         <v-col cols="4" class="mx-auto">
           <v-text-field
+            class="absolute"
             solo
             v-model="searchValue"
             placeholder="Suche ..."
@@ -167,4 +168,10 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+#courseList{
+  /* background-image: url('https://images.pexels.com/photos/2607687/pexels-photo-2607687.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260');
+  background-size: cover;
+  height: 100vh; */
+}
+</style>
