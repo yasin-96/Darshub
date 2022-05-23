@@ -15,7 +15,9 @@ WORKDIR /usr/src/app
 ARG envname
 
 COPY package*.json ./
-RUN npm ci
+RUN npm i
+RUN npm i --save-dev
+
 
 COPY . .
 
