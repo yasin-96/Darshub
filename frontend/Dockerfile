@@ -14,6 +14,8 @@ WORKDIR /usr/src/app
 # where available (npm@5+)
 ARG envname
 
+RUN apk add --no-cache git
+
 COPY package*.json ./
 RUN npm i
 RUN npm i --save-dev
