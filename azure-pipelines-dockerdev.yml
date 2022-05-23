@@ -38,7 +38,7 @@ stages:
         repository: $(imageRepository)
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
-        arguments: '--build-arg envname=$buildConfig'
+        arguments: '--build-arg envname=$(buildConfig)'
         tags: |
           $(tag)
     - task: Docker@2
