@@ -15,7 +15,8 @@ WORKDIR /usr/src/app
 ARG envname
 
 COPY package*.json ./
-RUN npm install
+RUN npm ci
+
 COPY . .
 
 RUN echo "Will now run npm run build:env with environment: -$envname-"
