@@ -45,13 +45,22 @@ func RegisterUser(rw http.ResponseWriter, r *http.Request) {
 		user.TelNr == "" ||
 		user.Bio == "" {
 		rw.WriteHeader(http.StatusBadRequest)
-		rw.Write([]byte("Request is not valid. Requierd Information are missing"))
+		rw.Write([]byte("Request is not valid. Required Informations are missing"))
 		return
 	}
 
 	dbResponse := data.Create(user)
 	rw.WriteHeader(http.StatusCreated)
 	rw.Write([]byte(dbResponse))
+}
+
+func GetAllUsers(rw http.ResponseWriter, r *http.Request) {
+	users := data.GetAllUsers()
+	rw.WriteHeader(http.StatusOK)
+	parseErr := util.ToJSON(users, rw)
+	if parseErr != nil {
+		log.Fatal(parseErr)
+	}
 }
 
 func FindById(rw http.ResponseWriter, r *http.Request) {
@@ -165,8 +174,30 @@ func Login(rw http.ResponseWriter, r *http.Request) {
 
 	user := data.Find(loginRequest.Email)
 
+	if reflect.ValueOf(user).IsZero() {
+		rw.WriteHeader(http.StatusNotFound)
+		rw.Write([]byte("No user found with the provided email"))
+	}
+
 	if data.CheckIfPasswordsMatch(user, loginRequest.Password) {
 		rw.WriteHeader(http.StatusOK)
 	}
 	rw.WriteHeader(http.StatusUnauthorized)
+}
+
+func SetAccountInactive(rw http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+
+	if vars == nil || vars["userId"] == "" {
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	userId, err := primitive.ObjectIDFromHex(vars["userId"])
+	if err != nil {
+		log.Fatal("Could not parse userId: ", err)
+	}
+
+	data.SetAccountInactive(userId)
 }

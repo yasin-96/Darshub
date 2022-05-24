@@ -45,7 +45,6 @@ type UserRequest struct {
 	School     string             `json:"school"`
 	Subject    string             `json:"subject"`
 	Country    string             `json:"country"`
-	IsActive   bool               `bson:"isActive"`
 	Bio        string             `bson:"bio"`
 	Role       []int              `bson:"role"`
 }
@@ -88,21 +87,28 @@ func Create(userRequest *UserRequest) string {
 	return userRequest.ID.Hex()
 }
 
+func GetAllUsers() []User {
+	var users []User
+	ctx, cancel, client := config.GetConnection()
+	defer cancel()
+	defer client.Disconnect(ctx)
+
+	cur, err := client.Database("darshub").Collection("user").Find(ctx, bson.M{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	cur.All(ctx, &users)
+
+	return users
+}
+
 func Find(email string) User {
 	if email == "" {
 		return User{}
 	}
 
-	var user User
+	user := getUser(email)
 
-	ctx, cancel, client := config.GetConnection()
-	defer cancel()
-	defer client.Disconnect(ctx)
-
-	err := client.Database("darshub").Collection("user").FindOne(ctx, bson.M{"email": email}).Decode(&user)
-	if err != nil {
-		log.Fatal(err)
-	}
 	return user
 }
 
@@ -178,6 +184,42 @@ func CheckIfPasswordsMatch(user User, password string) bool {
 	return err == nil
 }
 
+func SetAccountInactive(userId primitive.ObjectID) User {
+	ctx, cancel, client := config.GetConnection()
+	defer cancel()
+	defer client.Disconnect(ctx)
+
+	userToBeDeactivated := FindById(userId)
+	userToBeDeactivated.IsActive = false
+
+	resp, err := client.Database("darshub").Collection("user").ReplaceOne(ctx, bson.M{"_id": userToBeDeactivated.ID}, userToBeDeactivated)
+	if err != nil {
+		log.Println(err)
+		return User{}
+	}
+
+	//Check response if only one docuument was updated
+	if resp.MatchedCount == 1 && resp.ModifiedCount == 1 && resp.UpsertedCount == 1 {
+		return FindById(userToBeDeactivated.ID)
+	}
+
+	return User{}
+}
+
+func getUser(email string) User {
+	var user User
+	ctx, cancel, client := config.GetConnection()
+	defer cancel()
+	defer client.Disconnect(ctx)
+
+	err := client.Database("darshub").Collection("user").FindOne(ctx, bson.M{"email": email}).Decode(&user)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return user
+}
+
 func getEncryptedPassword(password []byte) []byte {
 	hashedPassword, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
 	if err != nil {
@@ -200,6 +242,7 @@ func (userRequest *UserRequest) toUser() User {
 	user.Company = userRequest.Company
 	user.Occupation = userRequest.Occupation
 	user.School = userRequest.School
+	user.IsActive = true
 	user.Subject = userRequest.Subject
 	user.Country = userRequest.Country
 
