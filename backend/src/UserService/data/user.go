@@ -20,7 +20,7 @@ type User struct {
 	Birthday   time.Time          `bson:"birthday"`
 	Avatar     string             `bson:"avatar"`
 	Email      string             `bson:"email"`
-	TelNr      string             `bson:"telNr"`
+	TelNr      string             `bson:"tel_nr"`
 	Company    string             `bson:"company"`
 	Occupation string             `bson:"occupation"`
 	School     string             `bson:"school"`
@@ -32,59 +32,51 @@ type User struct {
 }
 
 type UserRequest struct {
-	ID         primitive.ObjectID `json:"id"`
-	Password   string             `json:"password"`
-	First_Name string             `json:"first_name"`
-	Last_Name  string             `json:"last_name"`
-	Birthday   time.Time          `json:"birthday"`
-	Avatar     string             `json:"avatar"`
-	Email      string             `json:"email"`
-	TelNr      string             `json:"telNr"`
-	Company    string             `json:"company"`
-	Occupation string             `json:"occupation"`
-	School     string             `json:"school"`
-	Subject    string             `json:"subject"`
-	Country    string             `json:"country"`
-	Bio        string             `bson:"bio"`
-	Role       []int              `bson:"role"`
-}
-
-type UpdateUserRequest struct {
 	Password   string    `json:"password"`
 	First_Name string    `json:"first_name"`
 	Last_Name  string    `json:"last_name"`
 	Birthday   time.Time `json:"birthday"`
 	Avatar     string    `json:"avatar"`
 	Email      string    `json:"email"`
-	TelNr      string    `json:"telNr"`
+	TelNr      string    `json:"tel_nr"`
 	Company    string    `json:"company"`
 	Occupation string    `json:"occupation"`
 	School     string    `json:"school"`
 	Subject    string    `json:"subject"`
 	Country    string    `json:"country"`
+	Bio        string    `bson:"bio"`
+	Role       []int     `bson:"role"`
 }
 
-func Create(userRequest *UserRequest) string {
+type UpdateUserRequest struct {
+	First_Name string    `json:"first_name"`
+	Last_Name  string    `json:"last_name"`
+	Birthday   time.Time `json:"birthday"`
+	Avatar     string    `json:"avatar"`
+	Email      string    `json:"email"`
+	TelNr      string    `json:"tel_nr"`
+	Company    string    `json:"company"`
+	Occupation string    `json:"occupation"`
+	School     string    `json:"school"`
+	Subject    string    `json:"subject"`
+	Country    string    `json:"country"`
+	Bio        string    `json:"bio"`
+}
+
+func Create(userRequest *UserRequest) {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
-	userRequest.ID = primitive.NewObjectID()
 
-	resp, err := client.Database("darshub").Collection("user").InsertOne(ctx, userRequest.toUser())
+	user := userRequest.toUser()
+	user.ID = primitive.NewObjectID()
+	_, err := client.Database("darshub").Collection("user").InsertOne(ctx, user)
 	if err != nil {
 		log.Printf("Could not save the new user obj: %v\n", err)
-	}
-
-	//TODO hier noch mal schauen
-	log.Println(resp.InsertedID)
-
-	if resp.InsertedID == nil {
-		log.Println("User was not created")
-		return ""
+		return
 	}
 
 	log.Println("User was created")
-	return userRequest.ID.Hex()
 }
 
 func GetAllUsers() []User {
@@ -121,8 +113,8 @@ func FindById(userId primitive.ObjectID) User {
 	err := client.Database("darshub").Collection("user").FindOne(ctx, bson.M{"_id": userId}).Decode(&user)
 	if err != nil {
 		log.Println(err)
+		return User{}
 	}
-
 	return user
 }
 
@@ -133,50 +125,39 @@ func UpdateUser(userId primitive.ObjectID, updatedUser *UpdateUserRequest) User 
 	defer client.Disconnect(ctx)
 
 	update := bson.M{
-		"password":   updatedUser.Password,
 		"first_name": updatedUser.First_Name,
 		"last_name":  updatedUser.Last_Name,
 		"birthday":   updatedUser.Birthday,
 		"avatar":     updatedUser.Avatar,
 		"email":      updatedUser.Email,
-		"tel_nr":     updatedUser.TelNr,
 		"company":    updatedUser.Company,
 		"occupation": updatedUser.Occupation,
 		"school":     updatedUser.School,
 		"subject":    updatedUser.Subject,
 		"country":    updatedUser.Country,
+		"bio":        updatedUser.Bio,
+		"tel_nr":     updatedUser.TelNr,
 	}
 
-	resp, err := client.Database("darshub").Collection("course").ReplaceOne(ctx, bson.M{"_id": userId}, update)
+	_, err := client.Database("darshub").Collection("user").ReplaceOne(ctx, bson.M{"_id": userId}, update)
 	if err != nil {
 		log.Println(err)
 		return User{}
 	}
-
-	//Check response if only one docuument was updated
-	if resp.MatchedCount == 1 && resp.ModifiedCount == 1 && resp.UpsertedCount == 1 {
-		return FindById(userId)
-	}
-
-	return User{}
+	return FindById(userId)
 }
 
-func DeleteUser(userId primitive.ObjectID) bool {
+func DeleteUser(userId primitive.ObjectID) {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
-	resp, err := client.Database("darshub").Collection("course").DeleteOne(ctx, bson.M{"_id": userId})
+	_, err := client.Database("darshub").Collection("course").DeleteOne(ctx, bson.M{"_id": userId})
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return
 	}
-
-	if resp.DeletedCount == 1 {
-		return true
-	}
-
-	return false
-
+	log.Print("User was deleted successfully")
 }
 
 func CheckIfPasswordsMatch(user User, password string) bool {
@@ -184,7 +165,7 @@ func CheckIfPasswordsMatch(user User, password string) bool {
 	return err == nil
 }
 
-func SetAccountInactive(userId primitive.ObjectID) User {
+func SetAccountInactive(userId primitive.ObjectID) {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
@@ -192,18 +173,10 @@ func SetAccountInactive(userId primitive.ObjectID) User {
 	userToBeDeactivated := FindById(userId)
 	userToBeDeactivated.IsActive = false
 
-	resp, err := client.Database("darshub").Collection("user").ReplaceOne(ctx, bson.M{"_id": userToBeDeactivated.ID}, userToBeDeactivated)
+	_, err := client.Database("darshub").Collection("user").ReplaceOne(ctx, bson.M{"_id": userToBeDeactivated.ID}, userToBeDeactivated)
 	if err != nil {
 		log.Println(err)
-		return User{}
 	}
-
-	//Check response if only one docuument was updated
-	if resp.MatchedCount == 1 && resp.ModifiedCount == 1 && resp.UpsertedCount == 1 {
-		return FindById(userToBeDeactivated.ID)
-	}
-
-	return User{}
 }
 
 func getUser(email string) User {
@@ -214,7 +187,7 @@ func getUser(email string) User {
 
 	err := client.Database("darshub").Collection("user").FindOne(ctx, bson.M{"email": email}).Decode(&user)
 	if err != nil {
-		log.Fatal(err)
+		return user
 	}
 
 	return user
@@ -231,7 +204,6 @@ func getEncryptedPassword(password []byte) []byte {
 
 func (userRequest *UserRequest) toUser() User {
 	user := User{}
-	user.ID = userRequest.ID
 	user.Password = getEncryptedPassword([]byte(userRequest.Password))
 	user.First_Name = userRequest.First_Name
 	user.Last_Name = userRequest.Last_Name
@@ -245,6 +217,7 @@ func (userRequest *UserRequest) toUser() User {
 	user.IsActive = true
 	user.Subject = userRequest.Subject
 	user.Country = userRequest.Country
+	user.Bio = userRequest.Bio
 
 	return user
 }

@@ -40,7 +40,7 @@ func main() {
 	getRouter.HandleFunc("/chapter/{chapterId}", courseHandler.FindChapter)
 	getRouter.HandleFunc("/subchapter/{subchapterId}", courseHandler.FindSubchapter)
 	getRouter.HandleFunc("/courses", courseHandler.GetAllCourses)
-	getRouter.HandleFunc("courseCategory", courseHandler.GetAllCourseCategoryNames)
+	getRouter.HandleFunc("/courseCategoryNames/all", courseHandler.GetAllCourseCategoryNames)
 
 	postRouter := sm.Methods(http.MethodPost, http.MethodOptions).Subrouter()
 	postRouter.HandleFunc("/user", userHandler.RegisterUser)
@@ -79,7 +79,7 @@ func main() {
 
 	// start the server
 
-	l.Println("Starting server on port 9090")
+	l.Println("Starting server on port 8080")
 
 	errLis := s.ListenAndServe()
 	if errLis != nil {
