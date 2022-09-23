@@ -5,46 +5,35 @@ trigger:
     - develop
 
 variables:
-  # Agent VM image name
-  vmImageName: 'ubuntu-latest'
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '0ea48d35-4539-47a0-8bc7-059824f4dc6c'
+  dockerRegistryServiceConnection: 'dhacr01'
   imageRepository: 'darshubbackend'
   containerRegistry: 'dhacr01.azurecr.io'
-  dockerfilePath: 'backend/Dockerfile'
   
-  # master branch -->  production builds
+  # master branch -->  prod builds
   ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
-    buildConfig: "production"
-    tag: 'production'
-  # develop branch --> development builds
+    tag: 'prod'
+  # develop branch --> dev builds
   ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
-    tag: 'develop'
+    tag: 'dev'
 
-stages:
-- stage: Build
-  displayName: Build and push stage
-  jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: $(vmImageName)
-    steps:
-    - task: Docker@2
-      displayName: Build image 
-      inputs:
-        command: build
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
-        arguments: '--build-arg envname=develop'
-        tags: |
-          $(tag)
-    - task: Docker@2
-      displayName: Push an image to container registry
-      inputs:
-        command: push
-        repository: $(imageRepository)
-        containerRegistry: $(dockerRegistryServiceConnection)
-        tags: |
-          $(tag)
+pool:
+  vmImage: 'ubuntu-latest'
+steps:
+- task: Docker@2
+  displayName: Build an image 
+  inputs:
+    command: build
+    repository: $(imageRepository)
+    dockerfile: 'backend/Dockerfile'
+    containerRegistry: $(dockerRegistryServiceConnection)
+    tags: |
+      $(tag)
+- task: Docker@2
+  displayName: Push an image to container registry
+  inputs:
+    command: push
+    repository: $(imageRepository)
+    containerRegistry: $(dockerRegistryServiceConnection)
+    tags: |
+      $(tag)
