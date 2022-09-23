@@ -1,5 +1,3 @@
-name: $(SourceBranchName)_$(date:yyyyMMdd)$(rev:.r)
-
 trigger:
   branches:
     include:
@@ -8,18 +6,18 @@ trigger:
         
   paths:
     include:
-    - frontend/*
+    - frontend
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
 variables:
-  # master branch -->  production builds
+  # master branch -->  prod builds
   ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
-    buildConfig: "production"
-  # develop branch --> development builds
+    buildConfig: 'prod'
+  # develop branch --> dev builds
   ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
-    buildConfig: 'develop'
+    buildConfig: 'dev'
 
 steps:
   - task: Npm@1
@@ -27,37 +25,12 @@ steps:
       command: 'custom'
       customCommand: 'ci'
       workingDir: '$(Build.SourcesDirectory)/frontend'
-    displayName: npm ci
-    
-  # - script: |
-  #     cd frontend
-  #     npm outdated
-  #   displayName: 'npm outdated'
-    
-  # - script: |
-  #     cd frontend
-  #     npm run lint
-  #   displayName: 'npm run lint'
-    
-  # - script: |
-  #     cd frontend
-  #     npm run test:unit
-  #   displayName: 'npm run test:unit'
+    displayName: 'npm ci'
 
   - script: |
       cd frontend
       npm run build:$(buildConfig)
     displayName: 'Build -$(buildConfig)- frontend'
-
-  # - script: |
-  #     cd frontend
-  #     npm run test:e2e
-  #   displayName: 'Run E2E tests'
-
-# TODO - publish test results
-
-# TODO - publish code coverage results
-
 
   - task: ArchiveFiles@2
     inputs:

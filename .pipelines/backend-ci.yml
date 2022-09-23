@@ -4,6 +4,10 @@ trigger:
     - main
     - develop
 
+  paths:
+    include:
+    - backend
+
 variables:
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: 'dhacr01'
@@ -19,6 +23,7 @@ variables:
 
 pool:
   vmImage: 'ubuntu-latest'
+
 steps:
 - task: Docker@2
   displayName: Build an image 
