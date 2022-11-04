@@ -1,19 +1,20 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import Notification from "./components/dialog/Notification.vue"
-import LayoutNavbar from "./components/layout/LayoutNavbar.vue"
-import LayoutFooter from "./components/layout/LayoutFooter.vue"
-
+import { RouterLink, RouterView } from "vue-router";
+import BaseLayout from "@/components/layout/base/BaseLayout.vue";
+import Footer from "@/components/layout/base/Footer.vue";
+import Navbar from "@/components/layout/base/Navbar.vue";
 </script>
 
 <template>
-  <LayoutNavbar>
-    <!-- <Notification class="mt-20" /> -->
+  <BaseLayout>
+    <template v-slot:main>
+      <Navbar>
+        <RouterView />
+      </Navbar>
+    </template>
 
-    <main class="mt-10 mb-auto">
-      <RouterView />
-
-    </main>
-    <LayoutFooter />
-  </LayoutNavbar>
+    <template v-slot:footer>
+      <!-- <Footer /> -->
+    </template>
+  </BaseLayout>
 </template>

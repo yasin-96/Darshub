@@ -1,5 +1,5 @@
 <template>
-  <div class="hero min-h-screen" style="background-image: url(https://images.pexels.com/photos/942873/pexels-photo-942873.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1)">
+  <div class="hero min-h-screen" >
     <div class="hero-overlay bg-opacity-60"></div>
     <div class="hero-content text-center text-neutral-content">
       <div class="">
@@ -26,7 +26,7 @@ export default defineComponent({
     const { t } = useI18n();
     useMeta({
       title: "404 Error",
-      meta: [{ name: "description", content: "Ansammlung von Fotos und Videos" }],
+      meta: [{ name: "description", content: "" }],
     });
     return {
       t,

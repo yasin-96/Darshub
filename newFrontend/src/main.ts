@@ -8,6 +8,7 @@ import "./index.css";
 import { createApp } from "vue";
 const app = createApp(App);
 
+//Enable or Disable Devtools [performance flag]
 const currentEnviroment = import.meta.env.VITE_APP_NODE_ENV;
 
 if (currentEnviroment === "develop" || currentEnviroment === "local") {
@@ -30,6 +31,8 @@ import { i18nLanguages } from "./plugins/i18nPlugin";
 import { createMetaManager, plugin as metaPlugin } from "vue-meta";
 const metaManager = createMetaManager();
 
-app.use(router).use(pinia).use(i18nLanguages).use(metaManager).use(metaPlugin); // optional, only needed for OptionsAPI
+//Bind all option
+app.use(router).use(pinia).use(i18nLanguages).use(metaManager).use(metaPlugin);
 
+//Bind to containder #app -> index.html
 app.mount("#app");
