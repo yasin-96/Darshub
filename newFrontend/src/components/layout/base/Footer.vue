@@ -3,18 +3,12 @@
     <div class="">
       <div class="avatar">
         <div class="w-24 rounded-full">
-          <img width="128"
-            :src="logoUrl"
-            alt="Logo"
-            >
-
+          <img width="128" src="logoUrl" alt="Logo" />
         </div>
       </div>
-      <p>Copyright &copy; {{new Date().getFullYear()}} - {{$t("footer.cr")}}</p>
+      <p>Copyright &copy; {{ new Date().getFullYear() }} - {{ $t("footer.cr") }}</p>
     </div>
-    <div>
-
-    </div>
+    <div></div>
     <div>
       <!-- <span class="text-bold text-lg">Legal</span> 
     <a class="link link-hover">Terms of use</a> 
@@ -24,17 +18,11 @@
   </footer>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import { useI18n } from "vue-i18n"
-export default defineComponent({
-  name: "LayoutFooter",
-  setup() {
-    const { t } = useI18n()
+<script setup>
+import { useI18n } from "vue-i18n";
+const { t } = useI18n();
 
-    const logoFileName =""
-  },
-});
+const logoFileName = "";
 </script>
 
 <!-- <style>
