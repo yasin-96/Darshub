@@ -9,7 +9,7 @@ trigger:
     - frontend
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: ubuntu-latest
 
 variables:
   # master branch -->  prod builds
