@@ -14,16 +14,16 @@ pool:
 variables:
   # master branch -->  prod builds
   ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
-    buildConfig: 'prod'
+    buildConfig: prod
   # develop branch --> dev builds
   ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
-    buildConfig: 'dev'
+    buildConfig: dev
 
 steps:
   - task: Npm@1
     inputs:
-      command: 'custom'
-      customCommand: 'ci'
+      command: custom
+      customCommand: ci
       workingDir: '$(Build.SourcesDirectory)/frontend'
     displayName: 'npm ci'
 
@@ -41,6 +41,6 @@ steps:
       
   - task: PublishBuildArtifacts@1
     inputs: 
-      pathtoPublish: $(Build.ArtifactStagingDirectory)
-      ArtifactName: 'dist'
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: dist
     displayName: 'Publish artifact'
