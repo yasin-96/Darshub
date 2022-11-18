@@ -10,19 +10,19 @@ trigger:
 
 variables:
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: 'dhacr01'
-  imageRepository: 'darshubbackend'
-  containerRegistry: 'dhacr01.azurecr.io'
+  dockerRegistryServiceConnection: dhacr01
+  imageRepository: darshubbackend
+  containerRegistry: dhacr01.azurecr.io
   
   # master branch -->  prod builds
   ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
-    tag: 'prod'
+    tag: prod
   # develop branch --> dev builds
   ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
-    tag: 'dev'
+    tag: dev
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: ubuntu-latest
 
 steps:
 - task: Docker@2
