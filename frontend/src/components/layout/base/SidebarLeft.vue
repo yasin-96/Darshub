@@ -1,45 +1,52 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
+import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useBaseLayoutStore } from "@/stores/layout/baseLayout";
 import { onClickOutside } from "@vueuse/core";
 
-import { Home, Photo, Bars3Icon, XCircleIcon } from "@heroicons/vue/24/outline";
-
 const baseLayout = useBaseLayoutStore();
+const r = useRoute();
+const { locale, t } = useI18n();
 
 const nav_ref = ref();
-
-const r = useRoute();
-const local = useI18n();
-const { t } = useI18n();
-
 const generalSidebar = ref([
   {
     name: "sidebar.default.index",
-    icon: "heroicons-home",
+    icon: "i-heroicons-home",
     disabled: false,
     href: "/",
   },
   {
     name: "sidebar.default.courses",
-    icon: "",
+    icon: "i-heroicons-presentation-chart-line",
     disabled: false,
     href: "/courses",
   },
   {
     name: "sidebar.default.gallery",
-    icon: "Photo",
+    icon: "i-heroicons-photo",
     disabled: false,
     href: "/gallery",
   },
 ]);
 
 const generalFooter = ref([
-  { name: "sidebar.footer.impress", icon: "", href: "/impressum" },
-  { name: "sidebar.footer.team", icon: "", href: "/team" },
-  { name: "sidebar.footer.contact", icon: "", href: "/contact" },
+  {
+    name: "sidebar.footer.impress",
+    icon: "i-heroicons-building-office-2",
+    href: "/impressum",
+  },
+  {
+    name: "sidebar.footer.team",
+    icon: "i-heroicons-user-group",
+    href: "/team",
+  },
+  {
+    name: "sidebar.footer.contact",
+    icon: "i-heroicons-envelope",
+    href: "/contact",
+  },
 ]);
 
 const drawerLeftSide = computed({
@@ -51,15 +58,17 @@ const drawerLeftSide = computed({
     baseLayout.act_toggleSidebarLeft(val);
   },
 });
+
+const closeSideBar = () => {
+  baseLayout.act_toggleSidebarLeft(false);
+};
+
 onClickOutside(nav_ref, (event) => {
   baseLayout.act_toggleSidebarLeft(false);
 });
 </script>
 
 <template>
-  <!-- <transition-group name="slide-fade" :duration="2000" type="animation" mode>
-    
-  </transition-group> -->
   <nav
     ref="nav_ref"
     :class="`top-0 left-0  bg-white z-40 flex flex-col flex-wrap w-72 h-full justify-between shadow-2xl ${
@@ -73,9 +82,12 @@ onClickOutside(nav_ref, (event) => {
           :key="link.name"
           class="px-1 py-1 hover:bg-slate-400 rounded-lg"
         >
-          <router-link :to="link.href" class="flex flex-row px-1 py-2">
-            <component :is="`${link.icon}`" class="h-6 w-6 text-black" />
-            <i :class="`${link.icon} h-6 w-6`" ></i>
+          <router-link
+            :to="link.href"
+            class="flex flex-row px-1 py-2"
+            @click="closeSideBar"
+          >
+            <i :class="`${link.icon} h-6 w-6`"></i>
             <span class="pl-3" @click="drawerLeftSide != false">{{
               $t(link.name)
             }}</span>
@@ -92,21 +104,13 @@ onClickOutside(nav_ref, (event) => {
           :key="link.name"
           class="px-1 py-1 hover:bg-slate-400 rounded-md"
         >
-          <router-link :to="link.href" class="flex flex-row px-1 py-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-6 h-6"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                :d="link.icon"
-              />
-            </svg>
+          <router-link
+            :to="link.href"
+            class="flex flex-row px-1 py-2"
+            @click="closeSideBar"
+          >
+            <i :class="`${link.icon} h-6 w-6`"></i>
+
             <span class="pl-3" @click="drawerLeftSide != drawerLeftSide">{{
               $t(link.name)
             }}</span>
