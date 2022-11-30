@@ -19,6 +19,16 @@ export enum GenderOptionRO {
   DIVERS = "DIVERS",
 }
 
+export type UserRegistrationCheck = {
+  first_name: string;
+  last_name: string;
+  birthday: number | null;
+  avatar: string;
+  email: string;
+  telNr: string;
+  bio: string;
+};
+
 export type User = {
   id: string;
   password: Array<string>;
@@ -43,8 +53,8 @@ export type UserRequest = {
   password: Array<string>;
   first_name: string;
   last_name: string;
-  birthday: Date| null;
-  avatar: string;
+  birthday: number | null;
+  avatar: string | null;
   email: string;
   telNr: string;
   company: string;

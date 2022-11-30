@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { reactive, computed, onMounted } from "vue";
+import { LanguageIcon } from "@heroicons/vue/24/outline";
 import { useLanguageStore } from "@/stores/langStore";
 import { useI18n } from "vue-i18n";
 
@@ -7,31 +8,22 @@ import { useI18n } from "vue-i18n";
 const state = reactive({
   selectedValue: "",
   selectedLocal: {},
+  enableMenu: false,
 });
 
 const languageStore = useLanguageStore();
-const { t, locale } = useI18n();
+const { locale } = useI18n();
 
 const allLanguages = computed(() => {
   return languageStore.lang;
 });
-const localWithFlag = computed(() => {
-  return languageStore.lang.find((x) => x.code === locale.value)?.url;
-});
-const localISOCode = computed(() => {
-  return languageStore.lang.find((x) => x.code === locale.value)?.code;
-});
 
 const changeLocale = (newLocal: string) => {
-  // $i18n.locale = newLocal;
+  locale.value = newLocal;
   state.selectedLocal = newLocal;
   languageStore.setCurrentLangCode(newLocal);
+  state.enableMenu =false
 };
-
-// watch(selectedLocal, (newVal, oldVal) => {
-//   // console.log(newVal, oldVal);
-//   // locale.value = newVal;
-// });
 
 onMounted(() => {
   state.selectedLocal = locale.value;
@@ -40,30 +32,58 @@ onMounted(() => {
 
 <template>
   <div class="flex-2 px-2 mx-2">
-    {{ state.selectedLocal }}
-    {{}}
-    <div class="dropdown dropdown-end">
-      <label tabindex="0" class="btn btn-ghost rounded-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802"
-          />
-        </svg>
-      </label>
-      <ul tabindex="0" class="menu dropdown-content p-2 shadow bg-base-100 rounded-box w-52 mt-4">
-        <li v-for="item in allLanguages" :key="item.iso" @click="changeLocale(item.code)">
-          <span :class="item.code == selectedLocal ? 'active' : ''">
-            <div class="avatar placeholder">
-              <div class="bg-neutral-focus text-neutral-content rounded-full w-8">
-                <img :src="item.url" width="auto" height="auto" :alt="item.code" loading="lazy" />
-              </div>
-            </div>
-            {{ item.text }}
-          </span>
-        </li>
-      </ul>
-    </div>
+    <button
+      class="transition ease-in-out hover:scale-110  px-2 py-2 rounded-full shadow-lg text-white hover:bg-white hover:bg-white hover:text-black"
+      @click="state.enableMenu = state.enableMenu ? false : true"
+    >
+      <LanguageIcon class="h-6 w-6" />
+    </button>
+    <transition
+      enter-active-class="transition ease-out duration-100"
+      enter-from-class="transform opacity-0 scale-95"
+      enter-to-class="transform opacity-100 scale-100"
+      leave-active-class="transition ease-in duration-75"
+      leave-from-class="transform opacity-100 scale-100"
+      leave-to-class="transform opacity-0 scale-95"
+    >
+      <div
+        :class="`absolute right-32 z-40 mt-1 w-16 origin-top-right divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none
+        ${state.enableMenu ? '' : 'hidden'}
+        `"
+        role="menu"
+        aria-orientation="vertical"
+        aria-labelledby="menu-button"
+        tabindex="-1"
+      >
+        <div class="py-1" role="none">
+          <ul class="px-2 py-2 text-lg">
+            <li
+              v-for="item in allLanguages"
+              :key="item.iso"
+              @click="changeLocale(item.code)"
+              class=""
+            >
+              <button
+                :class="`px-1 py-1 w-full hover:bg-gray-300 hover:text-black rounded-lg ${
+                  locale === item.code ? 'bg-amber-700 text-white' : ''
+                }`"
+                @click="changeLocale(item.code)"
+              >
+                {{ item.text }}
+                <img
+                  :src="item.url"
+                  width="auto"
+                  height="auto"
+                  :alt="item.code"
+                  loading="lazy"
+                />
+              </button>
+            </li>
+          </ul>
+
+          <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
+        </div>
+      </div>
+    </transition>
   </div>
 </template>

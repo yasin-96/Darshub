@@ -1,7 +1,7 @@
 const sidebarLeftModule = {
   namespaced: true,
   state: {
-    showSidebarLeftDrawer: false,
+    showSidebarLeftDrawer: true,
     sidebarLeftNavigationLinks: {
       all: [
         { title: "router.sidebar.all.home", icon: "mdi-home", route: "/" },

@@ -1,5 +1,5 @@
-import en from "../locales/en.js.js";
-import de from "../locales/de.js.js";
+import en from "../locales/en.js";
+import de from "../locales/de.js";
 
 import { createI18n } from "vue-i18n";
 

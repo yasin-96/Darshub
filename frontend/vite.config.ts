@@ -7,8 +7,8 @@ import vueI18n from "@intlify/vite-plugin-vue-i18n";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  server:{
-    port: 5173
+  server: {
+    port: 5173,
   },
   plugins: [
     vue(),
@@ -21,6 +21,17 @@ export default defineConfig({
       include: resolve(dirname(fileURLToPath(import.meta.url)), "./path/to/src/locales/**"),
     }),
   ],
+  css: {
+    postcss: {
+      plugins: [
+        require("tailwindcss/nesting"),
+        require("tailwindcss")({
+          config: process.env?.TAILWIND_CONFIG ? `tailwind-${process.env.TAILWIND_CONFIG}.config.js` : "./tailwind.config.js",
+        }),
+        require("autoprefixer"),
+      ],
+    },
+  },
   build: {
     reportCompressedSize: true,
     sourcemap: false,
@@ -45,23 +56,22 @@ export default defineConfig({
   },
 });
 
-
 // chainWebpack: (config) => {
-  //   config
-  //   .plugin('define')
-  //   .tap((args) => {
-  //     const gitRevisionPlugin = new GitRevisionPlugin({
-  //       commithashCommand: 'rev-list --max-count=1 --no-merges HEAD',
-  //       versionCommand: 'describe --always --tags',
-  //     });
+//   config
+//   .plugin('define')
+//   .tap((args) => {
+//     const gitRevisionPlugin = new GitRevisionPlugin({
+//       commithashCommand: 'rev-list --max-count=1 --no-merges HEAD',
+//       versionCommand: 'describe --always --tags',
+//     });
 
-  //     args[0]['process.env']['VUE_APP_GIT_VERSION'] = JSON.stringify(gitRevisionPlugin.version());
-  //     args[0]['process.env']['VUE_APP_GIT_HASH'] = JSON.stringify(gitRevisionPlugin.commithash());
-  //     args[0]['process.env']['VUE_APP_GIT_LAST_COMMIT_DATE'] = JSON.stringify(gitRevisionPlugin.lastcommitdatetime());
-  //     return args;
-  //   });
+//     args[0]['process.env']['VUE_APP_GIT_VERSION'] = JSON.stringify(gitRevisionPlugin.version());
+//     args[0]['process.env']['VUE_APP_GIT_HASH'] = JSON.stringify(gitRevisionPlugin.commithash());
+//     args[0]['process.env']['VUE_APP_GIT_LAST_COMMIT_DATE'] = JSON.stringify(gitRevisionPlugin.lastcommitdatetime());
+//     return args;
+//   });
 
-  //   config.module.rule('pdf')
-  //     .test(/\.pdf$/)
-  //     .use('file-loader').loader('file-loader');
-  // },
+//   config.module.rule('pdf')
+//     .test(/\.pdf$/)
+//     .use('file-loader').loader('file-loader');
+// },
