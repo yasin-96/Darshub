@@ -41,7 +41,7 @@ export const useLanguageStore = defineStore("languageStore", {
     },
   },
   getters: {
-    getIsoCode(): LanguageCodes {
+    getIsoCode(): LanguageCodes | undefined {
       return this.lang.find((x) => x.code === this.currentLanguageCode);
     },
   },

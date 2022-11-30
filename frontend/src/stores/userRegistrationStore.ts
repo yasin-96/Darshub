@@ -1,4 +1,4 @@
-import type { UserRequest } from "@/types";
+import type { UserRegistrationCheck, UserRequest } from "@/models/user/types";
 import axios from "axios";
 import { defineStore } from "pinia";
 
@@ -33,29 +33,32 @@ export const useUserRegistrationStore = defineStore("userRegistrationStore", {
     clear() {
       this.$reset();
     },
-    setBirthday(newBirthday: Date) {
-      this.user.birthday = newBirthday;
+    setFirstName(newFN: string) {
+      this.user.first_name = newFN;
+    },
+    setLastName(newLN: string) {
+      this.user.last_name = newLN;
+    },
+    setBirthday(newBirthday: string) {
+      const parsedUnixTime = Date.parse(newBirthday);
+      this.user.birthday = parsedUnixTime;
+    },
+
+    setAvatar(newAvatar: string | null) {
+      this.user.avatar = newAvatar;
     },
 
     async addNewUser() {
-      console.log(`${BACKEND_API}/user`)
-
-      // fetch(`${BACKEND_API}/user`, {
-      //   method: "POST",
-      //   body: JSON.stringify(this.user)
-      // }).then((resp) => {
-      //   // console.log(resp)
-      // })
+      console.log(`${BACKEND_API}/user`);
 
       await axios
         .post(`${BACKEND_API}/user`, this.user)
         .then((resp) => {
-          console.log(resp)
+          console.log(resp);
           this.$reset();
         })
         .catch((err) => {
-          console.log(err)
-
+          // console.log(err)
         });
 
       //   RestBackendCalls.doPostRequest(api_endpoints.user.registry, null, state.newUser)
@@ -73,7 +76,11 @@ export const useUserRegistrationStore = defineStore("userRegistrationStore", {
       //     .catch((err) => {
       //       console.log(err);
       //     });
-      
+    },
+  },
+  getters: {
+    getAvatar(): string {
+      return String(this.user.avatar);
     },
   },
 });

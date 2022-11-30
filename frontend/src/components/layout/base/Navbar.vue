@@ -1,10 +1,18 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import LocaleSwitcher from "@/components/locale/LocaleSwitcher.vue";
-import { useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
+import { useBaseLayoutStore } from "@/stores/layout/baseLayout";
+import {
+  ArrowRightOnRectangleIcon,
+  ArrowLeftOnRectangleIcon,
+  Bars3Icon,
+  Bars3BottomLeftIcon,
+} from "@heroicons/vue/24/outline";
+const baseLayout = useBaseLayoutStore();
 
-const r = useRoute();
+const r = useRouter();
 const drawer = ref(false);
 const local = useI18n();
 const { t } = useI18n();
@@ -51,7 +59,24 @@ const generalFooter = ref([
   { name: "sidebar.default.team", icon: "", href: "/team" },
   { name: "sidebar.default.contact", icon: "", href: "/contact" },
 ]);
-const currentSideName = ref(r.name ? t(`sidebar.default.${String(r.name)}`) : "");
+const currentSideName = ref(
+  r.name ? t(`sidebar.default.${String(r.name)}`) : ""
+);
+
+const drawerState = computed({
+  get() {
+    return baseLayout.currentStateDrawerSidebarLeft;
+  },
+  set(tValue: boolean) {
+    baseLayout.act_toggleSidebarLeft(tValue);
+  },
+});
+
+const openSideBar = () => drawerState.value != drawerState.value;
+
+const goToLoginPage = () => {
+  r.push({ name: "registry" });
+};
 
 // watch: {
 //   currentSideName() {
@@ -61,11 +86,68 @@ const currentSideName = ref(r.name ? t(`sidebar.default.${String(r.name)}`) : ""
 </script>
 
 <template>
-  <nav>
+  <header>
+    <nav class="bg-gray-800 w-full">
+      <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+        <div class="relative flex h-16 items-center justify-between">
+          <div class="flex flex-1 items-start">
+            <div class="flex flex-shrink-0 items-center">
+              <button
+                v-if="!drawerState"
+                class="transition ease-in-out hover:scale-110 hover:bg-gray-700 hover:text-white text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white rounded-lg"
+                @click="drawerState = true"
+              >
+                <Bars3Icon class="drawerButton w-6 h-6 block h-8 w-auto m-1" />
+              </button>
+              <button
+                v-else
+                class="drawerButton transition ease-in-out hover:scale-110 hover:bg-gray-700 hover:text-white text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white rounded-lg"
+                @click="drawerState = false"
+              >
+                <!-- <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-6 h-6 block h-8 w-auto m-1"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
+                  />
+                </svg> -->
+                <Bars3BottomLeftIcon
+                  class="drawerButton w-6 h-6 block h-8 w-auto m-1"
+                />
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
+          >
+            <LocaleSwitcher />
+            <button
+              class="transition ease-in-out hover:scale-110 rounded-full flex bg-white px-2 py-2"
+              @click="goToLoginPage()"
+            >
+              <span class="pl-2 pr-2">Sign Up</span>
+              <ArrowRightOnRectangleIcon class="h-6 w-6 hover:text-blue-400" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile menu, show/hide based on menu state. -->
+    </nav>
+
+    <!-- <nav>
     <div class="drawer">
       <input id="leftSidebarDrawer" v-model="drawer" type="checkbox" class="drawer-toggle" />
       <div class="drawer-content flex flex-col">
-        <!-- Navbar -->
+        <-- Navbar --
         <div class="`w-full navbar bg-base-100 fixed top-0 z-50 pt-2 pb-2`">
           <div class="flex-none">
             <label for="leftSidebarDrawer" class="btn btn-square btn-ghost">
@@ -75,7 +157,7 @@ const currentSideName = ref(r.name ? t(`sidebar.default.${String(r.name)}`) : ""
             </label>
           </div>
           <div class="flex-1 px-2 mx-2">{{}}</div>
-          <!-- <div class="flex-none hidden lg:block">
+          <!- <div class="flex-none hidden lg:block">
           <ul class="menu menu-horizontal">
             <li v-for="(link) in generalSidebar" :key="link.name">
 
@@ -89,7 +171,7 @@ const currentSideName = ref(r.name ? t(`sidebar.default.${String(r.name)}`) : ""
               </a>
             </li>
           </ul>
-        </div> -->
+        </div> ->
 
           <LocaleSwitcher />
           <router-link to="/registry">
@@ -101,12 +183,10 @@ const currentSideName = ref(r.name ? t(`sidebar.default.${String(r.name)}`) : ""
             </button>
           </router-link>
         </div>
-        <main class="">
-          <slot></slot>
-        </main>
+
       </div>
 
-      <div class="drawer-side">
+      <!- <div class="drawer-side">
         <label for="leftSidebarDrawer" class="drawer-overlay"></label>
         <ul class="menu p-4 overflow-y-auto w-80 bg-base-100">
           <li v-for="link in generalSidebar" :key="link.name">
@@ -133,7 +213,8 @@ const currentSideName = ref(r.name ? t(`sidebar.default.${String(r.name)}`) : ""
             </a>
           </li>
         </ul>
-      </div>
+      </div> ->
     </div>
-  </nav>
+  </nav> -->
+  </header>
 </template>

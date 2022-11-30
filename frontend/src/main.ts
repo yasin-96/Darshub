@@ -2,7 +2,7 @@
 import App from "./App.vue";
 
 //CSS (Tailwind)
-import "./index.css";
+import "./assets/main.css";
 
 //Vue App Creation
 import { createApp } from "vue";

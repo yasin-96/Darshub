@@ -5,6 +5,19 @@ export default {
       lang: "Languages",
     },
   },
+  sidebar: {
+    default: {
+      index: "Home",
+      gallery: "Gallery",
+      courses: "Courses",
+    },
+    admin: {},
+    footer: {
+      impress: "Impress",
+      team: "Team",
+      contact: "Contact",
+    },
+  },
   footer: {
     c: "Urheberrecht",
     cr: "Alle Rechte vorbehalten.",
@@ -18,71 +31,71 @@ export default {
     de: "Germany",
     en: "English",
   },
-  gender:{
+  gender: {
     MALE: "Man",
     FEMALE: "Woman",
     DIVERS: "undefined",
   },
-  sites:{ 
-    registry:{
-      title:"",
-      steps:{
-        first:{
-          title:"Basis Daten",
-          input:{
-            firstName:{
+  sites: {
+    registry: {
+      title: "",
+      steps: {
+        first: {
+          title: "Basis Daten",
+          input: {
+            firstName: {
               label: "First Name",
               placeholder: "",
-              hints:"",
+              hints: "",
             },
-            lastName:{
+            lastName: {
               label: "Last Name",
               placeholder: "",
-              hints:"",
+              hints: "",
             },
-            birthday:{
+            birthday: {
               label: "Birthday",
               placeholder: "",
-              hints:"",
+              hints: "",
             },
-            gender:{
+            gender: {
               label: "Gender",
               placeholder: "",
-              hints:"",
-            }
+              hints: "",
+            },
           },
         },
-        second:{
-          title:"Basis Daten",
-          input:{
-            email:{
+        second: {
+          title: "Basis Daten",
+          input: {
+            email: {
               label: "",
               placeholder: "",
-              hints:"",
+              hints: "",
             },
             mobileNumber: {
               label: "",
               placeholder: "",
-              hints:"",
-            }
-          }
+              hints: "",
+            },
+          },
         },
-        third:{
-          title:"Basis Daten",
-          input:{
-            password:{
+        third: {
+          title: "Basis Daten",
+          input: {
+            password: {
               label: "",
               placeholder: "",
-              hints:"",
+              hints: "",
             },
             checkPassword: {
               label: "",
               placeholder: "",
-              hints:"",
-            }
-          }
-        }
-      }
-    }
-  }
+              hints: "",
+            },
+          },
+        },
+      },
+    },
+  },
 };
