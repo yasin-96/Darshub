@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { reactive, computed } from "vue";
-import { EyeSlashIcon, EyeIcon } from "@heroicons/vue/24/outline";
 import ImageUploader from "@/components/img/ImageUploader.vue";
 import { useRouter } from "vue-router";
 
@@ -225,8 +224,11 @@ const registerNewUser = async () => {
                     state.fields.password.hide = !state.fields.password.hide
                   "
                 >
-                  <EyeIcon class="w-6 h-6" v-if="!state.fields.password.hide" />
-                  <EyeSlashIcon class="w-6 h-6" v-else />
+                  <i
+                    class="i-heroicons-eye w-6 h-6"
+                    v-if="!state.fields.password.hide"
+                  ></i>
+                  <i class="i-heroicons-eye-slash w-6 h-6" v-else></i>
                 </button>
               </div>
             </label>

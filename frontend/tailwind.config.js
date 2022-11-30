@@ -1,6 +1,7 @@
 const colors = require("tailwindcss/colors");
 const { Icons } = require("tailwindcss-plugin-icons");
 
+
 /**
  * @type {import('tailwindcss-plugin-icons').Options}
  */

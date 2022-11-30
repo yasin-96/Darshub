@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { reactive, computed, onMounted } from "vue";
-import { LanguageIcon } from "@heroicons/vue/24/outline";
+import { reactive, computed, onMounted, ref } from "vue";
 import { useLanguageStore } from "@/stores/langStore";
 import { useI18n } from "vue-i18n";
+
+import { onClickOutside } from "@vueuse/core";
 
 //Component state
 const state = reactive({
@@ -10,6 +11,9 @@ const state = reactive({
   selectedLocal: {},
   enableMenu: false,
 });
+
+const ref_languagePicker = ref();
+
 
 const languageStore = useLanguageStore();
 const { locale } = useI18n();
@@ -22,8 +26,12 @@ const changeLocale = (newLocal: string) => {
   locale.value = newLocal;
   state.selectedLocal = newLocal;
   languageStore.setCurrentLangCode(newLocal);
-  state.enableMenu =false
+  state.enableMenu = false;
 };
+
+onClickOutside(ref_languagePicker, (event) => {
+  state.enableMenu = false;
+});
 
 onMounted(() => {
   state.selectedLocal = locale.value;
@@ -33,10 +41,10 @@ onMounted(() => {
 <template>
   <div class="flex-2 px-2 mx-2">
     <button
-      class="transition ease-in-out hover:scale-110  px-2 py-2 rounded-full shadow-lg text-white hover:bg-white hover:bg-white hover:text-black"
+      class="transition ease-in-out hover:scale-110 px-2 py-2 rounded-full shadow-lg text-white hover:bg-white hover:bg-white hover:text-black"
       @click="state.enableMenu = state.enableMenu ? false : true"
     >
-      <LanguageIcon class="h-6 w-6" />
+      <i class="i-heroicons-language h-6 w-6 block"></i>
     </button>
     <transition
       enter-active-class="transition ease-out duration-100"
@@ -46,7 +54,7 @@ onMounted(() => {
       leave-from-class="transform opacity-100 scale-100"
       leave-to-class="transform opacity-0 scale-95"
     >
-      <div
+      <div ref="ref_languagePicker"
         :class="`absolute right-32 z-40 mt-1 w-16 origin-top-right divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none
         ${state.enableMenu ? '' : 'hidden'}
         `"
