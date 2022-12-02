@@ -1,4 +1,5 @@
-import type { UserRegistrationCheck, UserRequest } from "@/models/user/types";
+import type { UserRequest } from "@/models/user/types";
+import { useFetch, useBase64 } from "@vueuse/core";
 import axios from "axios";
 import { defineStore } from "pinia";
 
@@ -6,13 +7,13 @@ interface Registration {
   user: UserRequest;
 }
 
-const BACKEND_API = import.meta.env.VITE_APP_BACKEND_URL;
+const BACKEND_API = import.meta.env.VITE_APP_BACKEND_URI;
 
-export const useUserRegistrationStore = defineStore("userRegistrationStore", {
+export const useRegistrationStore = defineStore("userRegistrationStore", {
   state: (): Registration => ({
     user: {
       id: "",
-      password: [],
+      password: "",
       first_name: "",
       last_name: "",
       birthday: null,
@@ -39,27 +40,52 @@ export const useUserRegistrationStore = defineStore("userRegistrationStore", {
     setLastName(newLN: string) {
       this.user.last_name = newLN;
     },
-    setBirthday(newBirthday: string) {
-      const parsedUnixTime = Date.parse(newBirthday);
-      this.user.birthday = parsedUnixTime;
+    setBirthday(newBirthday: Date) {
+      // const parsedUnixTime = Date.parse(newBirthday);
+      this.user.birthday = newBirthday;
     },
 
     setAvatar(newAvatar: string | null) {
       this.user.avatar = newAvatar;
     },
+    setEmail(newEmailAddr: string) {
+      this.user.email = newEmailAddr;
+    },
+    setMobileNumber(newMobileNumber: string) {
+      this.user.telNr = newMobileNumber;
+    },
+
+    setPasswd(newPasswd: string) {
+      this.user.password = newPasswd;
+    },
+    setGender(newGender: string){
+      this.user.bio = newGender;
+    },
 
     async addNewUser() {
-      console.log(`${BACKEND_API}/user`);
+      console.log(JSON.stringify(this.user))
+      const { isFetching, error, data } = await useFetch(
+        `${BACKEND_API}/user`
+        // { timeout: BACKEND_API_TIMEOUT }
+      ).post(this.user);
 
-      await axios
-        .post(`${BACKEND_API}/user`, this.user)
-        .then((resp) => {
-          console.log(resp);
-          this.$reset();
-        })
-        .catch((err) => {
-          // console.log(err)
-        });
+      if (error) {
+        console.log("err", error.value);
+        // this.$reset();
+      } else {
+        console.table("data", data);
+        // this.user = data;
+      }
+
+      // await axios
+      //   .post(`${BACKEND_API}/user`, this.user)
+      //   .then((resp) => {
+      //     console.log(resp);
+      //     this.$reset();
+      //   })
+      //   .catch((err) => {
+      //     // console.log(err)
+      //   });
 
       //   RestBackendCalls.doPostRequest(api_endpoints.user.registry, null, state.newUser)
       //     .then((resp) => {

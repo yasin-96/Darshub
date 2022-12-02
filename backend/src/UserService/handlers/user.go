@@ -168,5 +168,6 @@ func Login(rw http.ResponseWriter, r *http.Request) {
 		rw.WriteHeader(http.StatusOK)
 		util.ToJSON(user, rw)
 	}
+
 	rw.WriteHeader(http.StatusUnauthorized)
 }

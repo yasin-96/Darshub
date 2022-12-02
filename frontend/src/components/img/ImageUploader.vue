@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { reactive, computed, onMounted, onUnmounted } from "vue";
-import { useUserRegistrationStore } from "@/stores/userRegistrationStore";
+import { useRegistrationStore } from "@/stores/registrationStore";
 
 const state = reactive({
   maxFileSize: 2 * 1024 * 1024,
@@ -12,7 +12,7 @@ const state = reactive({
   allowedImagesTypes: ["image/png", "image/jpeg", "image/jpg", "image/svg"],
 });
 
-const registrationStore = useUserRegistrationStore();
+const registrationStore = useRegistrationStore();
 
 const checkFileSize = (fileSizeToCheck: number | string): boolean => {
   if (

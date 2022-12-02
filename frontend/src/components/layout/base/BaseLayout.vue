@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useBaseLayoutStore } from "@/stores/layout/baseLayout";
 
 const baseLayout = useBaseLayoutStore();
@@ -10,17 +10,24 @@ const drawerLeftSide = computed(() => {
 </script>
 
 <template>
+  <!-- Layer for Sidebar to hide all -->
   <div
-    :class="`flex h-screen ${
-      !drawerLeftSide ? '' : 'bg-blend-screen bg-gray-700'
+    :class="`${
+      !drawerLeftSide
+        ? ''
+        : 'fixed inset-0 bg-gray-700 bg-opacity-75 transition-opacity'
     }`"
-  >
+  ></div>
+
+  <div class="flex h-screen">
     <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- Banner/ Navbar Top -->
       <slot name="info"> </slot>
       <slot name="nav"></slot>
-      
+
       <div class="flex h-full">
-        <slot name="sidebarLeft" class="mb-0"></slot>
+        <!-- Sidebar left / Main Content -->
+        <slot name="sidebarLeft" class=""></slot>
         <main
           :class="`flex flex-col w-full overflow-x-hidden overflow-y-auto'
           }`"
@@ -30,8 +37,7 @@ const drawerLeftSide = computed(() => {
           </div>
         </main>
       </div>
-
-      <slot name="footer"></slot>
     </div>
   </div>
+  <slot name="footer"></slot>
 </template>

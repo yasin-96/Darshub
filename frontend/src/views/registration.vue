@@ -8,26 +8,20 @@ import {
   GenderOptionRO,
   type UserRequest,
 } from "@/models/user/types";
-import { useUserRegistrationStore } from "@/stores/userRegistrationStore";
+import { useRegistrationStore } from "@/stores/registrationStore";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
 const router = useRouter();
-const registryStore = useUserRegistrationStore();
+const registryStore = useRegistrationStore();
 
 const state = reactive({
   valid: false,
   passwordValid: false,
-  date: null,
-  birthdayModel: false,
-  birthdayPicker: null,
-  minDate: "1950-01-01",
-  currentStep: 0,
+  // minDate: "1950-01-01",
   passwordRecheck: null,
-  displayPassword: false,
   selectedCountry: {},
-  selectedBirthday: null,
   fields: {
     password: {
       hide: true,
@@ -44,31 +38,65 @@ const first_name = computed({
   },
 });
 
+const last_name = computed({
+  get() {
+    return registryStore.user.last_name;
+  },
+  set(newLN: string) {
+    registryStore.setLastName(newLN);
+  },
+});
+
+const email = computed({
+  get() {
+    return registryStore.user.email;
+  },
+  set(newEmail: string) {
+    registryStore.setEmail(newEmail);
+  },
+});
+
+const mobileNumber = computed({
+  get() {
+    return registryStore.user.telNr;
+  },
+  set(newMobileNr: string) {
+    registryStore.setMobileNumber(newMobileNr);
+  },
+});
+
+const passwd = computed({
+  get() {
+    return registryStore.user.password;
+  },
+  set(newPasswd: string) {
+    registryStore.setPasswd(newPasswd);
+  },
+});
+
+const gender = computed({
+  get() {
+    return registryStore.user.bio;
+  },
+  set(newGender: string) {
+    registryStore.setGender(newGender);
+  },
+});
+
 // const validate = ()=> {
 //     this.$refs.reg_registryForm.validate();
 //     if (this.valid) {
 //       this.$store.dispatch("registry/act_createNewUser");
 //     }
 //   }
-const reset = () => {
-  // state.$refs.reg_registryForm.reset();
-  registryStore.clear();
-  // router.push({ name: "home" });
-};
-
-const nextStep = (nextStep: number) => {
-  state.currentStep = nextStep;
-};
 
 const abbord = () => {
   registryStore.clear();
   router.push({ name: "index" });
 };
 
-const saveBirthday = (e) => {
-  console.log("HIER", e.target.value);
-  console.log(Date.parse(e.target.value));
-  registryStore.setBirthday(e.target.value);
+const saveBirthday = (e: any) => {
+  registryStore.setBirthday(new Date(e.target.value));
 };
 
 // ...mapState({
@@ -136,7 +164,7 @@ const registerNewUser = async () => {
                 $t('sites.registry.steps.first.input.firstName.placeholder')
               "
               class="form-input rounded-lg input-bordered w-full"
-              :model="first_name"
+              v-model="first_name"
             />
           </label>
 
@@ -150,6 +178,7 @@ const registerNewUser = async () => {
                 $t('sites.registry.steps.first.input.lastName.placeholder')
               "
               class="form-input rounded-lg w-full"
+              v-model="last_name"
             />
           </label>
           <label class="block my-4">
@@ -170,6 +199,7 @@ const registerNewUser = async () => {
               <option
                 v-for="(s, index) in GenderOptionRO"
                 :key="`gender-${s}-${index}`"
+                @click="gender = s"
               >
                 {{ $t(`gender.${s}`) }}
               </option>
@@ -189,14 +219,16 @@ const registerNewUser = async () => {
               type="email"
               placeholder="email"
               class="form-input rounded-lg w-full"
+              v-model="email"
             />
           </label>
           <label class="block my-4">
             <span class="label-text">Mobile</span>
             <input
-              type="email"
-              placeholder="password"
+              type="text"
+              placeholder="mobile"
               class="form-input rounded-lg w-full"
+              v-model="mobileNumber"
             />
           </label>
 
@@ -217,6 +249,7 @@ const registerNewUser = async () => {
                   placeholder="Password"
                   class="form-input block rounded-lg w-full"
                   clearable
+                  v-model="passwd"
                 />
                 <button
                   class="btn btn-square"
@@ -225,10 +258,10 @@ const registerNewUser = async () => {
                   "
                 >
                   <i
-                    class="i-heroicons-eye w-6 h-6"
+                    class="i-heroicons-eye w-6 h-6 block"
                     v-if="!state.fields.password.hide"
                   ></i>
-                  <i class="i-heroicons-eye-slash w-6 h-6" v-else></i>
+                  <i class="i-heroicons-eye-slash w-6 h-6 block" v-else></i>
                 </button>
               </div>
             </label>
@@ -241,6 +274,7 @@ const registerNewUser = async () => {
                   :type="`password`"
                   placeholder="Password Wiederholen"
                   class="form-input block rounded-lg w-full"
+                  v-model="state.passwordRecheck"
                 />
               </div>
             </label>
