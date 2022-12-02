@@ -1,18 +1,9 @@
-
-
 <script setup>
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 
 const logoFileName = "";
 </script>
-
-<!-- <style>
-.footer {
-  color: white
-}
-</style> -->
-
 
 <template>
   <footer class="p-10 bg-slate-500">
@@ -27,11 +18,5 @@ const logoFileName = "";
       </p>
     </div>
     <div></div>
-    <div>
-      <!-- <span class="text-bold text-lg">Legal</span> 
-    <a class="link link-hover">Terms of use</a> 
-    <a class="link link-hover">Privacy policy</a> 
-    <a class="link link-hover">Cookie policy</a> -->
-    </div>
   </footer>
 </template>

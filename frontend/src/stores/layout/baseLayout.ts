@@ -7,6 +7,9 @@ export const useBaseLayoutStore = defineStore("baseLayoutStore", {
       drawerForSidebarLeft: {
         showPanel: false,
       },
+      loginModal: {
+        showPanel: false,
+      },
     },
     sidebarLeft: {},
     mainContent: {},
@@ -16,10 +19,16 @@ export const useBaseLayoutStore = defineStore("baseLayoutStore", {
     act_toggleSidebarLeft(tValue: boolean) {
       this.navBarTop.drawerForSidebarLeft.showPanel = tValue;
     },
+    act_toggleLoginWindow(tValue: boolean) {
+      this.navBarTop.loginModal.showPanel = tValue;
+    },
   },
   getters: {
     currentStateDrawerSidebarLeft(): boolean {
       return this.navBarTop.drawerForSidebarLeft.showPanel;
+    },
+    getCurrentStateOfLoginWindow(): boolean {
+      return this.navBarTop.loginModal.showPanel;
     },
   },
 });

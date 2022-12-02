@@ -4,9 +4,6 @@
 //   DIVERS;
 // };
 
-
-
-
 export enum GenderOption {
   MALE = 0,
   FEMALE,
@@ -29,6 +26,11 @@ export type UserRegistrationCheck = {
   bio: string;
 };
 
+export type UserLoginData = {
+  password: string;
+  email: string;
+};
+
 export type User = {
   id: string;
   password: Array<string>;
@@ -48,12 +50,30 @@ export type User = {
   role: Array<Uint8Array>;
 };
 
-export type UserRequest = {
+export type UserInfo = {
   id: string;
-  password: Array<string>;
   first_name: string;
   last_name: string;
-  birthday: number | null;
+  birthday: Date | null;
+  avatar: string;
+  email: string;
+  telNr: string;
+  company: string;
+  occupation: string;
+  school: string;
+  subject: string;
+  country: string;
+  isActive: boolean;
+  bio: string;
+  role: Array<Uint8Array>;
+};
+
+export type UserRequest = {
+  id: string;
+  password: string;
+  first_name: string;
+  last_name: string;
+  birthday: Date | null;
   avatar: string | null;
   email: string;
   telNr: string;
