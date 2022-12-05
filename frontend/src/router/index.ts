@@ -15,7 +15,8 @@ const RegistrationView = () => import("@/views/registration.vue");
 const LoginView = () => import("@/views/login.vue");
 const UserDasboard = () => import("@/views/user/dashboard.vue");
 const UserSettings = () => import("@/views/user/settings.vue");
-const CourseOverview = () => import("@/views/course/overview.vue");
+const CourseOverview = () => import("@/views/course/courseOverview.vue");
+const CoursePreview = () => import("@/views/course/coursePreview.vue");
 
 declare module "vue-router" {
   interface RouteMeta {
@@ -62,26 +63,21 @@ const generalRoutes: Array<RouteRecordRaw> = [
   {
     path: "/about",
     name: "about",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    // component: () => import(/* webpackChunkName: "about" */ "../views/About.vue"),
-    // authReq: 0,
+    meta: { requiresAuth: false },
+
     component: () => {},
   },
   {
     path: "/team",
     name: "team",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    // component: () => import(/* webpackChunkName: "about" */ "../views/About.vue"),
-    // authReq: 0,
+    meta: { requiresAuth: false },
     component: () => {},
   },
   {
     path: "/:pathMatch(.*)*",
     name: "404",
+    meta: { requiresAuth: false },
+
     component: NotFoundView,
   },
 ];
@@ -92,30 +88,6 @@ const userRoutes: Array<RouteRecordRaw> = [
     name: "user-dashboard",
     meta: { requiresAuth: true },
     component: UserDasboard,
-    children: [
-      {
-        // UserProfile will be rendered inside User's <router-view>
-        // when /user/:id/profile is matched
-        path: "settings",
-        name: "user-settings",
-        meta: { requiresAuth: true },
-        component: UserSettings,
-        beforeEnter: async (
-          to: RouteLocationNormalized,
-          from: RouteLocationNormalized,
-          next: NavigationGuardNext
-        ) => {
-          const params: RouteParams = to.params;
-          const metaInfo: RouteMeta = to.meta;
-          if (metaInfo.requiresAuth && useLoginStore().getUserId) {
-            console.log(params.id);
-            next();
-          } else {
-            alert("asdasd")
-          }
-        },
-      },
-    ],
     beforeEnter: async (
       to: RouteLocationNormalized,
       from: RouteLocationNormalized,
@@ -123,29 +95,73 @@ const userRoutes: Array<RouteRecordRaw> = [
     ) => {
       const params: RouteParams = to.params;
       const metaInfo: RouteMeta = to.meta;
-      if (params.id && metaInfo.requiresAuth && useLoginStore().getUserId) {
-        console.log(params.id);
+      if (
+        params.id &&
+        params.id !== "undefined" &&
+        params.id !== "null" &&
+        params.id.length &&
+        metaInfo.requiresAuth &&
+        useLoginStore().getUserId
+      ) {
         next();
       } else {
         next("/login");
       }
     },
+    children: [
+      {
+        path: "settings",
+        name: "user-settings",
+        meta: { requiresAuth: true },
+        component: UserSettings,
+      },
+    ],
   },
 ];
 
 const courseRoutes: Array<RouteRecordRaw> = [
   {
-    path: "/course/overview",
-    name: "course-overview",
-    component: CourseOverview,
-    beforeEnter: async (
-      to: RouteLocationNormalized,
-      from: RouteLocationNormalized,
-      next: NavigationGuardNext
-    ) => {
-      await useCoreCourseStore().act_loadAllCourseAsQuickInfo();
-      next();
-    },
+    path: "/course",
+    name: "course",
+    children: [
+      {
+        path: "overview",
+        name: "course-overview",
+        component: CourseOverview,
+        beforeEnter: async (
+          to: RouteLocationNormalized,
+          from: RouteLocationNormalized,
+          next: NavigationGuardNext
+        ) => {
+          await useCoreCourseStore().act_loadAllCourseAsQuickInfo();
+          next();
+        },
+      },
+      {
+        path: ":cId/preview",
+        name: "course-preview",
+        component: CoursePreview,
+        beforeEnter: async (
+          to: RouteLocationNormalized,
+          from: RouteLocationNormalized,
+          next: NavigationGuardNext
+        ) => {
+          const params: RouteParams = to.params;
+          console.log(params);
+          if (
+            params.cId &&
+            params.cId !== "undefined" &&
+            params.cId !== "null" &&
+            params.cId.length
+          ) {
+            await useCoreCourseStore().act_loadCourseById(String(params.cId));
+            next();
+          } else {
+            next("/course/overview");
+          }
+        },
+      },
+    ],
   },
 ];
 
@@ -171,19 +187,18 @@ const router = createRouter({
   routes: [...generalRoutes, ...userRoutes, ...adminRoutes, ...courseRoutes],
 });
 
-router.beforeEach(async (to, from, next) => {
-  // const isAuthenticated = store.getters["userStore/user/isAuthenticated"];
-  // console.log("to.name:", to.name);
-  // if (!to.authReq) {
-  next();
-
-  // if (to.authReq && !isAuthenticated) {
-  // next({ name: "Login" });
-  // }
-
-  // if (to.authReq && isAuthenticated) {
-  // next();
-  // }
-});
+//General Navigation Guards here
+// router.beforeEach(async (to, from, next) => {
+//  const isAuthenticated = store.getters["userStore/user/isAuthenticated"];
+//  console.log("to.name:", to.name);
+//  if (!to.authReq) {
+//  next();
+//  if (to.authReq && !isAuthenticated) {
+//  next({ name: "Login" });
+//  }
+//  if (to.authReq && isAuthenticated) {
+//  next();
+//  }
+// });
 
 export default router;

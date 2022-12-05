@@ -21,7 +21,7 @@ const generalSidebar = ref([
     name: "sidebar.default.courses",
     icon: "i-heroicons-presentation-chart-line",
     disabled: false,
-    href: "/courses",
+    href: "/course/overview",
   },
   {
     name: "sidebar.default.gallery",
