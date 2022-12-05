@@ -1,11 +1,12 @@
 <script lang="ts" setup>
-import { useBaseLayoutStore } from "@/stores/layout/baseLayout";
-import { useLoginStore } from "@/stores/loginStore";
-
-import type { UserLoginData } from "@/models/user/types";
 import { reactive, computed } from "vue";
+import type { UserLoginData } from "@/models/user/types";
+import { useBaseLayoutStore } from "@/stores/layout/baseLayout";
+import { useLoginStore } from "@/stores/session/loginStore";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 
+const r = useRouter();
 const { t } = useI18n();
 const loginStore = useLoginStore();
 const baseLayout = useBaseLayoutStore();
@@ -14,13 +15,21 @@ const state = reactive<UserLoginData>({
   password: "",
 });
 
-const loginIn = () => {
-  loginStore.act_logUserIn({ email: state.email, password: state.password });
-};
-const closeWindows = () => {
-  displayLoginWindow.value = false;
+const resetLocalState = () => {
   state.email = "";
   state.password = "";
+};
+
+const loginIn = async () => {
+  await loginStore.act_logUserIn({
+    email: state.email,
+    password: state.password,
+  });
+};
+
+const closeWindows = () => {
+  displayLoginWindow.value = false;
+  resetLocalState();
 };
 
 const displayLoginWindow = computed({
@@ -30,6 +39,12 @@ const displayLoginWindow = computed({
   set(tValue: boolean) {
     baseLayout.act_toggleLoginWindow(tValue);
   },
+});
+
+loginStore.$subscribe(() => {
+  resetLocalState();
+  displayLoginWindow.value = false;
+  r.push({ name: "user-dashboard", params: { id: loginStore.getUserId } });
 });
 </script>
 
@@ -84,6 +99,19 @@ const displayLoginWindow = computed({
                         />
                       </div>
                     </label>
+                  </div>
+                </div>
+                <div class="mt-2">
+                  <div class="w-full justify-around">
+                    <div>
+                      <hr />
+                      <div @click="closeWindows">
+                        <span>Noch Konto vorhanden?</span>
+                        <router-link to="/registry">
+                          <span class="pl-2 text-blue-500">Registrieren !</span>
+                        </router-link>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

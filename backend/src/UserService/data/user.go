@@ -13,22 +13,22 @@ import (
 //Abstraction to MVC, this are the service functions
 
 type User struct {
-	ID         primitive.ObjectID `bson:"_id"`
-	Password   []byte             `bson:"password"`
-	First_Name string             `bson:"first_name"`
-	Last_Name  string             `bson:"last_name"`
-	Birthday   time.Time          `bson:"birthday"`
-	Avatar     string             `bson:"avatar"`
-	Email      string             `bson:"email"`
-	TelNr      string             `bson:"telNr"`
-	Company    string             `bson:"company"`
-	Occupation string             `bson:"occupation"`
-	School     string             `bson:"school"`
-	Subject    string             `bson:"subject"`
-	Country    string             `bson:"country"`
-	IsActive   bool               `bson:"isActive"`
-	Bio        string             `bson:"bio"`
-	Role       []int              `bson:"role"`
+	ID         primitive.ObjectID `json:"id" bson:"_id"`
+	Password   []byte             `json:"-" bson:"password"` // will not in the response
+	First_Name string             `json:"first_name" bson:"first_name"`
+	Last_Name  string             `json:"last_name" bson:"last_name"`
+	Birthday   time.Time          `json:"birthday" bson:"birthday"`
+	Avatar     string             `json:"avatar" bson:"avatar"`
+	Email      string             `json:"email" bson:"email"`
+	TelNr      string             `json:"telNr" bson:"telNr"`
+	Company    string             `json:"company" bson:"company"`
+	Occupation string             `json:"occupation" bson:"occupation"`
+	School     string             `json:"school" bson:"school"`
+	Subject    string             `json:"subject" bson:"subject"`
+	Country    string             `json:"country" bson:"country"`
+	IsActive   bool               `json:"isActive" bson:"isActive"`
+	Bio        string             `json:"bio" bson:"bio"`
+	Role       []int              `json:"role" bson:"role"`
 }
 
 type UserRequest struct {

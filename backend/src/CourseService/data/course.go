@@ -75,7 +75,7 @@ func GetAllCourses() []Course {
 	defer cancel()
 	defer client.Disconnect(ctx)
 
-	cur, err := client.Database("darshub").Collection("course").Find(ctx, bson.M{})
+	cur, err := client.Database("darshub").Collection("course").Find(ctx, bson.D{})
 	if err != nil {
 		log.Fatal(err)
 	}
