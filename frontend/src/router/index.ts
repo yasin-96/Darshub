@@ -9,14 +9,15 @@ import {
   type RouteParams,
   type RouteRecordRaw,
 } from "vue-router";
-const IndexView = () => import("@/views/index.vue");
-const NotFoundView = () => import("@/views/404.vue");
-const RegistrationView = () => import("@/views/registration.vue");
-const LoginView = () => import("@/views/login.vue");
-const UserDasboard = () => import("@/views/user/dashboard.vue");
-const UserSettings = () => import("@/views/user/settings.vue");
-const CourseOverview = () => import("@/views/course/courseOverview.vue");
-const CoursePreview = () => import("@/views/course/coursePreview.vue");
+import IndexView from "@/views/index.vue";
+import NotFoundView from "@/views/404.vue";
+import Registration from "@/views/registration.vue";
+
+import LoginView from "@/views/login.vue";
+import UserDasboard from "@/views/user/userDashboard.vue";
+// import UserSettings from "@/views/user/userSettings.vue";
+import CourseOverview from "@/views/course/courseOverview.vue";
+import CoursePreview from "@/views/course/coursePreview.vue";
 
 declare module "vue-router" {
   interface RouteMeta {
@@ -38,7 +39,7 @@ const generalRoutes: Array<RouteRecordRaw> = [
     path: "/registry",
     name: "registry",
     meta: { requiresAuth: false },
-    component: RegistrationView,
+    component: Registration,
   },
   {
     path: "/logout",
@@ -105,16 +106,16 @@ const userRoutes: Array<RouteRecordRaw> = [
       ) {
         next();
       } else {
-        next("/login");
+        next({ name: "login" });
       }
     },
     children: [
-      {
-        path: "settings",
-        name: "user-settings",
-        meta: { requiresAuth: true },
-        component: UserSettings,
-      },
+      // {
+      //   path: "settings",
+      //   name: "user-settings",
+      //   meta: { requiresAuth: true },
+      //   component: UserSettings,
+      // },
     ],
   },
 ];
@@ -157,7 +158,7 @@ const courseRoutes: Array<RouteRecordRaw> = [
             await useCoreCourseStore().act_loadCourseById(String(params.cId));
             next();
           } else {
-            next("/course/overview");
+            next({ name: "course-overview" });
           }
         },
       },

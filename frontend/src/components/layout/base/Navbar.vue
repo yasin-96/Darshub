@@ -21,6 +21,9 @@ const currentSideName = ref(
 const goToLoginPage = () => {
   baseLayout.act_toggleLoginWindow(true);
 };
+const goToLogoutPage = () => {
+  rr.push({ name: "logout" });
+};
 
 const drawerState = computed({
   get() {
@@ -71,12 +74,22 @@ const isUserLoggedIn = computed(() => {
               >
                 <span class="pl-2 pr-2">Login</span>
                 <i
-                  class="i-heroicons-arrow-right-on-rectangle h-6 w-6 hover:text-blue-400"
+                  class="i-heroicons-arrow-left-on-rectangle h-6 w-6 hover:text-blue-400"
                 ></i>
               </button>
               <LoginModal />
             </div>
-            <div v-else></div>
+            <div v-else>
+              <button
+                class="rounded-full flex bg-red-500 px-2 py-2 transform hover:scale-105"
+                @click="goToLogoutPage()"
+              >
+                <span class="pl-2 pr-2">Logout</span>
+                <i
+                  class="i-heroicons-arrow-right-on-rectangle h-6 w-6 hover:text-blue-400"
+                ></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
