@@ -1,11 +1,8 @@
-import type { UserInfo, UserLoginData, UserRequest } from "@/models/user/types";
-import axios from "axios";
 import { defineStore } from "pinia";
 import { useFetch } from "@vueuse/core";
 
-interface UserDetails {
-  user: UserRequest;
-}
+import type { UserLoginData, UserRequest } from "@/models/user/types";
+import type { UserDetails } from "@/models/user/interfaces";
 
 const BACKEND_API = import.meta.env.VITE_APP_BACKEND_URI;
 const BACKEND_API_TIMEOUT = 60000;
@@ -36,15 +33,19 @@ export const useLoginStore = defineStore("loginStore", {
       this.$reset();
     },
     async act_logUserIn(logInData: UserLoginData) {
-
       if (logInData.password && logInData.email) {
         const { isFetching, error, data } = await useFetch<UserRequest>(
           `${BACKEND_API}/session`
           // { timeout: BACKEND_API_TIMEOUT }
-        ).post(logInData).json();
+        )
+          .post(logInData)
+          .json();
+
         if (error.value) {
+          //TODO: Message popup
           console.log("err", error.value);
           this.$reset();
+          return;
         }
 
         if (data.value) {
@@ -52,10 +53,19 @@ export const useLoginStore = defineStore("loginStore", {
         }
       }
     },
+    act_logUserOut() {
+      this.$reset();
+    },
   },
   getters: {
     getAvatar(): string {
       return String(this.user.avatar);
+    },
+    isUserLoggedIn(): boolean {
+      return this.user?.id ? true : false;
+    },
+    getUserId(): string | null {
+      return this.user.id;
     },
   },
 });

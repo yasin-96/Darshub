@@ -1,11 +1,7 @@
-import type { UserRequest } from "@/models/user/types";
-import { useFetch, useBase64 } from "@vueuse/core";
-import axios from "axios";
 import { defineStore } from "pinia";
+import { useFetch } from "@vueuse/core";
 
-interface Registration {
-  user: UserRequest;
-}
+import type { Registration } from "@/models/user/interfaces";
 
 const BACKEND_API = import.meta.env.VITE_APP_BACKEND_URI;
 
@@ -58,12 +54,12 @@ export const useRegistrationStore = defineStore("userRegistrationStore", {
     setPasswd(newPasswd: string) {
       this.user.password = newPasswd;
     },
-    setGender(newGender: string){
+    setGender(newGender: string) {
       this.user.bio = newGender;
     },
 
     async addNewUser() {
-      console.log(JSON.stringify(this.user))
+      console.log(JSON.stringify(this.user));
       const { isFetching, error, data } = await useFetch(
         `${BACKEND_API}/user`
         // { timeout: BACKEND_API_TIMEOUT }

@@ -5,18 +5,22 @@ import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useBaseLayoutStore } from "@/stores/layout/baseLayout";
 import LoginModal from "@/components/dialog/LoginModal.vue";
+import { useLoginStore } from "@/stores/session/loginStore";
 
 const baseLayout = useBaseLayoutStore();
-
+const loginStore = useLoginStore();
 const r = useRoute();
 const rr = useRouter();
 const drawer = ref(false);
-const local = useI18n();
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const currentSideName = ref(
   r.name ? t(`sidebar.default.${String(r.name)}`) : ""
 );
+
+const goToLoginPage = () => {
+  baseLayout.act_toggleLoginWindow(true);
+};
 
 const drawerState = computed({
   get() {
@@ -27,19 +31,9 @@ const drawerState = computed({
   },
 });
 
-const openSideBar = () => drawerState.value != drawerState.value;
-
-const goToLoginPage = () => {
-  baseLayout.act_toggleLoginWindow(true);
-
-  // rr.push({ name: "registry" });
-};
-
-// watch: {
-//   currentSideName() {
-//     this.currentSideName = this.$t(`sidebar.default.${String(this.r.name)}`);
-//   },
-// },
+const isUserLoggedIn = computed(() => {
+  return loginStore.isUserLoggedIn;
+});
 </script>
 
 <template>
@@ -70,16 +64,19 @@ const goToLoginPage = () => {
             class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
           >
             <LocaleSwitcher />
-            <button
-              class="rounded-full flex bg-white px-2 py-2 transform hover:scale-105"
-              @click="goToLoginPage()"
-            >
-              <span class="pl-2 pr-2">Sign Up</span>
-              <i
-                class="i-heroicons-arrow-right-on-rectangle h-6 w-6 hover:text-blue-400"
-              ></i>
-            </button>
-            <LoginModal />
+            <div v-if="!isUserLoggedIn">
+              <button
+                class="rounded-full flex bg-white px-2 py-2 transform hover:scale-105"
+                @click="goToLoginPage()"
+              >
+                <span class="pl-2 pr-2">Login</span>
+                <i
+                  class="i-heroicons-arrow-right-on-rectangle h-6 w-6 hover:text-blue-400"
+                ></i>
+              </button>
+              <LoginModal />
+            </div>
+            <div v-else></div>
           </div>
         </div>
       </div>
