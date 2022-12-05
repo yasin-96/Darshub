@@ -10,15 +10,15 @@ import (
 )
 
 type Course struct {
-	ID          primitive.ObjectID   `bson:"_id"`
-	Name        string               `bson:"name"`
-	Description string               `bson:"description"`
-	Duration    time.Time            `bson:"duration"`
-	Level       string               `bson:"level"`
-	Content     []primitive.ObjectID `bson:"content"`
-	Author      string               `bson:"author"`
-	Released    time.Time            `bson:"released"`
-	LastUpdate  time.Time            `bson:"lastUpdate"`
+	ID          primitive.ObjectID   `json:"id" bson:"_id"`
+	Name        string               `json:"name" bson:"name"`
+	Description string               `json:"description" bson:"description"`
+	Duration    time.Time            `json:"duration" bson:"duration"`
+	Level       string               `json:"level" bson:"level"`
+	Content     []primitive.ObjectID `json:"content" bson:"content"`
+	Author      string               `json:"author" bson:"author"`
+	Released    time.Time            `json:"released" bson:"released"`
+	LastUpdate  time.Time            `json:"lastUpdate" bson:"lastUpdate"`
 }
 
 type CreateCourseRequest struct {
