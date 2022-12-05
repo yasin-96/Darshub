@@ -8,7 +8,7 @@ import {
   GenderOptionRO,
   type UserRequest,
 } from "@/models/user/types";
-import { useRegistrationStore } from "@/stores/registrationStore";
+import { useRegistrationStore } from "@/stores/session/registrationStore";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();

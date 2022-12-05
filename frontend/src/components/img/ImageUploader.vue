@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { reactive, computed, onMounted, onUnmounted } from "vue";
-import { useRegistrationStore } from "@/stores/registrationStore";
+import { useRegistrationStore } from "@/stores/session/registrationStore";
 
 const state = reactive({
   maxFileSize: 2 * 1024 * 1024,

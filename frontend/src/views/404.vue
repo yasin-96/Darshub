@@ -1,3 +1,24 @@
+<script lang="ts">
+import { defineComponent } from "vue";
+import { useI18n } from "vue-i18n";
+import { useMeta } from "vue-meta";
+
+export default defineComponent({
+  name: "NotFoundView",
+  setup() {
+    const { t } = useI18n();
+    useMeta({
+      title: "404 Error",
+      meta: [{ name: "description", content: "" }],
+    });
+    return {
+      t,
+    };
+  },
+});
+</script>
+
+
 <template>
   <div class="relative px-6 lg:px-8">
     <div class="mx-auto max-w-3xl pt-20 pb-32 sm:pt-48 sm:pb-40">
@@ -24,22 +45,3 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import { useI18n } from "vue-i18n";
-import { useMeta } from "vue-meta";
-
-export default defineComponent({
-  name: "NotFoundView",
-  setup() {
-    const { t } = useI18n();
-    useMeta({
-      title: "404 Error",
-      meta: [{ name: "description", content: "" }],
-    });
-    return {
-      t,
-    };
-  },
-});
-</script>

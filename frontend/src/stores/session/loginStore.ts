@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { useFetch } from "@vueuse/core";
 
-import type { UserLoginData, UserRequest } from "@/models/user/types";
+import type { User, UserLoginData, UserRequest } from "@/models/user/types";
 import type { UserDetails } from "@/models/user/interfaces";
 
 const BACKEND_API = import.meta.env.VITE_APP_BACKEND_URI;
@@ -66,6 +66,9 @@ export const useLoginStore = defineStore("loginStore", {
     },
     getUserId(): string | null {
       return this.user.id;
+    },
+    getUser(): UserRequest {
+      return this.user;
     },
   },
 });
