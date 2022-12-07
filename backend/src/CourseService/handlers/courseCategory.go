@@ -38,22 +38,26 @@ func FindCourseCategory(rw http.ResponseWriter, r *http.Request) {
 
 	courseCategoryId, err := primitive.ObjectIDFromHex(vars["courseCategoryId"])
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		rw.WriteHeader(http.StatusInternalServerError)
 	}
 
 	courseCategory := data.FindCourseCategory(courseCategoryId)
 	if reflect.ValueOf(courseCategory).IsZero() {
 		rw.WriteHeader(http.StatusNotFound)
+		rw.Write([]byte("The course category with the given id was not found."))
+		return
 	}
 
-	rw.WriteHeader(http.StatusOK)
 	parseErr := util.ToJSON(courseCategory, rw)
 	if parseErr != nil {
-		log.Fatal(err)
+		log.Print(err)
+		rw.WriteHeader(http.StatusInternalServerError)
 	}
 }
 
 func GetAllCourseCategoryNames(rw http.ResponseWriter, r *http.Request) {
+	println("test")
 	courseCategories := data.FindAllCourses()
 	courseCategoryNames := make([]string, 0)
 	for _, v := range courseCategories {
@@ -62,22 +66,25 @@ func GetAllCourseCategoryNames(rw http.ResponseWriter, r *http.Request) {
 	rw.WriteHeader(http.StatusOK)
 	parseErr := util.ToJSON(courseCategoryNames, rw)
 	if parseErr != nil {
-		log.Fatal(parseErr)
+		log.Print(parseErr)
+		rw.WriteHeader(http.StatusInternalServerError)
 	}
 }
 
 func UpdateCourseCategory(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	if vars == nil || vars["courseId"] == "" {
+	if vars == nil || vars["courseCategoryId"] == "" {
 		rw.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	updatedCourseCategory := &data.UpdateCourseCategoryRequest{}
 
-	courseCategoryId, err := primitive.ObjectIDFromHex(vars["courseId"])
+	courseCategoryId, err := primitive.ObjectIDFromHex(vars["courseCategoryId"])
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		rw.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 	parseErr := util.FromJSON(updatedCourseCategory, r.Body)
@@ -93,16 +100,16 @@ func UpdateCourseCategory(rw http.ResponseWriter, r *http.Request) {
 func DeleteCourseCategory(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	if vars == nil || vars["courseId"] == "" {
+	if vars == nil || vars["courseCategoryId"] == "" {
 		rw.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	courseId, err := primitive.ObjectIDFromHex(vars["courseId"])
+	courseCategoryId, err := primitive.ObjectIDFromHex(vars["courseCategoryId"])
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return
 	}
-
-	data.Delete(courseId)
+	data.DeleteCourseCategory(courseCategoryId)
 	rw.WriteHeader(http.StatusNoContent)
 }

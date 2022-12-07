@@ -22,11 +22,10 @@ type Course struct {
 }
 
 type CreateCourseRequest struct {
-	ID          primitive.ObjectID   `json:"id"`
 	Name        string               `json:"name"`
 	Description string               `json:"description"`
-	Duration    time.Time            `json:"duration"`
-	Level       string               `json:"level"`
+	Duration    string               `json:"duration"`
+	Level       int                  `json:"level"`
 	Content     []primitive.ObjectID `json:"content"`
 	Author      string               `json:"author"`
 	Released    time.Time            `json:"released"`
@@ -36,11 +35,10 @@ type CreateCourseRequest struct {
 type UpdateCourseRequest struct {
 	Name        string               `json:"name"`
 	Description string               `json:"description"`
-	Duration    time.Time            `json:"duration"`
-	Level       string               `json:"level"`
+	Duration    string               `json:"duration"`
+	Level       int                  `json:"level"`
 	Content     []primitive.ObjectID `json:"content"`
 	Author      string               `json:"author"`
-	Released    time.Time            `json:"released"`
 	LastUpdate  time.Time            `json:"lastUpdate"`
 }
 
@@ -48,7 +46,6 @@ func Create(course *CreateCourseRequest) {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
-	course.ID = primitive.NewObjectID()
 
 	_, err := client.Database("darshub").Collection("course").InsertOne(ctx, course)
 	if err != nil {
@@ -64,7 +61,8 @@ func Find(courseId primitive.ObjectID) Course {
 
 	err := client.Database("darshub").Collection("course").FindOne(ctx, bson.M{"_id": courseId}).Decode(&course)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return Course{}
 	}
 	return course
 }
@@ -77,10 +75,9 @@ func GetAllCourses() []Course {
 
 	cur, err := client.Database("darshub").Collection("course").Find(ctx, bson.D{})
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 	cur.All(ctx, &courses)
-
 	return courses
 }
 
@@ -96,13 +93,13 @@ func Update(courseId primitive.ObjectID, updatedCourse *UpdateCourseRequest) Cou
 		"level":       updatedCourse.Level,
 		"content":     updatedCourse.Content,
 		"author":      updatedCourse.Author,
-		"released":    updatedCourse.Released,
 		"lastUpdate":  updatedCourse.LastUpdate,
 	}
 
 	_, err := client.Database("darshub").Collection("course").ReplaceOne(ctx, bson.M{"_id": courseId}, update)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return Course{}
 	}
 
 	return Find(courseId)
@@ -115,6 +112,8 @@ func Delete(courseId primitive.ObjectID) {
 
 	_, err := client.Database("darshub").Collection("course").DeleteOne(ctx, bson.M{"_id": courseId})
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return
 	}
+	log.Print("Course was successfully deleted")
 }

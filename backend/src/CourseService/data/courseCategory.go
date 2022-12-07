@@ -16,10 +16,9 @@ type CourseCategory struct {
 }
 
 type CreateCourseCategoryRequest struct {
-	ID          primitive.ObjectID `json:"id"`
-	Name        string             `json:"name"`
-	Description string             `json:"description"`
-	Skills      string             `json:"skills"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Skills      string `json:"skills,omitempty"`
 }
 
 type UpdateCourseCategoryRequest struct {
@@ -33,8 +32,7 @@ func CreateCourseCategory(courseCategory *CreateCourseCategoryRequest) {
 	defer cancel()
 	defer client.Disconnect(ctx)
 
-	courseCategory.ID = primitive.NewObjectID()
-	_, err := client.Database("darshub").Collection("courseCategory").InsertOne(ctx, courseCategory)
+	_, err := client.Database("darshub").Collection("course_category").InsertOne(ctx, courseCategory)
 	if err != nil {
 		log.Printf("Could not save course: %v", err)
 	}
@@ -46,9 +44,10 @@ func FindCourseCategory(courseCategoryId primitive.ObjectID) CourseCategory {
 	defer cancel()
 	defer client.Disconnect(ctx)
 
-	err := client.Database("darshub").Collection("courseCategory").FindOne(ctx, bson.M{"_id": courseCategoryId}).Decode(&courseCategory)
+	err := client.Database("darshub").Collection("course_Category").FindOne(ctx, bson.M{"_id": courseCategoryId}).Decode(&courseCategory)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return CourseCategory{}
 	}
 	return courseCategory
 }
@@ -59,9 +58,9 @@ func FindAllCourses() []CourseCategory {
 	defer cancel()
 	defer client.Disconnect(ctx)
 
-	cur, err := client.Database("darshub").Collection("courseCategory").Find(ctx, bson.M{})
+	cur, err := client.Database("darshub").Collection("course_category").Find(ctx, bson.M{})
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 	cur.All(ctx, &courseCategories)
 	return courseCategories
@@ -75,12 +74,12 @@ func UpdateCourseCategory(courseCategoryId primitive.ObjectID, updatedCourseCate
 	update := bson.M{
 		"name":        updatedCourseCategory.Name,
 		"description": updatedCourseCategory.Description,
-		"status":      updatedCourseCategory.Skills,
+		"skills":      updatedCourseCategory.Skills,
 	}
 
-	_, err := client.Database("darshub").Collection("courseCategory").ReplaceOne(ctx, bson.M{"_id": courseCategoryId}, update)
+	_, err := client.Database("darshub").Collection("course_category").ReplaceOne(ctx, bson.M{"_id": courseCategoryId}, update)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 
 	return FindCourseCategory(courseCategoryId)
@@ -91,8 +90,10 @@ func DeleteCourseCategory(courseCategoryId primitive.ObjectID) {
 	defer cancel()
 	defer client.Disconnect(ctx)
 
-	_, err := client.Database("darshub").Collection("courseCategory").DeleteOne(ctx, bson.M{"_id": courseCategoryId})
+	_, err := client.Database("darshub").Collection("course_category").DeleteOne(ctx, bson.M{"_id": courseCategoryId})
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return
 	}
+	log.Print("Course category was deleted successfully")
 }

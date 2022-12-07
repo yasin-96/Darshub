@@ -31,7 +31,7 @@ func CreateSubchapter(subchapter *CreateSubchapterRequest) {
 	defer client.Disconnect(ctx)
 
 	subchapter.ID = primitive.NewObjectID()
-	_, err := client.Database("darshub").Collection("chapter").InsertOne(ctx, subchapter)
+	_, err := client.Database("darshub").Collection("subchapter").InsertOne(ctx, subchapter)
 	if err != nil {
 		log.Printf("Could not save chapter: %v", err)
 	}
@@ -45,7 +45,7 @@ func FindSubchapter(subchapterId primitive.ObjectID) Subchapter {
 
 	err := client.Database("darshub").Collection("subchapter").FindOne(ctx, bson.M{"_id": subchapterId}).Decode(&subchapter)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 	return subchapter
 }
@@ -62,7 +62,8 @@ func UpdateSubchapter(subchapterId primitive.ObjectID, updatedSubchapter *Update
 
 	_, err := client.Database("darshub").Collection("subchapter").ReplaceOne(ctx, bson.M{"_id": subchapterId}, update)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return Chapter{}
 	}
 
 	return FindChapter(subchapterId)
@@ -75,6 +76,8 @@ func DeleteSubchapter(subchapterId primitive.ObjectID) {
 
 	_, err := client.Database("darshub").Collection("subchapter").DeleteOne(ctx, bson.M{"_id": subchapterId})
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return
 	}
+	log.Print("Chapter was deleted successfully")
 }

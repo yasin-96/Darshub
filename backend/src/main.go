@@ -33,12 +33,14 @@ func main() {
 
 	getRouter := sm.Methods(http.MethodGet, http.MethodOptions).Subrouter()
 	getRouter.HandleFunc("/user/{userId}", userHandler.FindById)
+	getRouter.HandleFunc("/user/{userId}/setInactive", userHandler.SetAccountInactive)
+	getRouter.HandleFunc("/user/all", userHandler.GetAllUsers)
 	getRouter.HandleFunc("/course/{courseId}", courseHandler.FindCourse)
 	getRouter.HandleFunc("/courseCategory/{courseCategoryId}", courseHandler.FindCourseCategory)
 	getRouter.HandleFunc("/chapter/{chapterId}", courseHandler.FindChapter)
 	getRouter.HandleFunc("/subchapter/{subchapterId}", courseHandler.FindSubchapter)
 	getRouter.HandleFunc("/courses", courseHandler.GetAllCourses)
-	getRouter.HandleFunc("/courseCategory", courseHandler.GetAllCourseCategoryNames)
+	getRouter.HandleFunc("/courseCategoryNames/all", courseHandler.GetAllCourseCategoryNames)
 
 	postRouter := sm.Methods(http.MethodPost, http.MethodOptions).Subrouter()
 	postRouter.HandleFunc("/user", userHandler.RegisterUser)
@@ -99,8 +101,8 @@ func main() {
 	s.Shutdown(ctx)
 }
 
-//All Request with Options will be ignored
-//TODO Specify the origins ans methods from const variable
+// All Request with Options will be ignored
+// TODO Specify the origins ans methods from const variable
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")

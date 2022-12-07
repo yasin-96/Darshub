@@ -20,7 +20,7 @@ type LoginRequest struct {
 func RegisterUser(rw http.ResponseWriter, r *http.Request) {
 
 	if r.Body == http.NoBody {
-		log.Println("Request is not valid. Req Body is not valid.")
+		log.Println("Req Body is not valid.")
 		rw.WriteHeader(http.StatusBadRequest)
 		rw.Write([]byte("Request is not valid."))
 		// http.Error(rw, "Request is not valid.", http.StatusBadRequest)
@@ -31,7 +31,7 @@ func RegisterUser(rw http.ResponseWriter, r *http.Request) {
 
 	err := util.FromJSON(user, r.Body)
 	if err != nil {
-		log.Println("Request body could not parsed [USER]")
+		log.Println("Request body could not be parsed")
 		log.Println(err)
 		rw.WriteHeader(http.StatusBadRequest)
 		return
@@ -45,13 +45,21 @@ func RegisterUser(rw http.ResponseWriter, r *http.Request) {
 		user.TelNr == "" ||
 		user.Bio == "" {
 		rw.WriteHeader(http.StatusBadRequest)
-		rw.Write([]byte("Request is not valid. Requierd Information are missing"))
+		rw.Write([]byte("Request is not valid. Required informations are missing"))
 		return
 	}
 
-	dbResponse := data.Create(user)
+	data.Create(user)
 	rw.WriteHeader(http.StatusCreated)
-	rw.Write([]byte(dbResponse))
+}
+
+func GetAllUsers(rw http.ResponseWriter, r *http.Request) {
+	users := data.GetAllUsers()
+	rw.WriteHeader(http.StatusOK)
+	parseErr := util.ToJSON(users, rw)
+	if parseErr != nil {
+		log.Print(parseErr)
+	}
 }
 
 func FindById(rw http.ResponseWriter, r *http.Request) {
@@ -72,6 +80,7 @@ func FindById(rw http.ResponseWriter, r *http.Request) {
 	user := data.FindById(userId)
 	if reflect.ValueOf(user).IsZero() {
 		rw.WriteHeader(http.StatusNotFound)
+		rw.Write([]byte("The user with the given id does not exist"))
 		return
 	}
 
@@ -102,7 +111,7 @@ func UpdateUser(rw http.ResponseWriter, r *http.Request) {
 	parseErr := util.FromJSON(updatedUser, r.Body)
 	if parseErr != nil {
 		// http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
-		log.Println("Request body could not parsed")
+		log.Println("Request body could not be parsed")
 		log.Println(err)
 		rw.WriteHeader(http.StatusBadRequest)
 		return
@@ -143,10 +152,7 @@ func Login(rw http.ResponseWriter, r *http.Request) {
 
 	if r.Body == http.NoBody {
 		log.Println("Request is not valid. Req Body is not valid or missing information")
-
 		http.Error(rw, "Request is not valid.", http.StatusBadRequest)
-
-		// http.Error(rw, "Request is not valid.", http.StatusBadRequest)
 		rw.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -155,7 +161,8 @@ func Login(rw http.ResponseWriter, r *http.Request) {
 
 	err := util.FromJSON(loginRequest, r.Body)
 	if err != nil {
-		log.Fatal(err)
+		rw.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	if loginRequest.Email == "" || loginRequest.Password == "" {
@@ -164,10 +171,35 @@ func Login(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	user := data.Find(loginRequest.Email)
-	if data.CheckIfPasswordsMatch(user, loginRequest.Password) {
-		rw.WriteHeader(http.StatusOK)
-		util.ToJSON(user, rw)
+
+	if reflect.ValueOf(user).IsZero() {
+		rw.WriteHeader(http.StatusNotFound)
+		rw.Write([]byte("No account found with the entered email address."))
+		return
 	}
 
-	rw.WriteHeader(http.StatusUnauthorized)
+	if !data.CheckIfPasswordsMatch(user, loginRequest.Password) {
+		rw.WriteHeader(http.StatusUnauthorized)
+		rw.Write([]byte("The password which was entered is incorrect."))
+		return
+	}
+
+	rw.WriteHeader(http.StatusOK)
+	util.ToJSON(user, rw)
+}
+
+func SetAccountInactive(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	if vars == nil || vars["userId"] == "" {
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	userId, err := primitive.ObjectIDFromHex(vars["userId"])
+	if err != nil {
+		log.Print("Could not parse userId: ", err)
+	}
+
+	data.SetAccountInactive(userId)
 }

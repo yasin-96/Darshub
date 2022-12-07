@@ -12,43 +12,47 @@ import (
 )
 
 func InsertChapter(rw http.ResponseWriter, r *http.Request) {
-	chapter := &data.CreateChapterRequest{}
+	chapterRequest := &data.CreateChapterRequest{}
 
 	if r.Body == nil {
 		rw.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	err := util.FromJSON(chapter, r.Body)
+	err := util.FromJSON(chapterRequest, r.Body)
 	if err != nil {
 		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
+		return
 	}
-
-	data.CreateChapter(chapter)
+	data.CreateChapter(chapterRequest)
 	rw.WriteHeader(http.StatusCreated)
+
 }
 
 func FindChapter(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	if vars == nil || vars["courseId"] == "" {
+	if vars == nil || vars["chapterId"] == "" {
 		rw.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	chapterId, err := primitive.ObjectIDFromHex(vars["courseId"])
+	chapterId, err := primitive.ObjectIDFromHex(vars["chapterId"])
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		rw.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 	chapter := data.FindChapter(chapterId)
 	if reflect.ValueOf(chapter).IsZero() {
 		rw.WriteHeader(http.StatusNotFound)
+		rw.Write([]byte("Course category with the given id does not exist"))
 		return
 	}
-	rw.WriteHeader(http.StatusOK)
 	parseErr := util.ToJSON(chapter, rw)
 	if parseErr != nil {
-		log.Fatal(parseErr)
+		rw.WriteHeader(http.StatusInternalServerError)
+		log.Print(parseErr)
 	}
 }
 
@@ -64,9 +68,9 @@ func UpdateChapter(rw http.ResponseWriter, r *http.Request) {
 
 	chapterId, err := primitive.ObjectIDFromHex(vars["chapterId"])
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return
 	}
-
 	parseErr := util.FromJSON(updatedChapter, r.Body)
 	if parseErr != nil {
 		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
@@ -87,9 +91,9 @@ func DeleteChapter(rw http.ResponseWriter, r *http.Request) {
 
 	chapterId, err := primitive.ObjectIDFromHex(vars["chapterId"])
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return
 	}
-
 	data.DeleteChapter(chapterId)
 	rw.WriteHeader(http.StatusNoContent)
 }
