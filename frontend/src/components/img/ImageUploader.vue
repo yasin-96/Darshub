@@ -48,19 +48,19 @@ const checkFileType = (typeToCheck: any) => {
     return true;
   }
 };
-const selectFile = (newAvatarFile: Event) => {
-  console.log("newAvatarFile", newAvatarFile)
-  if (newAvatarFile) {
-    const { size, type } = newAvatarFile;
-    console.table({ size, type });
-    console.log("state.maxFileSize", state.maxFileSize);
-    if (checkFileType(type)) {
-      if (checkFileSize(size)) {
-        state.fileReader.readAsText(newAvatarFile);
-      }
-    }
-  }
-};
+// const selectFile = (newAvatarFile: Event) => {
+//   console.log("newAvatarFile", newAvatarFile)
+//   if (newAvatarFile) {
+//     const { size, type } = newAvatarFile;
+//     console.table({ size, type });
+//     console.log("state.maxFileSize", state.maxFileSize);
+//     if (checkFileType(type)) {
+//       if (checkFileSize(size)) {
+//         state.fileReader.readAsText(newAvatarFile);
+//       }
+//     }
+//   }
+// };
 
 const resetInput = () => {
   avatar.value = null;
@@ -148,7 +148,7 @@ onUnmounted(() => {
         />
         <img else class="h-16 w-16 object-cover rounded-full" alt="Profile" />
       </div>
-      <label class="block">
+      <!-- <label class="block">
         <input
           type="file"
           class="rounded-lg form-input block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-blue-500 hover:file:bg-violet-100"
@@ -160,7 +160,7 @@ onUnmounted(() => {
         <span v-else class="text-sm text-gray-500">
           Erlaubte formate [{{ allowedTypes }}]
         </span>
-      </label>
+      </label> -->
     </form>
   </div>
 </template>

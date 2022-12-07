@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, computed } from "vue";
-import ImageUploader from "@/components/img/ImageUploader.vue";
+// import ImageUploader from "@/components/img/ImageUploader.vue";
 import { useRouter } from "vue-router";
 
 import {
@@ -232,7 +232,7 @@ const registerNewUser = async () => {
             />
           </label>
 
-          <ImageUploader />
+          <!-- <ImageUploader /> -->
         </div>
         <div class="p-2">
           <div class="flex"></div>

@@ -37,16 +37,16 @@ export default defineConfig({
     sourcemap: false,
     cssCodeSplit: true,
     chunkSizeWarningLimit: 1400,
-    rollupOptions: {
-      // https://rollupjs.org/guide/en/#outputmanualchunks
-      output: {
-        strict: true,
-        manualChunks: {
-          general: [],
-          data: [],
-        },
-      },
-    },
+    // rollupOptions: {
+    //   // https://rollupjs.org/guide/en/#outputmanualchunks
+    //   output: {
+    //     strict: true,
+    //     manualChunks: {
+    //       general: [],
+    //       data: [],
+    //     },
+    //   },
+    // },
   },
   resolve: {
     alias: {

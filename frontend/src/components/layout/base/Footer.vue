@@ -10,7 +10,7 @@ const logoFileName = "";
     <div class="">
       <div class="avatar">
         <div class="w-24 rounded-full">
-          <img width="128" src="logoUrl" alt="Logo" />
+          <img width="128" src="" alt="Logo" />
         </div>
       </div>
       <p>

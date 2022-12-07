@@ -1,17 +1,11 @@
 #==================== Building Stage ================================================
 # base image
-FROM node:12.2.0-alpine as node
+FROM node:16.18.0-alpine as node
 
-# set working directory
-#RUN mkdir -p /usr/src/app
+# clean working directory
+RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-# add `/usr/src/app/node_modules/.bin` to $PATH
-#ENV PATH /usr/src/app/node_modules/.bin:$PATH
-
-# install and cache app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
 ARG envname
 
 RUN apk add --no-cache git
@@ -19,7 +13,6 @@ RUN apk add --no-cache git
 COPY package*.json ./
 RUN npm i
 RUN npm i --save-dev
-
 
 COPY . .
 
