@@ -1,7 +1,12 @@
 import { defineStore } from "pinia";
-import { useFetch } from "@vueuse/core";
+import { useFetch, useStorage } from "@vueuse/core";
 
-import type { User, UserLoginData, UserRequest } from "@/models/user/types";
+import {
+  UserRoles,
+  type User,
+  type UserLoginData,
+  type UserRequest,
+} from "@/models/user/types";
 import type { UserDetails } from "@/models/user/interfaces";
 
 const BACKEND_API = import.meta.env.VITE_APP_BACKEND_URI;
@@ -14,7 +19,7 @@ export const useLoginStore = defineStore("loginStore", {
       password: "",
       first_name: "",
       last_name: "",
-      birthday: null,
+      birthday: "",
       avatar: "",
       email: "",
       telNr: "",
@@ -25,9 +30,10 @@ export const useLoginStore = defineStore("loginStore", {
       country: "",
       isActive: true,
       bio: "",
-      role: new Array<Uint8Array>(),
+      role: new Array<UserRoles>(),
     },
   }),
+  persist: true,
   actions: {
     clear() {
       this.$reset();
@@ -69,6 +75,18 @@ export const useLoginStore = defineStore("loginStore", {
     },
     getUser(): UserRequest {
       return this.user;
+    },
+    userHasAuthorRights(): boolean {
+      return this.user.role.includes(UserRoles.AUTHOR, 0) ? true : false;
+    },
+    userHasUserManagementRights(): boolean {
+      return this.user.role.includes(UserRoles.AUTHOR, 0) ? true : false;
+    },
+    userHasCourseManagementRights(): boolean {
+      return this.user.role.includes(UserRoles.AUTHOR, 0) ? true : false;
+    },
+    userHasAdminRights(): boolean {
+      return this.user.role.includes(UserRoles.ADMIN, 0) ? true : false;
     },
   },
 });

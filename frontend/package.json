@@ -17,9 +17,9 @@
   },
   "dependencies": {
     "@vueuse/core": "^9.6.0",
-    "daisyui": "^2.38.0",
     "gsap": "^3.11.3",
     "pinia": "^2.0.22",
+    "pinia-plugin-persistedstate": "^3.0.1",
     "tailwindcss-plugin-icons": "^2.0.8",
     "vue": "^3.2.40",
     "vue-i18n": "^9.2.2",

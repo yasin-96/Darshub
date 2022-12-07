@@ -22,7 +22,13 @@ import router from "./router";
 
 //Store def.
 import { createPinia } from "pinia";
+import { createPersistedState } from "pinia-plugin-persistedstate";
 const pinia = createPinia();
+pinia.use(
+  createPersistedState({
+    key: (id) => `_persisted_darshub_${id}`,
+  })
+);
 
 //I18n Languages
 import { i18nLanguages } from "./plugins/i18nPlugin";

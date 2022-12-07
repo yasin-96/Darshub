@@ -8,12 +8,21 @@ export default {
   sidebar: {
     default: {
       index: "Home",
-      gallery: "Gallery",
       courses: "Courses",
     },
-    admin: {},
+    admin: {
+      sidebarMenuTitel: "Admin",
+      userManagement: "User Management",
+      courseManagement: "Course Management",
+    },
+    user: {
+      sidebarMenuTitel: "User",
+      course: "Course",
+      dashboard: "Dashboard",
+      settings: "Settings",
+    },
     footer: {
-      impress: "Impress",
+      // impress: "Impress",
       team: "Team",
       contact: "Contact",
     },
@@ -93,6 +102,25 @@ export default {
               placeholder: "",
               hints: "",
             },
+          },
+        },
+      },
+    },
+    admin: {
+      courseManagement: {
+        table: {
+          header: {
+            id: "ID",
+            name: "Name",
+            description: "Description",
+            duration: "Duration",
+            level: "Level",
+            content: "Content",
+            author: "Author",
+            released: "Released",
+            lastupdate: "Lastupdate",
+            action: "Action",
+
           },
         },
       },
