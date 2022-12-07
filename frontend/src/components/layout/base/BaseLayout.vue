@@ -15,7 +15,7 @@ const drawerLeftSide = computed(() => {
     :class="`${
       !drawerLeftSide
         ? ''
-        : 'fixed inset-0 bg-gray-700 bg-opacity-75 transition-opacity'
+        : 'fixed inset-0 bg-warmGray-800 bg-opacity-10 transition-opacity'
     }`"
   ></div>
 
@@ -24,20 +24,20 @@ const drawerLeftSide = computed(() => {
       <!-- Banner/ Navbar Top -->
       <slot name="info"> </slot>
       <slot name="nav"></slot>
-
+      
       <div class="flex h-full">
         <!-- Sidebar left / Main Content -->
         <slot name="sidebarLeft" class=""></slot>
-        <main
+        <div
           :class="`flex flex-col w-full overflow-x-hidden overflow-y-auto'
           }`"
         >
           <div class="mx-auto px-6 py-8">
             <slot name="main"></slot>
           </div>
-        </main>
+        </div>
       </div>
+      <slot name="footer"></slot>
     </div>
   </div>
-  <slot name="footer"></slot>
 </template>

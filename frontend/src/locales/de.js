@@ -8,14 +8,23 @@ export default {
   sidebar: {
     default: {
       index: "Start",
-      gallery: "",
-      courses: "",
+      courses: "Kurse",
     },
-    admin: {},
+    admin: {
+      sidebarMenuTitel: "Admin",
+      userManagement: "Benutzerverwaltung",
+      courseManagement: "Kursverwaltung",
+    },
+    user: {
+      sidebarMenuTitel: "Benutzer",
+      course: "Meine Kurse",
+      dashboard: "Übersicht",
+      settings: "Einstellungen",
+    },
     footer: {
-      impress: "",
-      team: "",
-      contact: "",
+      // impress: "Impressum",
+      team: "Team",
+      contact: "Kontakt",
     },
   },
   footer: {
@@ -97,8 +106,26 @@ export default {
         },
       },
     },
-    error:{
-      notFound:""
-    }
+    admin: {
+      courseManagement: {
+        table: {
+          header: {
+            id: "ID",
+            name: "Titel",
+            description: "Beschreibung",
+            duration: "Dauer",
+            level: "Schwierigkeitsgrad",
+            content: "Inhalt",
+            author: "Autor",
+            released: "Erstellt",
+            lastupdate: "Verändert",
+            action: "Aktion",
+          },
+        },
+      },
+    },
+    error: {
+      notFound: "",
+    },
   },
 };

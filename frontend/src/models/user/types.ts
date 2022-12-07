@@ -4,6 +4,14 @@
 //   DIVERS;
 // };
 
+export enum UserRoles {
+  USER = 1,
+  AUTHOR = 2,
+  USER_MANAGER = 3,
+  COURSE_MANAGER = 3,
+  ADMIN = 99,
+}
+
 export enum GenderOption {
   MALE = 0,
   FEMALE,
@@ -47,7 +55,7 @@ export type User = {
   country: string;
   isActive: boolean;
   bio: string;
-  role: Array<Uint8Array>;
+  role: Array<UserRoles>;
 };
 
 export type UserInfo = {
@@ -65,7 +73,7 @@ export type UserInfo = {
   country: string;
   isActive: boolean;
   bio: string;
-  role: Array<Uint8Array>;
+  role: Array<UserRoles>;
 };
 
 export type UserRequest = {
@@ -73,7 +81,7 @@ export type UserRequest = {
   password: string;
   first_name: string;
   last_name: string;
-  birthday: Date | null;
+  birthday: string;
   avatar: string | null;
   email: string;
   telNr: string;
@@ -84,7 +92,7 @@ export type UserRequest = {
   country: string;
   isActive: boolean;
   bio: string;
-  role: Array<Uint8Array>;
+  role: Array<UserRoles>;
 };
 
 export type UpdateUserRequest = {
