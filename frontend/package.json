@@ -2,7 +2,7 @@
   "name": "vite-project",
   "version": "0.0.0",
   "scripts": {
-    "serve:local": "vite",
+    "serve:local": "vite --host",
     "serve:dev": "vite --mode develop",
     "serve:prod": "vite --mode production",
     "build": "run-p type-check build-only",
