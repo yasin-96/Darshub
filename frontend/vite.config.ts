@@ -18,7 +18,10 @@ export default defineConfig({
       // to use Vue I18n Legacy API
       compositionOnly: false,
       // you need to set i18n resource including paths !
-      include: resolve(dirname(fileURLToPath(import.meta.url)), "./path/to/src/locales/**"),
+      include: resolve(
+        dirname(fileURLToPath(import.meta.url)),
+        "./path/to/src/locales/**"
+      ),
     }),
   ],
   css: {
@@ -26,7 +29,9 @@ export default defineConfig({
       plugins: [
         require("tailwindcss/nesting"),
         require("tailwindcss")({
-          config: process.env?.TAILWIND_CONFIG ? `tailwind-${process.env.TAILWIND_CONFIG}.config.js` : "./tailwind.config.js",
+          config: process.env?.TAILWIND_CONFIG
+            ? `tailwind-${process.env.TAILWIND_CONFIG}.config.js`
+            : "./tailwind.config.js",
         }),
         require("autoprefixer"),
       ],
