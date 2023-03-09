@@ -203,3 +203,18 @@ func SetAccountInactive(rw http.ResponseWriter, r *http.Request) {
 
 	data.SetAccountInactive(userId)
 }
+
+func ForgotPassword(rw http.ResponseWriter, r *http.Request) {
+	if r.Body == http.NoBody {
+		log.Println("Req Body is not valid.")
+		rw.WriteHeader(http.StatusBadRequest)
+		rw.Write([]byte("Request is not valid."))
+		// http.Error(rw, "Request is not valid.", http.StatusBadRequest)
+		return
+	}
+
+	forgotPasswordRequest := &data.ForgotPasswordRequest{}
+	util.FromJSON(forgotPasswordRequest, r.Body)
+
+	data.ForgotPassword(forgotPasswordRequest.Email)
+}
