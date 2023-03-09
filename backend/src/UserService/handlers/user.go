@@ -53,15 +53,6 @@ func RegisterUser(rw http.ResponseWriter, r *http.Request) {
 	rw.WriteHeader(http.StatusCreated)
 }
 
-func GetAllUsers(rw http.ResponseWriter, r *http.Request) {
-	users := data.GetAllUsers()
-	rw.WriteHeader(http.StatusOK)
-	parseErr := util.ToJSON(users, rw)
-	if parseErr != nil {
-		log.Print(parseErr)
-	}
-}
-
 func FindById(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 

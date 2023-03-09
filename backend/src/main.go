@@ -34,7 +34,6 @@ func main() {
 	getRouter := sm.Methods(http.MethodGet, http.MethodOptions).Subrouter()
 	getRouter.HandleFunc("/user/{userId}", userHandler.FindById)
 	getRouter.HandleFunc("/user/{userId}/setInactive", userHandler.SetAccountInactive)
-	getRouter.HandleFunc("/user/all", userHandler.GetAllUsers)
 	getRouter.HandleFunc("/course/{courseId}", courseHandler.FindCourse)
 	getRouter.HandleFunc("/courseCategory/{courseCategoryId}", courseHandler.FindCourseCategory)
 	getRouter.HandleFunc("/chapter/{chapterId}", courseHandler.FindChapter)

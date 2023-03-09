@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
+	gomail "gopkg.in/gomail.v2"
 )
 
 //Abstraction to MVC, this are the service functions
@@ -26,6 +27,7 @@ type User struct {
 	School     string             `bson:"school"`
 	Subject    string             `bson:"subject"`
 	Country    string             `bson:"country"`
+	IsActive   bool               `bson:is_active"`
 }
 
 type UserRequest struct {
@@ -42,6 +44,7 @@ type UserRequest struct {
 	School     string             `json:"school"`
 	Subject    string             `json:"subject"`
 	Country    string             `json:"country"`
+	Bio        string             `json:"bio"`
 }
 
 type UpdateUserRequest struct {
@@ -146,8 +149,30 @@ func CheckIfPasswordsMatch(user User, password string) bool {
 	return err == nil
 }
 
-func ForgotPassword(enail string) {
+func SetAccountInactive(userId primitive.ObjectID) {
+	ctx, cancel, client := config.GetConnection()
+	defer cancel()
+	defer client.Disconnect(ctx)
 
+	userToBeDeactivated := FindById(userId)
+	userToBeDeactivated.IsActive = false
+
+	_, err := client.Database("darshub").Collection("user").ReplaceOne(ctx, bson.M{"_id": userToBeDeactivated.ID}, userToBeDeactivated)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func ForgotPassword(email string) {
+	msg := gomail.NewMessage()
+	msg.SetHeader("From", "<paste your gmail account here>") //darshub email
+	msg.SetHeader("To", email)
+	msg.SetHeader("Subject", "Forgot password request")
+	msg.SetBody("text/html", "<b>Forgot password request</b><br><p>Click on this linkt to reset your password: <a>link to password reset</a></p>")
+	n := gomail.NewDialer("email host", 587, "darshub email", "email password")
+	if err := n.DialAndSend(msg); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func getEncryptedPassword(password []byte) []byte {
