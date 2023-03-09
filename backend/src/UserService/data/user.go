@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"dev.azure.com/learn-website-orga/_git/learn-website/src/UserService/config"
+	"dev.azure.com/learn-website-orga/_git/learn-website/backend/src/UserService/config"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
@@ -13,94 +13,78 @@ import (
 //Abstraction to MVC, this are the service functions
 
 type User struct {
-	ID         primitive.ObjectID `json:"id" bson:"_id"`
-	Password   []byte             `json:"-" bson:"password"` // will not in the response
-	First_Name string             `json:"first_name" bson:"first_name"`
-	Last_Name  string             `json:"last_name" bson:"last_name"`
-	Birthday   time.Time          `json:"birthday" bson:"birthday"`
-	Avatar     string             `json:"avatar" bson:"avatar"`
-	Email      string             `json:"email" bson:"email"`
-	TelNr      string             `json:"telNr" bson:"telNr"`
-	Company    string             `json:"company" bson:"company"`
-	Occupation string             `json:"occupation" bson:"occupation"`
-	School     string             `json:"school" bson:"school"`
-	Subject    string             `json:"subject" bson:"subject"`
-	Country    string             `json:"country" bson:"country"`
-	IsActive   bool               `json:"isActive" bson:"isActive"`
-	Bio        string             `json:"bio" bson:"bio"`
-	Role       []int              `json:"role" bson:"role"`
+	ID         primitive.ObjectID `bson:"_id"`
+	Password   []byte             `bson:"password"`
+	First_Name string             `bson:"first_name"`
+	Last_Name  string             `bson:"last_name"`
+	Birthday   time.Time          `bson:"birthday"`
+	Avatar     string             `bson:"avatar"`
+	Email      string             `bson:"email"`
+	TelNr      string             `bson:"telNr"`
+	Company    string             `bson:"company"`
+	Occupation string             `bson:"occupation"`
+	School     string             `bson:"school"`
+	Subject    string             `bson:"subject"`
+	Country    string             `bson:"country"`
 }
 
 type UserRequest struct {
+	ID         primitive.ObjectID `json:"id"`
+	Password   string             `json:"password"`
+	First_Name string             `json:"first_name"`
+	Last_Name  string             `json:"last_name"`
+	Birthday   time.Time          `json:"birthday"`
+	Avatar     string             `json:"avatar"`
+	Email      string             `json:"email"`
+	TelNr      string             `json:"telNr"`
+	Company    string             `json:"company"`
+	Occupation string             `json:"occupation"`
+	School     string             `json:"school"`
+	Subject    string             `json:"subject"`
+	Country    string             `json:"country"`
+}
+
+type UpdateUserRequest struct {
 	Password   string    `json:"password"`
 	First_Name string    `json:"first_name"`
 	Last_Name  string    `json:"last_name"`
 	Birthday   time.Time `json:"birthday"`
 	Avatar     string    `json:"avatar"`
 	Email      string    `json:"email"`
-	TelNr      string    `json:"tel_nr"`
+	TelNr      string    `json:"telNr"`
 	Company    string    `json:"company"`
 	Occupation string    `json:"occupation"`
 	School     string    `json:"school"`
 	Subject    string    `json:"subject"`
 	Country    string    `json:"country"`
-	Bio        string    `bson:"bio"`
-	Role       []int     `bson:"role"`
 }
 
-type UpdateUserRequest struct {
-	First_Name string    `json:"first_name"`
-	Last_Name  string    `json:"last_name"`
-	Birthday   time.Time `json:"birthday"`
-	Avatar     string    `json:"avatar"`
-	Email      string    `json:"email"`
-	TelNr      string    `json:"tel_nr"`
-	Company    string    `json:"company"`
-	Occupation string    `json:"occupation"`
-	School     string    `json:"school"`
-	Subject    string    `json:"subject"`
-	Country    string    `json:"country"`
-	Bio        string    `json:"bio"`
+type ForgotPasswordRequest struct {
+	Email string `bson:"email"`
 }
 
 func Create(userRequest *UserRequest) {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
+	userRequest.ID = primitive.NewObjectID()
 
-	user := userRequest.toUser()
-	user.ID = primitive.NewObjectID()
-	_, err := client.Database("darshub").Collection("user").InsertOne(ctx, user)
+	_, err := client.Database("darshub").Collection("user").InsertOne(ctx, userRequest.toUser())
 	if err != nil {
-		log.Printf("Could not save the new user obj: %v\n", err)
-		return
+		log.Printf("Could not save Product: %v", err)
 	}
-
-	log.Println("User was created")
 }
 
-func GetAllUsers() []User {
-	var users []User
+func Find(email string) User {
+	var user User
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
-	cur, err := client.Database("darshub").Collection("user").Find(ctx, bson.M{})
+	err := client.Database("darshub").Collection("user").FindOne(ctx, bson.M{"email": email}).Decode(&user)
 	if err != nil {
 		log.Fatal(err)
 	}
-	cur.All(ctx, &users)
-
-	return users
-}
-
-func Find(email string) User {
-	if email == "" {
-		return User{}
-	}
-
-	user := getUser(email)
-
 	return user
 }
 
@@ -112,38 +96,37 @@ func FindById(userId primitive.ObjectID) User {
 
 	err := client.Database("darshub").Collection("user").FindOne(ctx, bson.M{"_id": userId}).Decode(&user)
 	if err != nil {
-		log.Println(err)
-		return User{}
+		log.Fatal(err)
 	}
+
 	return user
 }
 
 func UpdateUser(userId primitive.ObjectID, updatedUser *UpdateUserRequest) User {
-
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
 	update := bson.M{
+		"password":   updatedUser.Password,
 		"first_name": updatedUser.First_Name,
 		"last_name":  updatedUser.Last_Name,
 		"birthday":   updatedUser.Birthday,
 		"avatar":     updatedUser.Avatar,
 		"email":      updatedUser.Email,
+		"tel_nr":     updatedUser.TelNr,
 		"company":    updatedUser.Company,
 		"occupation": updatedUser.Occupation,
 		"school":     updatedUser.School,
 		"subject":    updatedUser.Subject,
 		"country":    updatedUser.Country,
-		"bio":        updatedUser.Bio,
-		"tel_nr":     updatedUser.TelNr,
 	}
 
-	_, err := client.Database("darshub").Collection("user").ReplaceOne(ctx, bson.M{"_id": userId}, update)
+	_, err := client.Database("darshub").Collection("course").ReplaceOne(ctx, bson.M{"_id": userId}, update)
 	if err != nil {
-		log.Println(err)
-		return User{}
+		log.Fatal(err)
 	}
+
 	return FindById(userId)
 }
 
@@ -154,10 +137,8 @@ func DeleteUser(userId primitive.ObjectID) {
 
 	_, err := client.Database("darshub").Collection("course").DeleteOne(ctx, bson.M{"_id": userId})
 	if err != nil {
-		log.Print(err)
-		return
+		log.Fatal(err)
 	}
-	log.Print("User was deleted successfully")
 }
 
 func CheckIfPasswordsMatch(user User, password string) bool {
@@ -165,32 +146,8 @@ func CheckIfPasswordsMatch(user User, password string) bool {
 	return err == nil
 }
 
-func SetAccountInactive(userId primitive.ObjectID) {
-	ctx, cancel, client := config.GetConnection()
-	defer cancel()
-	defer client.Disconnect(ctx)
+func ForgotPassword(enail string) {
 
-	userToBeDeactivated := FindById(userId)
-	userToBeDeactivated.IsActive = false
-
-	_, err := client.Database("darshub").Collection("user").ReplaceOne(ctx, bson.M{"_id": userToBeDeactivated.ID}, userToBeDeactivated)
-	if err != nil {
-		log.Println(err)
-	}
-}
-
-func getUser(email string) User {
-	var user User
-	ctx, cancel, client := config.GetConnection()
-	defer cancel()
-	defer client.Disconnect(ctx)
-
-	err := client.Database("darshub").Collection("user").FindOne(ctx, bson.M{"email": email}).Decode(&user)
-	if err != nil {
-		return user
-	}
-
-	return user
 }
 
 func getEncryptedPassword(password []byte) []byte {
@@ -204,6 +161,7 @@ func getEncryptedPassword(password []byte) []byte {
 
 func (userRequest *UserRequest) toUser() User {
 	user := User{}
+	user.ID = userRequest.ID
 	user.Password = getEncryptedPassword([]byte(userRequest.Password))
 	user.First_Name = userRequest.First_Name
 	user.Last_Name = userRequest.Last_Name
@@ -214,10 +172,8 @@ func (userRequest *UserRequest) toUser() User {
 	user.Company = userRequest.Company
 	user.Occupation = userRequest.Occupation
 	user.School = userRequest.School
-	user.IsActive = true
 	user.Subject = userRequest.Subject
 	user.Country = userRequest.Country
-	user.Bio = userRequest.Bio
 
 	return user
 }
