@@ -63,7 +63,7 @@ type UpdateUserRequest struct {
 }
 
 type ForgotPasswordRequest struct {
-	Email string `bson:"email"`
+	Email string `json:"email"`
 }
 
 func Create(userRequest *UserRequest) {
