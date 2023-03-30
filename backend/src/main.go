@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	courseSearchHandler "dev.azure.com/learn-website-orga/_git/learn-website/src/CourseSearchService/handlers"
 	courseHandler "dev.azure.com/learn-website-orga/_git/learn-website/src/CourseService/handlers"
 	userHandler "dev.azure.com/learn-website-orga/_git/learn-website/src/UserService/handlers"
 	"github.com/gorilla/mux"
@@ -41,6 +42,7 @@ func main() {
 	getRouter.HandleFunc("/subchapter/{subchapterId}", courseHandler.FindSubchapter)
 	getRouter.HandleFunc("/courses", courseHandler.GetAllCourses)
 	getRouter.HandleFunc("/courseCategoryNames/all", courseHandler.GetAllCourseCategoryNames)
+	getRouter.HandleFunc("/course", courseSearchHandler.SearchCourse)
 
 	postRouter := sm.Methods(http.MethodPost, http.MethodOptions).Subrouter()
 	postRouter.HandleFunc("/user", userHandler.RegisterUser)
