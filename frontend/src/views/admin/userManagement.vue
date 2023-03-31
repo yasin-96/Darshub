@@ -14,7 +14,7 @@ const tHeaders = computed(() => {
 </script>
 
 <template>
-  <table class="table-fixed">
+  <table class="table table-compact w-full">
     <thead>
       <tr>
         <th v-for="(th, index) in tHeaders" :key="`user-manager-h-${index}`">

@@ -90,132 +90,112 @@ const drawerLeftSide = computed({
     baseLayout.act_toggleSidebarLeft(val);
   },
 });
-
-onClickOutside(nav_ref, (event) => {
-  baseLayout.act_toggleSidebarLeft(false);
-});
 </script>
 
 <template>
-  <nav
-    ref="nav_ref"
-    :class="`overflow-auto absolute top-0 left-0 bg-white z-40 flex flex-col flex-nowrap w-72 xl:w-1/4 2xl:w-1/5 h-full 
-    justify-between shadow-2xl
-    ${drawerLeftSide ? '' : 'hidden'}`"
-  >
-    <div class="w-full text-center justify-start p-2">
-      <ul class="">
-        <li
-          v-for="link in state.generalSidebar"
-          :key="link.name"
-          class="px-1 py-1 hover:bg-slate-400 rounded-lg"
-        >
-          <router-link
-            :to="link.href"
-            class="flex flex-row px-1 py-2"
-            @click="closeSideBar"
-          >
-            <i :class="`${link.icon} h-6 w-6`"></i>
-            <span class="pl-3" @click="drawerLeftSide != false">{{
-              $t(link.name)
-            }}</span>
-          </router-link>
-        </li>
-      </ul>
+  <ul class="menu p-4 w-80 bg-base-100 text-base-content">
+    <!-- Sidebar content here -->
+    <li
+      v-for="link in state.generalSidebar"
+      :key="link.name"
+      class="hover:bg-slate-400 rounded-lg"
+    >
+      <router-link
+        :to="link.href"
+        @click="closeSideBar"
+      >
+        <i :class="`${link.icon} h-6 w-6`"></i>
+        <span class="pl-3" @click="drawerLeftSide != false">{{
+          $t(link.name)
+        }}</span>
+      </router-link>
+    </li>
+
+    <div v-if="loginStore.getUserId">
       <hr class="my-4" />
 
-      <ul class="" v-if="loginStore.getUserId && !!loginStore.getUserId">
-        <li>
-          <div
-            class="text-start flex my-2 bg-blue-200 rounded-lg py-3 px-3 text-lg"
+      <!-- Sidebar content here -->
+      <li>
+        <div
+          class="text-start flex my-2 bg-blue-200 rounded-lg py-3 px-3 text-lg"
+        >
+          <i class="i-heroicons-user block"></i>
+          <span class="pl-3">{{ $t("sidebar.user.sidebarMenuTitel") }}</span>
+        </div>
+        <ul class="text-md">
+          <li
+            v-for="link in state.userLinks"
+            :key="link.name"
+            class="px-3 py-1 hover:bg-slate-400 rounded-lg"
           >
-            <i class="i-heroicons-user block"></i>
-            <span class="pl-3">{{ $t("sidebar.user.sidebarMenuTitel") }}</span>
-          </div>
-          <ul class="text-md">
-            <li
-              v-for="link in state.userLinks"
-              :key="link.name"
-              class="px-3 py-1 hover:bg-slate-400 rounded-lg"
+            <router-link
+              :to="link.href"
+              class="flex flex-row px-1 py-2"
+              @click="closeSideBar"
             >
-              <router-link
-                :to="link.href"
-                class="flex flex-row px-1 py-2"
-                @click="closeSideBar"
-              >
-                <i :class="`${link.icon} h-6 w-6`"></i>
-                <span class="pl-3" @click="drawerLeftSide != false">{{
-                  $t(link.name)
-                }}</span>
-              </router-link>
-            </li>
-          </ul>
-        </li>
-      </ul>
+              <i :class="`${link.icon} h-6 w-6`"></i>
+              <span class="pl-3" @click="drawerLeftSide != false">{{
+                $t(link.name)
+              }}</span>
+            </router-link>
+          </li>
+        </ul>
+      </li>
     </div>
-
     <div
-      class="w-full text-center justify-end p-4"
       v-if="
         loginStore.getUserId &&
-        !!loginStore.getUserId &&
         loginStore.userHasAdminRights
       "
     >
-      <hr class="mb-3" />
-
-      <ul class="">
-        <li>
-          <div
-            class="text-start flex my-2 bg-amber-700 rounded-lg py-3 px-3 text-lg"
-          >
-            <i class="i-heroicons-user block"></i>
-            <span class="pl-3">{{ $t("sidebar.admin.sidebarMenuTitel") }}</span>
-          </div>
-          <ul class="">
-            <li
-              v-for="link in state.adminLinks"
-              :key="link.name"
-              class="px-1 py-1 hover:bg-slate-400 rounded-md"
-            >
-              <router-link
-                :to="link.href"
-                class="flex flex-row px-1 py-2"
-                @click="closeSideBar"
-              >
-                <i :class="`${link.icon} h-6 w-6`"></i>
-
-                <span class="pl-3" @click="drawerLeftSide != drawerLeftSide">{{
-                  $t(link.name)
-                }}</span>
-              </router-link>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-
-    <div class="w-full text-center justify-end p-4">
-      <hr class="mb-3" />
-      <ul class="">
-        <li
-          v-for="link in state.generalFooter"
-          :key="link.name"
-          class="px-1 py-1 hover:bg-slate-400 rounded-md"
+      <hr class="my-4" />
+      <li>
+        <div
+          class="text-start flex my-2 bg-amber-700 rounded-lg py-3 px-3 text-lg"
         >
-          <router-link
-            :to="link.href"
-            class="flex flex-row px-1 py-2"
-            @click="closeSideBar"
+          <i class="i-heroicons-user block"></i>
+          <span class="pl-3">{{ $t("sidebar.admin.sidebarMenuTitel") }}</span>
+        </div>
+        <ul class="">
+          <li
+            v-for="link in state.adminLinks"
+            :key="link.name"
+            class="px-1 py-1 hover:bg-slate-400 rounded-md"
           >
-            <i :class="`${link.icon} h-6 w-6`"></i>
+            <router-link
+              :to="link.href"
+              class="flex flex-row px-1 py-2"
+              @click="closeSideBar"
+            >
+              <i :class="`${link.icon} h-6 w-6`"></i>
 
-            <span class="pl-3" @click="drawerLeftSide != drawerLeftSide">{{
-              $t(link.name)
-            }}</span>
-          </router-link>
-        </li>
-      </ul>
+              <span class="pl-3" @click="drawerLeftSide != drawerLeftSide">{{
+                $t(link.name)
+              }} asda</span>
+            </router-link>
+          </li>
+        </ul>
+      </li>
     </div>
-  </nav>
+    <div class="full text-center justify-end p-4">
+      <hr class="mb-3" />
+      <li
+        v-for="link in state.generalFooter"
+        :key="link.name"
+        class="px-1 py-1 hover:bg-slate-400 rounded-md"
+      >
+        <router-link
+          :to="link.href"
+          class="flex flex-row px-1 py-2"
+          @click="closeSideBar"
+        >
+          <i :class="`${link.icon} h-6 w-6`"></i>
+
+          <span class="pl-3" @click="drawerLeftSide != drawerLeftSide">{{
+            $t(link.name)
+          }}</span>
+        </router-link>
+      </li>
+    </div>
+  </ul>
 </template>

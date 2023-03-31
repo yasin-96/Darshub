@@ -1,43 +1,41 @@
 <script setup>
-import { computed } from "vue";
+import { computed, reactive } from "vue";
 import { useBaseLayoutStore } from "@/stores/layout/baseLayout";
+
+import Navbar from "@/components/layout/base/Navbar.vue";
+import Footer from "@/components/layout/base/Footer.vue";
+import SidebarLeft from "@/components/layout/base/SidebarLeft.vue";
 
 const baseLayout = useBaseLayoutStore();
 
 const drawerLeftSide = computed(() => {
   return baseLayout.currentStateDrawerSidebarLeft;
 });
+
+const check = reactive(false);
 </script>
 
 <template>
-  <!-- Layer for Sidebar to hide all -->
-  <div
-    :class="`${
-      !drawerLeftSide
-        ? ''
-        : 'fixed inset-0 bg-warmGray-800 bg-opacity-10 transition-opacity'
-    }`"
-  ></div>
-
-  <div class="flex h-screen">
-    <div class="flex-1 flex flex-col overflow-hidden">
+  <div class="drawer">
+    <input
+      id="leftSideDrawer"
+      type="checkbox"
+      class="drawer-toggle"
+      v-model="check"
+    />
+    <div class="drawer-content flex flex-col">
       <!-- Banner/ Navbar Top -->
       <slot name="info"> </slot>
-      <slot name="nav"></slot>
-      
-      <div class="flex h-full">
-        <!-- Sidebar left / Main Content -->
-        <slot name="sidebarLeft" class=""></slot>
-        <div
-          :class="`flex flex-col w-full overflow-x-hidden overflow-y-auto'
-          }`"
-        >
-          <div class="mx-auto px-6 py-8">
-            <slot name="main"></slot>
-          </div>
-        </div>
-      </div>
-      <slot name="footer"></slot>
+      <Navbar> </Navbar>
+      <slot></slot>
+      <Footer></Footer>
+    </div>
+    <div class="drawer-side">
+      <label for="leftSideDrawer" class="drawer-overlay"></label>
+      <SidebarLeft />
+    </div> <div class="drawer-side">
+      <label for="leftSideDrawer" class="drawer-overlay"></label>
+      <SidebarLeft />
     </div>
   </div>
 </template>
