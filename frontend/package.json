@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@vueuse/core": "^9.6.0",
+    "daisyui": "^2.51.5",
     "gsap": "^3.11.3",
     "pinia": "^2.0.22",
     "pinia-plugin-persistedstate": "^3.0.1",

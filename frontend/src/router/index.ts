@@ -11,7 +11,6 @@ import {
 } from "vue-router";
 import IndexView from "@/views/startPage.vue";
 import NotFoundView from "@/views/404.vue";
-import Registration from "@/views/registrationPage.vue";
 import ContactPage from "@/views/contactPage.vue";
 import LoginView from "@/views/login.vue";
 import UserDasboard from "@/views/user/userDashboard.vue";
@@ -37,12 +36,6 @@ const generalRoutes: Array<RouteRecordRaw> = [
     name: "index",
     meta: { requiresAuth: false },
     component: IndexView,
-  },
-  {
-    path: "/registry",
-    name: "registry",
-    meta: { requiresAuth: false },
-    component: Registration,
   },
   {
     path: "/logout",

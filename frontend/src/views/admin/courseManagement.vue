@@ -41,8 +41,8 @@ const tHeaders = computed(() => {
 </script>
 
 <template>
-  <div class="">
-    <table class="shadow-lg rounded-lg">
+  <div>
+    <table class="table table-compact w-full bg-base-100 shadow-xl">
       <thead class="border-b-2">
         <tr class="text-left uppercase">
           <th
@@ -74,9 +74,9 @@ const tHeaders = computed(() => {
           <td class="p-2">{{ td.lastupdate }}</td>
           <td class="p-2">
             <button
-              class="rounded-full hover:shadow-xl hover:bg-slate-200 hover:bg-slate-400 px-2 py-2"
+              class="btn btn-circle btn-sm btn-info btn-outline hover:shadow-xl"
             >
-              <i class="i-heroicons-pencil text-red-600 block"></i>
+              <i class="i-heroicons-pencil"></i>
             </button>
           </td>
         </tr>

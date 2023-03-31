@@ -10,11 +10,28 @@ const coursePreview = computed(() => {
 </script>
 
 <template>
+  <div class="hero min-h-screen bg-base-200">
+    <div class="hero-content flex-col lg:flex-row">
+      <img
+        src="/images/stock/photo-1635805737707-575885ab0820.jpg"
+        class="max-w-sm rounded-lg shadow-2xl"
+      />
+      <div>
+        <h1 class="text-5xl font-bold">
+           {{ coursePreview.name }}
+        </h1>
+        <p class="py-6">
+          {{ coursePreview.description }}
+        </p>
+      </div>
+    </div>
+  </div>
+
   <div class="py-10">
     <div class="mx-auto max-w-2xl px-4 pt-10 pb-16 flex flex-col">
       <div class="">
         <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">
-          {{ coursePreview.name }}
+         
         </h1>
       </div>
 
