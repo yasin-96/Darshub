@@ -29,7 +29,6 @@ export const useLoginStore = defineStore("loginStore", {
       subject: "",
       country: "",
       isActive: true,
-      bio: "",
       role: new Array<UserRoles>(),
     },
   }),

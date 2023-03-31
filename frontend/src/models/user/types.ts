@@ -31,7 +31,6 @@ export type UserRegistrationCheck = {
   avatar: string;
   email: string;
   telNr: string;
-  bio: string;
 };
 
 export type UserLoginData = {
@@ -54,7 +53,6 @@ export type User = {
   subject: string;
   country: string;
   isActive: boolean;
-  bio: string;
   role: Array<UserRoles>;
 };
 
@@ -72,7 +70,6 @@ export type UserInfo = {
   subject: string;
   country: string;
   isActive: boolean;
-  bio: string;
   role: Array<UserRoles>;
 };
 
@@ -91,7 +88,6 @@ export type UserRequest = {
   subject: string;
   country: string;
   isActive: boolean;
-  bio: string;
   role: Array<UserRoles>;
 };
 

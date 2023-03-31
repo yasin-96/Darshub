@@ -42,8 +42,7 @@ func RegisterUser(rw http.ResponseWriter, r *http.Request) {
 		user.Last_Name == "" ||
 		&user.Birthday == new(time.Time) ||
 		user.Email == "" ||
-		user.TelNr == "" ||
-		user.Bio == "" {
+		user.TelNr == "" {
 		rw.WriteHeader(http.StatusBadRequest)
 		rw.Write([]byte("Request is not valid. Required informations are missing"))
 		return

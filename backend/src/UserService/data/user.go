@@ -27,7 +27,6 @@ type User struct {
 	Subject    string             `json:"subject" bson:"subject"`
 	Country    string             `json:"country" bson:"country"`
 	IsActive   bool               `json:"isActive" bson:"isActive"`
-	Bio        string             `json:"bio" bson:"bio"`
 	Role       []int              `json:"role" bson:"role"`
 }
 
@@ -44,7 +43,6 @@ type UserRequest struct {
 	School     string    `json:"school"`
 	Subject    string    `json:"subject"`
 	Country    string    `json:"country"`
-	Bio        string    `bson:"bio"`
 	Role       []int     `bson:"role"`
 }
 
@@ -60,7 +58,6 @@ type UpdateUserRequest struct {
 	School     string    `json:"school"`
 	Subject    string    `json:"subject"`
 	Country    string    `json:"country"`
-	Bio        string    `json:"bio"`
 }
 
 func Create(userRequest *UserRequest) {
@@ -135,7 +132,6 @@ func UpdateUser(userId primitive.ObjectID, updatedUser *UpdateUserRequest) User 
 		"school":     updatedUser.School,
 		"subject":    updatedUser.Subject,
 		"country":    updatedUser.Country,
-		"bio":        updatedUser.Bio,
 		"tel_nr":     updatedUser.TelNr,
 	}
 
@@ -217,7 +213,5 @@ func (userRequest *UserRequest) toUser() User {
 	user.IsActive = true
 	user.Subject = userRequest.Subject
 	user.Country = userRequest.Country
-	user.Bio = userRequest.Bio
-
 	return user
 }
