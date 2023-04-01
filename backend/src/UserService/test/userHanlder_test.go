@@ -51,7 +51,6 @@ func Test_Handler_CreatedNewUser_WithInvalidJsonSHhouldNotWork(t *testing.T) {
 		"password":   "",
 		"first_Name": "",
 		"last_Name":  "",
-		"bio":        "",
 		"birthday":   "",
 	`)
 
@@ -89,7 +88,6 @@ func Test_Handler_CreatedNewUser_WithEmptyInputShouldNotWork(t *testing.T) {
 	"subject" :"",
 	"country" :"",
 	"isActive" :"",
-	"bio" :"",
 	"role" :""
 	}
 	`)
@@ -128,7 +126,6 @@ func Test_Handler_CreatedNewUser_WithMinimumProps(t *testing.T) {
 	"subject" :"",
 	"country" :"",
 	"isActive" :"",
-	"bio" :"male",
 	"role" :""
 	}
 	`)
@@ -167,7 +164,6 @@ func Test_Handler_CreatedNewUser_WithMinimumProps(t *testing.T) {
 // 	"subject" :"",
 // 	"country" :"",
 // 	"isActive" :"",
-// 	"bio" :"male",
 // 	"role" :""
 // 	}
 // 	`)

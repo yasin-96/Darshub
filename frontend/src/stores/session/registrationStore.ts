@@ -22,7 +22,6 @@ export const useRegistrationStore = defineStore("userRegistrationStore", {
       subject: "",
       country: "",
       isActive: true,
-      bio: "",
       role: new Array<Uint8Array>(),
     },
   }),
@@ -53,9 +52,6 @@ export const useRegistrationStore = defineStore("userRegistrationStore", {
 
     setPasswd(newPasswd: string) {
       this.user.password = newPasswd;
-    },
-    setGender(newGender: string) {
-      this.user.bio = newGender;
     },
 
     async addNewUser() {

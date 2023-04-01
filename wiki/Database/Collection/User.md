@@ -15,7 +15,6 @@
 | subject      |             |      |
 | country      |             |      |
 | isActive     |             |      |
-| bio          |             |      |
 | role         |             |      |
 
 ## Example 
@@ -45,7 +44,6 @@
   "subject": "",
   "country": "Andorra",
   "isActive": false,
-  "bio": "",
   "role": null
 }
 ```
