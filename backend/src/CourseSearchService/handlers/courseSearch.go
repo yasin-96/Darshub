@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"reflect"
 
-	courseSearchService "dev.azure.com/learn-website-orga/_git/learn-website/src/CourseSearchService/data"
-	"dev.azure.com/learn-website-orga/_git/learn-website/src/util"
+	courseSearchService "darshub.dev/src/CourseSearchService/data"
+	"darshub.dev/src/util"
 )
 
 func SearchCourse(rw http.ResponseWriter, r *http.Request) {

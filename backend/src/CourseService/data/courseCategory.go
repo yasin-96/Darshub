@@ -3,7 +3,7 @@ package data
 import (
 	"log"
 
-	"dev.azure.com/learn-website-orga/_git/learn-website/src/UserService/config"
+	"darshub.dev/src/UserService/config"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

@@ -4,8 +4,8 @@ import (
 	"context"
 	"log"
 
-	courseService "dev.azure.com/learn-website-orga/_git/learn-website/src/CourseService/data"
-	"dev.azure.com/learn-website-orga/_git/learn-website/src/UserService/config"
+	courseService "darshub.dev/src/CourseService/data"
+	"darshub.dev/src/UserService/config"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
