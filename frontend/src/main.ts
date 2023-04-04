@@ -4,6 +4,8 @@ import App from "./App.vue";
 //CSS (Tailwind)
 import "./assets/main.css";
 
+import { vuetify } from "./plugins/vuetify";
+
 //Vue App Creation
 import { createApp } from "vue";
 const app = createApp(App);
@@ -38,7 +40,7 @@ import { createMetaManager, plugin as metaPlugin } from "vue-meta";
 const metaManager = createMetaManager();
 
 //Bind all option
-app.use(router).use(pinia).use(i18nLanguages).use(metaManager).use(metaPlugin);
+app.use(router).use(pinia).use(i18nLanguages).use(metaManager).use(metaPlugin).use(vuetify);
 
 //Bind to containder #app -> index.html
 app.mount("#app");
