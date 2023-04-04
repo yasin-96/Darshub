@@ -1,7 +1,6 @@
 package data
 
 import (
-	"log"
 	"time"
 
 	"darshub.dev/src/UserService/config"
@@ -42,18 +41,16 @@ type UpdateCourseRequest struct {
 	LastUpdate  time.Time            `json:"lastUpdate"`
 }
 
-func Create(course *CreateCourseRequest) {
+func Create(course *CreateCourseRequest) error {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
 	_, err := client.Database("darshub").Collection("course").InsertOne(ctx, course)
-	if err != nil {
-		log.Printf("Could not save course: %v", err)
-	}
+	return err
 }
 
-func Find(courseId primitive.ObjectID) Course {
+func Find(courseId primitive.ObjectID) (Course, error) {
 	var course Course
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
@@ -61,13 +58,12 @@ func Find(courseId primitive.ObjectID) Course {
 
 	err := client.Database("darshub").Collection("course").FindOne(ctx, bson.M{"_id": courseId}).Decode(&course)
 	if err != nil {
-		log.Print(err)
-		return Course{}
+		return Course{}, nil
 	}
-	return course
+	return course, nil
 }
 
-func GetAllCourses() []Course {
+func GetAllCourses() ([]Course, error) {
 	var courses []Course
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
@@ -75,13 +71,13 @@ func GetAllCourses() []Course {
 
 	cur, err := client.Database("darshub").Collection("course").Find(ctx, bson.D{})
 	if err != nil {
-		log.Print(err)
+		return nil, err
 	}
 	cur.All(ctx, &courses)
-	return courses
+	return courses, nil
 }
 
-func Update(courseId primitive.ObjectID, updatedCourse *UpdateCourseRequest) Course {
+func Update(courseId primitive.ObjectID, updatedCourse *UpdateCourseRequest) (Course, error) {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
@@ -98,22 +94,20 @@ func Update(courseId primitive.ObjectID, updatedCourse *UpdateCourseRequest) Cou
 
 	_, err := client.Database("darshub").Collection("course").ReplaceOne(ctx, bson.M{"_id": courseId}, update)
 	if err != nil {
-		log.Print(err)
-		return Course{}
+		return Course{}, err
 	}
-
-	return Find(courseId)
+	course, respErr := Find(courseId)
+	if respErr != nil {
+		return Course{}, err
+	}
+	return course, nil
 }
 
-func Delete(courseId primitive.ObjectID) {
+func Delete(courseId primitive.ObjectID) error {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
 	_, err := client.Database("darshub").Collection("course").DeleteOne(ctx, bson.M{"_id": courseId})
-	if err != nil {
-		log.Print(err)
-		return
-	}
-	log.Print("Course was successfully deleted")
+	return err
 }

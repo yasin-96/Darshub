@@ -2,14 +2,13 @@ package data
 
 import (
 	"context"
-	"log"
 
 	courseService "darshub.dev/src/CourseService/data"
 	"darshub.dev/src/UserService/config"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func SearchCourse(searchTerm string) []courseService.Course {
+func SearchCourse(searchTerm string) ([]courseService.Course, error) {
 	var courses []courseService.Course
 
 	ctx, cancel, client := config.GetConnection()
@@ -23,11 +22,10 @@ func SearchCourse(searchTerm string) []courseService.Course {
 	//opts := options.Aggregate().SetMaxTime(5 * time.Second)
 	cursor, err := col.Aggregate(ctx, searchStage)
 	if err != nil {
-		print("atlas search failed")
-		log.Printf("test %s", err)
+		return nil, err
 	}
 	if err = cursor.All(context.TODO(), &courses); err != nil {
-		panic(err)
+		return nil, err
 	}
-	return courses
+	return courses, nil
 }

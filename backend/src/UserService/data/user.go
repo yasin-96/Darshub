@@ -60,7 +60,7 @@ type UpdateUserRequest struct {
 	Country    string    `json:"country"`
 }
 
-func Create(userRequest *UserRequest) {
+func Create(userRequest *UserRequest) error {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
@@ -68,15 +68,10 @@ func Create(userRequest *UserRequest) {
 	user := userRequest.toUser()
 	user.ID = primitive.NewObjectID()
 	_, err := client.Database("darshub").Collection("user").InsertOne(ctx, user)
-	if err != nil {
-		log.Printf("Could not save the new user obj: %v\n", err)
-		return
-	}
-
-	log.Println("User was created")
+	return err
 }
 
-func GetAllUsers() []User {
+func GetAllUsers() ([]User, error) {
 	var users []User
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
@@ -84,11 +79,11 @@ func GetAllUsers() []User {
 
 	cur, err := client.Database("darshub").Collection("user").Find(ctx, bson.M{})
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	cur.All(ctx, &users)
 
-	return users
+	return users, nil
 }
 
 func Find(email string) User {
@@ -115,7 +110,7 @@ func FindById(userId primitive.ObjectID) User {
 	return user
 }
 
-func UpdateUser(userId primitive.ObjectID, updatedUser *UpdateUserRequest) User {
+func UpdateUser(userId primitive.ObjectID, updatedUser *UpdateUserRequest) (User, error) {
 
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
@@ -137,23 +132,19 @@ func UpdateUser(userId primitive.ObjectID, updatedUser *UpdateUserRequest) User 
 
 	_, err := client.Database("darshub").Collection("user").ReplaceOne(ctx, bson.M{"_id": userId}, update)
 	if err != nil {
-		log.Println(err)
-		return User{}
+		return User{}, err
 	}
-	return FindById(userId)
+	user := FindById(userId)
+	return user, nil
 }
 
-func DeleteUser(userId primitive.ObjectID) {
+func DeleteUser(userId primitive.ObjectID) error {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
 	_, err := client.Database("darshub").Collection("course").DeleteOne(ctx, bson.M{"_id": userId})
-	if err != nil {
-		log.Print(err)
-		return
-	}
-	log.Print("User was deleted successfully")
+	return err
 }
 
 func CheckIfPasswordsMatch(user User, password string) bool {

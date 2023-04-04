@@ -15,52 +15,59 @@ func InsertChapter(rw http.ResponseWriter, r *http.Request) {
 	chapterRequest := &data.CreateChapterRequest{}
 
 	if r.Body == nil {
-		rw.WriteHeader(http.StatusBadRequest)
+		http.Error(rw, "Body is empty", http.StatusBadRequest)
 		return
 	}
 
 	err := util.FromJSON(chapterRequest, r.Body)
 	if err != nil {
-		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
+		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
-	data.CreateChapter(chapterRequest)
+	respErr := data.CreateChapter(chapterRequest)
+	if respErr != nil {
+		http.Error(rw, respErr.Error(), http.StatusInternalServerError)
+		return
+	}
 	rw.WriteHeader(http.StatusCreated)
-
+	log.Print("Chapter was created successfully")
 }
 
 func FindChapter(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	if vars == nil || vars["chapterId"] == "" {
-		rw.WriteHeader(http.StatusBadRequest)
+		http.Error(rw, "No chapter id provided in path variable", http.StatusBadRequest)
 		return
 	}
 
 	chapterId, err := primitive.ObjectIDFromHex(vars["chapterId"])
 	if err != nil {
-		log.Print(err)
-		rw.WriteHeader(http.StatusInternalServerError)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	chapter := data.FindChapter(chapterId)
+	chapter, respErr := data.FindChapter(chapterId)
+	if respErr != nil {
+		http.Error(rw, respErr.Error(), http.StatusInternalServerError)
+		return
+	}
 	if reflect.ValueOf(chapter).IsZero() {
-		rw.WriteHeader(http.StatusNotFound)
-		rw.Write([]byte("Course category with the given id does not exist"))
+		http.Error(rw, "Chapter with the given id was not found", http.StatusNotFound)
 		return
 	}
 	parseErr := util.ToJSON(chapter, rw)
 	if parseErr != nil {
-		rw.WriteHeader(http.StatusInternalServerError)
-		log.Print(parseErr)
+		http.Error(rw, parseErr.Error(), http.StatusInternalServerError)
+		return
 	}
+	rw.WriteHeader(http.StatusOK)
 }
 
 func UpdateChapter(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	if vars == nil || vars["chapterId"] == "" {
-		rw.WriteHeader(http.StatusBadRequest)
+		http.Error(rw, "No chapter id provided in path variable", http.StatusBadRequest)
 		return
 	}
 
@@ -68,15 +75,20 @@ func UpdateChapter(rw http.ResponseWriter, r *http.Request) {
 
 	chapterId, err := primitive.ObjectIDFromHex(vars["chapterId"])
 	if err != nil {
-		log.Print(err)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	parseErr := util.FromJSON(updatedChapter, r.Body)
 	if parseErr != nil {
-		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
+		http.Error(rw, parseErr.Error(), http.StatusBadRequest)
+		return
 	}
 
-	chapter := data.UpdateChapter(chapterId, updatedChapter)
+	chapter, err := data.UpdateChapter(chapterId, updatedChapter)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	rw.WriteHeader(http.StatusOK)
 	util.ToJSON(chapter, rw)
 }
@@ -85,15 +97,20 @@ func DeleteChapter(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	if vars == nil || vars["chapterId"] == "" {
-		rw.WriteHeader(http.StatusBadRequest)
+		http.Error(rw, "No chapter id provided in path variable", http.StatusBadRequest)
 		return
 	}
 
 	chapterId, err := primitive.ObjectIDFromHex(vars["chapterId"])
 	if err != nil {
-		log.Print(err)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	data.DeleteChapter(chapterId)
+	respErr := data.DeleteChapter(chapterId)
+	if respErr != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	rw.WriteHeader(http.StatusNoContent)
+	rw.Write([]byte("Course was deleted successfully"))
 }

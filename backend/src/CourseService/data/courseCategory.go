@@ -27,15 +27,13 @@ type UpdateCourseCategoryRequest struct {
 	Skills      string `json:"skills"`
 }
 
-func CreateCourseCategory(courseCategory *CreateCourseCategoryRequest) {
+func CreateCourseCategory(courseCategory *CreateCourseCategoryRequest) error {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
 	_, err := client.Database("darshub").Collection("course_category").InsertOne(ctx, courseCategory)
-	if err != nil {
-		log.Printf("Could not save course: %v", err)
-	}
+	return err
 }
 
 func FindCourseCategory(courseCategoryId primitive.ObjectID) CourseCategory {

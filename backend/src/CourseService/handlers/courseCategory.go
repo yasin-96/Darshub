@@ -14,50 +14,53 @@ import (
 func InsertCourseCategory(rw http.ResponseWriter, r *http.Request) {
 
 	if r.Body == nil {
-		rw.WriteHeader(http.StatusBadRequest)
-		return
+		http.Error(rw, "Body is empty", http.StatusBadRequest)
 	}
 
 	courseCategory := &data.CreateCourseCategoryRequest{}
 	err := util.FromJSON(courseCategory, r.Body)
 	if err != nil {
-		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
+		http.Error(rw, err.Error(), http.StatusBadRequest)
+		return
 	}
-
-	data.CreateCourseCategory(courseCategory)
+	respErr := data.CreateCourseCategory(courseCategory)
+	if respErr != nil {
+		http.Error(rw, respErr.Error(), http.StatusInternalServerError)
+		return
+	}
 	rw.WriteHeader(http.StatusCreated)
+	log.Print("Course category was created successfully")
 }
 
 func FindCourseCategory(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	if vars == nil || vars["courseCategoryId"] == "" {
-		rw.WriteHeader(http.StatusBadRequest)
+		http.Error(rw, "No course category id was provided in the path variable", http.StatusBadRequest)
 		return
 	}
 
 	courseCategoryId, err := primitive.ObjectIDFromHex(vars["courseCategoryId"])
 	if err != nil {
-		log.Print(err)
-		rw.WriteHeader(http.StatusInternalServerError)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	courseCategory := data.FindCourseCategory(courseCategoryId)
 	if reflect.ValueOf(courseCategory).IsZero() {
-		rw.WriteHeader(http.StatusNotFound)
-		rw.Write([]byte("The course category with the given id was not found."))
+		http.Error(rw, "The course category with the given id was not found", http.StatusNotFound)
 		return
 	}
 
 	parseErr := util.ToJSON(courseCategory, rw)
 	if parseErr != nil {
-		log.Print(err)
-		rw.WriteHeader(http.StatusInternalServerError)
+		http.Error(rw, parseErr.Error(), http.StatusInternalServerError)
+		return
 	}
+	rw.WriteHeader(http.StatusOK)
 }
 
 func GetAllCourseCategoryNames(rw http.ResponseWriter, r *http.Request) {
-	println("test")
 	courseCategories := data.FindAllCourses()
 	courseCategoryNames := make([]string, 0)
 	for _, v := range courseCategories {

@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 	"reflect"
-	"time"
 
 	"darshub.dev/src/UserService/data"
 	"darshub.dev/src/util"
@@ -20,10 +19,7 @@ type LoginRequest struct {
 func RegisterUser(rw http.ResponseWriter, r *http.Request) {
 
 	if r.Body == http.NoBody {
-		log.Println("Req Body is not valid.")
-		rw.WriteHeader(http.StatusBadRequest)
-		rw.Write([]byte("Request is not valid."))
-		// http.Error(rw, "Request is not valid.", http.StatusBadRequest)
+		http.Error(rw, "Request is not valid.", http.StatusBadRequest)
 		return
 	}
 
@@ -31,13 +27,11 @@ func RegisterUser(rw http.ResponseWriter, r *http.Request) {
 
 	err := util.FromJSON(user, r.Body)
 	if err != nil {
-		log.Println("Request body could not be parsed")
-		log.Println(err)
-		rw.WriteHeader(http.StatusBadRequest)
+		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if user.Password == "" ||
+	/*if user.Password == "" ||
 		user.First_Name == "" ||
 		user.Last_Name == "" ||
 		&user.Birthday == new(time.Time) ||
@@ -46,55 +40,63 @@ func RegisterUser(rw http.ResponseWriter, r *http.Request) {
 		rw.WriteHeader(http.StatusBadRequest)
 		rw.Write([]byte("Request is not valid. Required informations are missing"))
 		return
-	}
+	}*/
 
-	data.Create(user)
+	respErr := data.Create(user)
+	if respErr != nil {
+		http.Error(rw, respErr.Error(), http.StatusInternalServerError)
+		return
+	}
 	rw.WriteHeader(http.StatusCreated)
 }
 
 func GetAllUsers(rw http.ResponseWriter, r *http.Request) {
-	users := data.GetAllUsers()
-	rw.WriteHeader(http.StatusOK)
+	users, err := data.GetAllUsers()
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	parseErr := util.ToJSON(users, rw)
 	if parseErr != nil {
 		log.Print(parseErr)
 	}
+	rw.WriteHeader(http.StatusOK)
+
 }
 
 func FindById(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	if vars == nil || vars["userId"] == "" {
-		rw.WriteHeader(http.StatusBadRequest)
+		http.Error(rw, "Np user id provided in path variable", http.StatusBadRequest)
 		return
 	}
 
 	userId, err := primitive.ObjectIDFromHex(vars["userId"])
 	if err != nil {
-		log.Println(err)
-		rw.WriteHeader(http.StatusBadRequest)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	user := data.FindById(userId)
 	if reflect.ValueOf(user).IsZero() {
-		rw.WriteHeader(http.StatusNotFound)
-		rw.Write([]byte("The user with the given id does not exist"))
+		http.Error(rw, "The user with the given id was not found", http.StatusNotFound)
 		return
 	}
 
-	rw.WriteHeader(http.StatusOK)
 	parseErr := util.ToJSON(user, rw)
 	if parseErr != nil {
-		log.Fatal(err)
+		http.Error(rw, parseErr.Error(), http.StatusInternalServerError)
+		return
 	}
+	rw.WriteHeader(http.StatusOK)
 }
 
 func UpdateUser(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	if vars == nil || vars["userId"] == "" {
-		rw.WriteHeader(http.StatusBadRequest)
+		http.Error(rw, "There was no user is provided in the path variable", http.StatusBadRequest)
 		return
 	}
 
@@ -102,27 +104,21 @@ func UpdateUser(rw http.ResponseWriter, r *http.Request) {
 	userId, err := primitive.ObjectIDFromHex(vars["userId"])
 
 	if err != nil {
-		log.Println(err)
-		rw.WriteHeader(http.StatusBadRequest)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	parseErr := util.FromJSON(updatedUser, r.Body)
 	if parseErr != nil {
-		// http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
-		log.Println("Request body could not be parsed")
-		log.Println(err)
-		rw.WriteHeader(http.StatusBadRequest)
+		http.Error(rw, parseErr.Error(), http.StatusBadRequest)
 		return
 	}
 
-	changedUser := data.UpdateUser(userId, updatedUser)
-
-	// if course == nil {
-	// 	rw.WriteHeader(http.StatusInternalServerError)
-	// 	return
-	// }
-
+	changedUser, respErr := data.UpdateUser(userId, updatedUser)
+	if respErr != nil {
+		http.Error(rw, respErr.Error(), http.StatusInternalServerError)
+		return
+	}
 	rw.WriteHeader(http.StatusOK)
 	util.ToJSON(changedUser, rw)
 }
@@ -131,19 +127,21 @@ func DeleteUser(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	if vars == nil || vars["userId"] == "" {
-		rw.WriteHeader(http.StatusBadRequest)
+		http.Error(rw, "No user id provided in the path variable", http.StatusBadRequest)
 		return
 	}
 
 	userId, err := primitive.ObjectIDFromHex(vars["userId"])
 	if err != nil {
-		log.Println("Request body could not parsed")
-		log.Println(err)
-		rw.WriteHeader(http.StatusBadRequest)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	data.DeleteUser(userId)
+	respErr := data.DeleteUser(userId)
+	if respErr != nil {
+		http.Error(rw, respErr.Error(), http.StatusInternalServerError)
+		return
+	}
 	rw.WriteHeader(http.StatusNoContent)
 }
 

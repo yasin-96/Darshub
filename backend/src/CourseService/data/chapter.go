@@ -27,18 +27,19 @@ type UpdateChapterRequest struct {
 	Skills      string `json:"skills"`
 }
 
-func CreateChapter(chapterRequest *CreateChapterRequest) {
+func CreateChapter(chapterRequest *CreateChapterRequest) error {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
 	_, err := client.Database("darshub").Collection("chapter").InsertOne(ctx, chapterRequest)
 	if err != nil {
-		log.Printf("Could not save chapter: %v", err)
+		return err
 	}
+	return nil
 }
 
-func FindChapter(chapterId primitive.ObjectID) Chapter {
+func FindChapter(chapterId primitive.ObjectID) (Chapter, error) {
 	var chapter Chapter
 	log.Printf(chapterId.String())
 	ctx, cancel, client := config.GetConnection()
@@ -47,13 +48,12 @@ func FindChapter(chapterId primitive.ObjectID) Chapter {
 
 	err := client.Database("darshub").Collection("chapter").FindOne(ctx, bson.M{"_id": chapterId}).Decode(&chapter)
 	if err != nil {
-		log.Print(err)
-
+		return Chapter{}, err
 	}
-	return chapter
+	return chapter, nil
 }
 
-func UpdateChapter(chapterId primitive.ObjectID, updatedChapter *UpdateChapterRequest) Chapter {
+func UpdateChapter(chapterId primitive.ObjectID, updatedChapter *UpdateChapterRequest) (Chapter, error) {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
@@ -66,24 +66,23 @@ func UpdateChapter(chapterId primitive.ObjectID, updatedChapter *UpdateChapterRe
 
 	_, err := client.Database("darshub").Collection("chapter").ReplaceOne(ctx, bson.M{"_id": chapterId}, update)
 	if err != nil {
-		log.Print(err)
-		return Chapter{}
+		return Chapter{}, err
 	}
-
-	return FindChapter(chapterId)
+	chapter, err := FindChapter(chapterId)
+	if err != nil {
+		return Chapter{}, err
+	}
+	return chapter, nil
 }
 
-func DeleteChapter(chapterId primitive.ObjectID) {
+func DeleteChapter(chapterId primitive.ObjectID) error {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
 	_, err := client.Database("darshub").Collection("chapter").DeleteOne(ctx, bson.M{"_id": chapterId})
-	if err != nil {
-		log.Print(err)
-		return
-	}
 	log.Print("Chapter was deleted successfully")
+	return err
 }
 
 func (chapterRequest *CreateChapterRequest) toChapter() Chapter {

@@ -1,8 +1,6 @@
 package data
 
 import (
-	"log"
-
 	"darshub.dev/src/UserService/config"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -25,19 +23,17 @@ type UpdateSubchapterRequest struct {
 	Listing []string `bson:"listing"`
 }
 
-func CreateSubchapter(subchapter *CreateSubchapterRequest) {
+func CreateSubchapter(subchapter *CreateSubchapterRequest) error {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
 	subchapter.ID = primitive.NewObjectID()
 	_, err := client.Database("darshub").Collection("subchapter").InsertOne(ctx, subchapter)
-	if err != nil {
-		log.Printf("Could not save chapter: %v", err)
-	}
+	return err
 }
 
-func FindSubchapter(subchapterId primitive.ObjectID) Subchapter {
+func FindSubchapter(subchapterId primitive.ObjectID) (Subchapter, error) {
 	var subchapter Subchapter
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
@@ -45,12 +41,12 @@ func FindSubchapter(subchapterId primitive.ObjectID) Subchapter {
 
 	err := client.Database("darshub").Collection("subchapter").FindOne(ctx, bson.M{"_id": subchapterId}).Decode(&subchapter)
 	if err != nil {
-		log.Print(err)
+		return Subchapter{}, err
 	}
-	return subchapter
+	return subchapter, nil
 }
 
-func UpdateSubchapter(subchapterId primitive.ObjectID, updatedSubchapter *UpdateSubchapterRequest) Chapter {
+func UpdateSubchapter(subchapterId primitive.ObjectID, updatedSubchapter *UpdateSubchapterRequest) (Subchapter, error) {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
@@ -62,22 +58,20 @@ func UpdateSubchapter(subchapterId primitive.ObjectID, updatedSubchapter *Update
 
 	_, err := client.Database("darshub").Collection("subchapter").ReplaceOne(ctx, bson.M{"_id": subchapterId}, update)
 	if err != nil {
-		log.Print(err)
-		return Chapter{}
+		return Subchapter{}, err
 	}
-
-	return FindChapter(subchapterId)
+	chapter, err := FindSubchapter(subchapterId)
+	if err != nil {
+		return Subchapter{}, err
+	}
+	return chapter, nil
 }
 
-func DeleteSubchapter(subchapterId primitive.ObjectID) {
+func DeleteSubchapter(subchapterId primitive.ObjectID) error {
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
 	_, err := client.Database("darshub").Collection("subchapter").DeleteOne(ctx, bson.M{"_id": subchapterId})
-	if err != nil {
-		log.Print(err)
-		return
-	}
-	log.Print("Chapter was deleted successfully")
+	return err
 }

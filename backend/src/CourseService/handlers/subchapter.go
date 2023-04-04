@@ -14,7 +14,7 @@ import (
 func InsertSubchapter(rw http.ResponseWriter, r *http.Request) {
 
 	if r.Body == nil {
-		rw.WriteHeader(http.StatusBadRequest)
+		http.Error(rw, "Body is empty", http.StatusBadRequest)
 		return
 	}
 
@@ -22,77 +22,99 @@ func InsertSubchapter(rw http.ResponseWriter, r *http.Request) {
 
 	err := util.FromJSON(subchapter, r.Body)
 	if err != nil {
-		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
+		http.Error(rw, err.Error(), http.StatusBadRequest)
+		return
 	}
 
-	data.CreateSubchapter(subchapter)
+	respErr := data.CreateSubchapter(subchapter)
+	if respErr != nil {
+		http.Error(rw, respErr.Error(), http.StatusInternalServerError)
+		return
+	}
 	rw.WriteHeader(http.StatusCreated)
+	log.Print("Subchapter was created successfully")
 }
 
 func FindSubchapter(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	if vars == nil || vars["subchapterId"] == "" {
-		rw.WriteHeader(http.StatusBadRequest)
+		http.Error(rw, "Subchapter id was not provided in the path variable", http.StatusBadRequest)
 		return
 	}
 
 	subchapterId, err := primitive.ObjectIDFromHex(vars["subchapterId"])
 	if err != nil {
-		log.Print(err)
-		rw.WriteHeader(http.StatusInternalServerError)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
 	}
-	subchapter := data.FindSubchapter(subchapterId)
+	subchapter, err := data.FindSubchapter(subchapterId)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	if reflect.ValueOf(subchapter).IsZero() {
-		rw.WriteHeader(http.StatusNotFound)
-		rw.Write([]byte("The subchapter with the given id does not exist"))
+		http.Error(rw, "The sbchapter with the given id was not found", http.StatusNotFound)
+		return
 	}
 	parseErr := util.ToJSON(subchapter, rw)
 	if parseErr != nil {
-		log.Print(parseErr)
-		rw.WriteHeader(http.StatusInternalServerError)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
 	}
+	rw.WriteHeader(http.StatusOK)
 }
 
 func UpdateSubchapter(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	if vars == nil || vars["subchapterId"] == "" {
-		rw.WriteHeader(http.StatusBadRequest)
+		http.Error(rw, "There was no subchapter id provided in the path variable", http.StatusBadRequest)
 		return
 	}
 
 	updatedSubchapter := &data.UpdateSubchapterRequest{}
 	chapterId, err := primitive.ObjectIDFromHex(vars["subchapterId"])
 	if err != nil {
-		log.Print(err)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	parseErr := util.FromJSON(updatedSubchapter, r.Body)
 	if parseErr != nil {
-		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
+		http.Error(rw, parseErr.Error(), http.StatusBadRequest)
+		return
 	}
 
-	subchapter := data.UpdateSubchapter(chapterId, updatedSubchapter)
+	subchapter, err := data.UpdateSubchapter(chapterId, updatedSubchapter)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	if reflect.ValueOf(subchapter).IsZero() {
-		rw.WriteHeader(http.StatusInternalServerError)
+		http.Error(rw, "The subchapter with the given id was not found", http.StatusNotFound)
+		return
 	}
 	util.ToJSON(subchapter, rw)
+	rw.WriteHeader(http.StatusOK)
 }
 
 func DeleteSubchapter(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	if vars == nil || vars["subchapterId"] == "" {
-		rw.WriteHeader(http.StatusBadRequest)
+		http.Error(rw, "There was no subchapter id provided in the path variable", http.StatusBadRequest)
 		return
 	}
 
 	subchapterId, err := primitive.ObjectIDFromHex(vars["subchapterId"])
 	if err != nil {
-		log.Print(err)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	data.DeleteSubchapter(subchapterId)
+	respErr := data.DeleteSubchapter(subchapterId)
+	if respErr != nil {
+		http.Error(rw, respErr.Error(), http.StatusInternalServerError)
+		return
+	}
 	rw.WriteHeader(http.StatusNoContent)
 }

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"reflect"
 
@@ -13,16 +12,16 @@ import (
 func SearchCourse(rw http.ResponseWriter, r *http.Request) {
 	searchTerm := r.URL.Query().Get("course")
 	fmt.Println("Search term:", searchTerm)
-	respData := courseSearchService.SearchCourse(searchTerm)
-
+	respData, err := courseSearchService.SearchCourse(searchTerm)
+	if err == nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+	}
 	if reflect.ValueOf(respData).IsZero() {
-		rw.WriteHeader(http.StatusNotFound)
-		rw.Write([]byte("No Data found"))
-		return
+		rw.WriteHeader(http.StatusOK)
+		rw.Write([]byte("There were no courses found for your search term"))
 	}
 	parseErr := util.ToJSON(respData, rw)
 	if parseErr != nil {
-		rw.WriteHeader(http.StatusInternalServerError)
-		log.Print(parseErr)
+		http.Error(rw, parseErr.Error(), http.StatusInternalServerError)
 	}
 }
