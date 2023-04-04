@@ -38,30 +38,21 @@ onMounted(() => {
 </script>
 
 <template>
-  <div :hidden="state.enableMenu" class="dropdown dropdown-bottom dropdown-end btn-rounded">
-    <label tabindex="0" class="btn m-1">
-      <i class="i-heroicons-language h-6 w-6 "></i>
-    </label>
-    <ul
-      tabindex="0"
-      class="dropdown-content menu p-2 shadow bg-base-100 rounded-box"
-    >
-      <li
-        v-for="item in allLanguages"
-        :key="item.iso"
-        @click="changeLocale(item.code)"
-      >
-        <a :class="`${locale === item.code ? 'bg-amber-700 text-white' : ''}`">
-          {{ item.text }}
-          <img
-            :src="item.url"
-            width="auto"
-            height="auto"
-            :alt="item.code"
-            loading="lazy"
-          />
-        </a>
-      </li>
-    </ul>
-  </div>
+  <v-btn icon>
+    <v-icon>mdi-translate</v-icon>
+
+    <v-menu activator="parent">
+      <v-list>
+        <v-list-item
+          v-for="item in allLanguages"
+          :key="item.iso"
+          :value="item.text"
+          :isSelected="locale === item.code"
+          @click="changeLocale(item.code)"
+        >
+          <v-list-item-title>{{ item.text }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+  </v-btn>
 </template>

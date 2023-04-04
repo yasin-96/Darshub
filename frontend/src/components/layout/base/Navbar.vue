@@ -40,39 +40,38 @@ const isUserLoggedIn = computed(() => {
 </script>
 
 <template>
-  <div class="navbar bg-base-100">
-    <div class="flex-none">
-      <label for="leftSideDrawer" class="btn btn-outline drawer-button"
-        ><i class="i-heroicons-bars-3"></i
-      ></label>
+  <v-app-bar :elevation="2">
+    <v-btn icon>
+      <v-icon icon="mdi-home" />
+    </v-btn>
+    <v-spacer></v-spacer>
+    <LocaleSwitcher />
+    <v-btn icon v-if="false">
+      <v-icon>mdi-login</v-icon>
+    </v-btn>
+    <div v-if="!isUserLoggedIn">
+      <button
+        class="btn btn-outline flex bg-white px-2 py-2 transform hover:scale-105"
+        @click="goToLoginPage()"
+      >
+        <span class="pl-2 pr-2">Login</span>
+        <i
+          class="i-heroicons-arrow-left-on-rectangle h-6 w-6 hover:text-blue-400"
+        ></i>
+      </button>
     </div>
-    <div class="flex-1">
+    <div v-else>
+      <button
+        class="btn btn-outline flex bg-red-500 px-2 py-2 transform hover:scale-105"
+        @click="goToLogoutPage()"
+      >
+        <span class="pl-2 pr-2">Logout</span>
+        <i
+          class="i-heroicons-arrow-right-on-rectangle h-6 w-6 hover:text-blue-400"
+        ></i>
+      </button>
     </div>
-    <div class="flex-none">
-      <LocaleSwitcher />
-      <div v-if="!isUserLoggedIn">
-        <button
-          class="btn btn-outline flex bg-white px-2 py-2 transform hover:scale-105"
-          @click="goToLoginPage()"
-        >
-          <span class="pl-2 pr-2">Login</span>
-          <i
-            class="i-heroicons-arrow-left-on-rectangle h-6 w-6 hover:text-blue-400"
-          ></i>
-        </button>
-        <LoginModal />
-      </div>
-      <div v-else>
-        <button
-          class="btn btn-outline flex bg-red-500 px-2 py-2 transform hover:scale-105"
-          @click="goToLogoutPage()"
-        >
-          <span class="pl-2 pr-2">Logout</span>
-          <i
-            class="i-heroicons-arrow-right-on-rectangle h-6 w-6 hover:text-blue-400"
-          ></i>
-        </button>
-      </div>
-    </div>
-  </div>
+  </v-app-bar>
+
+  <LoginModal />
 </template>
