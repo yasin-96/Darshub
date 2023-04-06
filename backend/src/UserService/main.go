@@ -10,7 +10,9 @@ import (
 	"time"
 
 	userHandler "darshub.dev/src/UserService/handlers"
+	"darshub.dev/src/UserService/middleware"
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	"github.com/nicholasjackson/env"
 )
 
@@ -20,15 +22,19 @@ var allowedHeaders = "Origin, Content-Type"
 
 func main() {
 	env.Parse()
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("Error loading the .env file: %v", err)
+	}
 
 	l := log.New(os.Stdout, "darshub-api-user-service", log.LstdFlags)
 
 	sm := mux.NewRouter()
 
 	getRouter := sm.Methods(http.MethodGet, http.MethodOptions).Subrouter()
-	getRouter.HandleFunc("/user/{userId}", userHandler.FindById)
+	getRouter.Use(middleware.EnsureValidToken())
+	getRouter.HandleFunc("/users/{userId}", userHandler.FindById)
 	getRouter.HandleFunc("/user/{userId}/setInactive", userHandler.SetAccountInactive)
-	getRouter.HandleFunc("/user/all", userHandler.GetAllUsers)
+	getRouter.HandleFunc("/users", userHandler.GetAllUsers)
 
 	postRouter := sm.Methods(http.MethodPost, http.MethodOptions).Subrouter()
 	postRouter.HandleFunc("/user", userHandler.RegisterUser)
