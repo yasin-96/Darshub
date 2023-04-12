@@ -11,7 +11,6 @@ const baseLayout = useBaseLayoutStore();
 const loginStore = useLoginStore();
 const r = useRoute();
 const rr = useRouter();
-const drawer = ref(false);
 const { t, locale } = useI18n();
 
 const currentSideName = ref(
@@ -25,23 +24,25 @@ const goToLogoutPage = () => {
   rr.push({ name: "logout" });
 };
 
-const drawerState = computed({
-  get() {
-    return baseLayout.currentStateDrawerSidebarLeft;
-  },
-  set(tValue: boolean) {
-    baseLayout.act_toggleSidebarLeft(tValue);
-  },
-});
-
 const isUserLoggedIn = computed(() => {
   return loginStore.isUserLoggedIn;
 });
+
+const drawerLeftSide = computed({
+  get() {
+    return baseLayout.currentStateDrawerSidebarLeft;
+  },
+  set(val) {
+    console.log("val", val);
+    baseLayout.act_toggleSidebarLeft(val);
+  },
+});
+
 </script>
 
 <template>
   <v-app-bar :elevation="2">
-    <v-btn icon>
+    <v-btn icon @click="drawerLeftSide = !drawerLeftSide">
       <v-icon icon="mdi-home" />
     </v-btn>
     <v-spacer></v-spacer>
@@ -73,5 +74,5 @@ const isUserLoggedIn = computed(() => {
     </div>
   </v-app-bar>
 
-  <LoginModal />
+ <!-- <LoginModal /> -->
 </template>

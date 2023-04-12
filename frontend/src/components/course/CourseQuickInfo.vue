@@ -14,27 +14,29 @@ const props = defineProps<CourseInfo>();
 </script>
 
 <template>
-  <div class="card card-compact bg-base-100 shadow-xl">
-    <figure>
-      <img
-        src="https://images.pexels.com/photos/68562/pexels-photo-68562.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-        alt="Placeholder"
-        class="h-full w-full object-cover object-center group-hover:opacity-75"
-      />
-    </figure>
-    <div class="card-body">
-      <h2 class="card-title">{{ props.name }}</h2>
-      <p>
-        {{ props.description }}
-      </p>
-      <p>
-        {{ props.level }}
-      </p>
-      <div class="card-actions justify-end">
-        <a :href="`/course/${props.id}/preview`" class="group link">
-          <button class="btn btn-primary">Open</button>
-        </a>
-      </div>
-    </div>
-  </div>
+  <v-card class="mx-auto" max-width="344">
+    <v-img
+      src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+      height="200px"
+      cover
+    ></v-img>
+
+    <v-card-title>
+      {{ props.name }}
+    </v-card-title>
+
+    <v-card-text>
+      <div>{{ props.description }}</div>
+
+      <div>Whitsunday Island, Whitsunday Islands</div>
+    </v-card-text>
+
+    <v-card-subtitle> {{ props.author }}</v-card-subtitle>
+
+    <v-card-actions>
+      <RouterLink :to="`/course/${props.id}/preview`">
+        <v-btn color="orange"> Explore </v-btn>
+      </RouterLink>
+    </v-card-actions>
+  </v-card>
 </template>

@@ -6,17 +6,9 @@ const logoFileName = "";
 </script>
 
 <template>
-  <footer class="p-10 bg-slate-500">
-    <div class="">
-      <div class="avatar">
-        <div class="w-24 rounded-full">
-          <img width="128" src="" alt="Logo" />
-        </div>
-      </div>
-      <p>
+   <v-footer app>
+     <div class="px-4 py-2 bg-black text-center w-100">
         Copyright &copy; {{ new Date().getFullYear() }} - {{ $t("footer.cr") }}
-      </p>
-    </div>
-    <div></div>
-  </footer>
+     </div>
+   </v-footer>
 </template>

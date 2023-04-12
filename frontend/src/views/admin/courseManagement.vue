@@ -41,23 +41,8 @@ const tHeaders = computed(() => {
 </script>
 
 <template>
-  <div>
-    <table class="table table-compact w-full bg-base-100 shadow-xl">
-      <thead class="border-b-2">
-        <tr class="text-left uppercase">
-          <th
-            v-for="(th, index) in tHeaders"
-            :key="`user-manager-h-${index}`"
-            :class="`p-2 ${
-              index == 0 || tHeaders.length - 1
-                ? 'border-l-0 border-r-0'
-                : 'border-l-4 border-r-4'
-            }`"
-          >
-            {{ $t(th.name) }}
-          </th>
-        </tr>
-      </thead>
+  <v-card elevation="3">
+    <v-table class="table table-compact w-full bg-base-100 shadow-xl">
       <tbody class="">
         <tr
           v-for="(td, index) in coreCourseStore.allCourseInMinimalForm"
@@ -81,6 +66,6 @@ const tHeaders = computed(() => {
           </td>
         </tr>
       </tbody>
-    </table>
-  </div>
+    </v-table>
+    </v-card>
 </template>

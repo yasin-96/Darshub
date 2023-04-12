@@ -8,8 +8,11 @@
           <h1
             class="text-4xl font-bold tracking-tight sm:text-center sm:text-6xl"
           >
-          Startseite ist noch im AUFBAU
           </h1>
+          <v-col class="text-center" cols="12">
+        <v-btn size="x-large">Default Elevation (2)</v-btn>
+      </v-col>
+
         </div>
       </div>
     </div>

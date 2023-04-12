@@ -14,7 +14,7 @@ const tHeaders = computed(() => {
 </script>
 
 <template>
-  <table class="table table-compact w-full">
+  <v-table class="table table-compact w-full">
     <thead>
       <tr>
         <th v-for="(th, index) in tHeaders" :key="`user-manager-h-${index}`">
@@ -38,5 +38,5 @@ const tHeaders = computed(() => {
         <td>{{td.lastupdate}}</td>
       </tr>
     </tbody>
-  </table>
+  </v-table>
 </template>

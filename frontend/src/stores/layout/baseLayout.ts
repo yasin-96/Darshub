@@ -2,7 +2,10 @@ import { defineStore } from "pinia";
 
 export const useBaseLayoutStore = defineStore("baseLayoutStore", {
   state: () => ({
-    infoPanel: {},
+    infoPanel: {
+      showPanel: false,
+      message: "",
+    },
     navBarTop: {
       drawerForSidebarLeft: {
         showPanel: false,
@@ -22,6 +25,9 @@ export const useBaseLayoutStore = defineStore("baseLayoutStore", {
     act_toggleLoginWindow(tValue: boolean) {
       this.navBarTop.loginModal.showPanel = tValue;
     },
+    act_toggleInfoPanel(tValue: boolean) {
+      this.infoPanel.showPanel = tValue;
+    },
   },
   getters: {
     currentStateDrawerSidebarLeft(): boolean {
@@ -29,6 +35,12 @@ export const useBaseLayoutStore = defineStore("baseLayoutStore", {
     },
     getCurrentStateOfLoginWindow(): boolean {
       return this.navBarTop.loginModal.showPanel;
+    },
+    currentStateOfInfoPanel(): boolean {
+      return this.infoPanel.showPanel;
+    },
+    messageOfInfoPanel(): string {
+      return this.infoPanel.message;
     },
   },
 });

@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from "vue";
+import { computed, reactive } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useBaseLayoutStore } from "@/stores/layout/baseLayout";
-import { onClickOutside } from "@vueuse/core";
 import { useLoginStore } from "@/stores/session/loginStore";
 
 const loginStore = useLoginStore();
@@ -12,13 +11,11 @@ const baseLayout = useBaseLayoutStore();
 const r = useRoute();
 const { locale, t } = useI18n();
 
-const nav_ref = ref();
-
 const state = reactive({
   generalSidebar: [
     {
       name: "sidebar.default.index",
-      icon: "i-heroicons-home",
+      icon: "mdi-home",
       disabled: false,
       href: "/",
     },
@@ -77,10 +74,6 @@ const state = reactive({
   ],
 });
 
-const closeSideBar = () => {
-  baseLayout.act_toggleSidebarLeft(false);
-};
-
 const drawerLeftSide = computed({
   get() {
     return baseLayout.currentStateDrawerSidebarLeft;
@@ -93,109 +86,64 @@ const drawerLeftSide = computed({
 </script>
 
 <template>
-  <ul class="menu p-4 w-80 bg-base-100 text-base-content">
-    <!-- Sidebar content here -->
-    <li
-      v-for="link in state.generalSidebar"
-      :key="link.name"
-      class="hover:bg-slate-400 rounded-lg"
-    >
-      <router-link
+  <v-navigation-drawer v-model="drawerLeftSide" location="left">
+    <v-list lines="one">
+      <v-list-item
+        v-for="link in state.generalSidebar"
         :to="link.href"
-        @click="closeSideBar"
+        :key="link.name"
+        link
       >
-        <i :class="`${link.icon} h-6 w-6`"></i>
-        <span class="pl-3" @click="drawerLeftSide != false">{{
-          $t(link.name)
-        }}</span>
-      </router-link>
-    </li>
+        <template v-slot:prepend>
+          <v-icon :icon="link.icon"></v-icon>
+        </template>
+        <v-list-item-title v-text="$t(link.name)"></v-list-item-title>
+      </v-list-item>
+    </v-list>
 
-    <div v-if="loginStore.getUserId">
-      <hr class="my-4" />
+    <v-list lines="one" v-if="loginStore.getUserId">
+      <v-list-item
+        v-for="link in state.userLinks"
+        :key="link.name"
+        link
+        :to="link.href"
+      >
+        <template v-slot:prepend>
+          <v-icon :icon="link.icon"></v-icon>
+        </template>
+        <v-list-item-title v-text="$t(link.name)"></v-list-item-title>
+      </v-list-item>
+    </v-list>
 
-      <!-- Sidebar content here -->
-      <li>
-        <div
-          class="text-start flex my-2 bg-blue-200 rounded-lg py-3 px-3 text-lg"
-        >
-          <i class="i-heroicons-user block"></i>
-          <span class="pl-3">{{ $t("sidebar.user.sidebarMenuTitel") }}</span>
-        </div>
-        <ul class="text-md">
-          <li
-            v-for="link in state.userLinks"
-            :key="link.name"
-            class="px-3 py-1 hover:bg-slate-400 rounded-lg"
-          >
-            <router-link
-              :to="link.href"
-              class="flex flex-row px-1 py-2"
-              @click="closeSideBar"
-            >
-              <i :class="`${link.icon} h-6 w-6`"></i>
-              <span class="pl-3" @click="drawerLeftSide != false">{{
-                $t(link.name)
-              }}</span>
-            </router-link>
-          </li>
-        </ul>
-      </li>
-    </div>
-    <div
-      v-if="
-        loginStore.getUserId &&
-        loginStore.userHasAdminRights
-      "
+    <v-list
+      lines="one"
+      v-if="loginStore.getUserId && loginStore.userHasAdminRights"
     >
-      <hr class="my-4" />
-      <li>
-        <div
-          class="text-start flex my-2 bg-amber-700 rounded-lg py-3 px-3 text-lg"
-        >
-          <i class="i-heroicons-user block"></i>
-          <span class="pl-3">{{ $t("sidebar.admin.sidebarMenuTitel") }}</span>
-        </div>
-        <ul class="">
-          <li
-            v-for="link in state.adminLinks"
-            :key="link.name"
-            class="px-1 py-1 hover:bg-slate-400 rounded-md"
-          >
-            <router-link
-              :to="link.href"
-              class="flex flex-row px-1 py-2"
-              @click="closeSideBar"
-            >
-              <i :class="`${link.icon} h-6 w-6`"></i>
+      <v-list-item
+        v-for="link in state.adminLinks"
+        :key="link.name"
+        link
+        :to="link.href"
+      >
+        <template v-slot:prepend>
+          <v-icon :icon="link.icon"></v-icon>
+        </template>
+        <v-list-item-title v-text="$t(link.name)"></v-list-item-title>
+      </v-list-item>
+    </v-list>
 
-              <span class="pl-3" @click="drawerLeftSide != drawerLeftSide">{{
-                $t(link.name)
-              }} asda</span>
-            </router-link>
-          </li>
-        </ul>
-      </li>
-    </div>
-    <div class="full text-center justify-end p-4">
-      <hr class="mb-3" />
-      <li
+    <v-list lines="one">
+      <v-list-item
         v-for="link in state.generalFooter"
         :key="link.name"
-        class="px-1 py-1 hover:bg-slate-400 rounded-md"
+        link
+        :to="link.href"
       >
-        <router-link
-          :to="link.href"
-          class="flex flex-row px-1 py-2"
-          @click="closeSideBar"
-        >
-          <i :class="`${link.icon} h-6 w-6`"></i>
-
-          <span class="pl-3" @click="drawerLeftSide != drawerLeftSide">{{
-            $t(link.name)
-          }}</span>
-        </router-link>
-      </li>
-    </div>
-  </ul>
+        <template v-slot:prepend>
+          <v-icon :icon="link.icon"></v-icon>
+        </template>
+        <v-list-item-title v-text="$t(link.name)"></v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </v-navigation-drawer>
 </template>

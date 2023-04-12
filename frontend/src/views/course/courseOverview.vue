@@ -12,9 +12,7 @@ const coursesWithMinimalDetails = computed(() => {
 </script>
 
 <template>
-  <div
-    class="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8"
-  >
+  <v-containter>
     <div class="text-center py-10">
       <h2
         class="sm:text-xl md:text-2xl lg:text-4xl font-bold tracking-tight text-gray-900"
@@ -22,21 +20,33 @@ const coursesWithMinimalDetails = computed(() => {
         Course (TODO)
       </h2>
     </div>
-    <div
-      class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-between gap-y-10 gap-x-6 sm:flex-row"
-    >
-      <CourseQuickInfo
-        v-for="c in coursesWithMinimalDetails"
-        :key="`course-min-det-${c.id}`"
-        :id="c.id"
-        :name="c.name"
-        :description="c.description"
-        :duration="c.duration"
-        :level="c.level"
-        :author="c.author"
-        :released="c.released"
-        :lastupdate="c.lastupdate"
-      />
+  </v-containter>
+  <v-container>
+    <div>
+      <v-row>
+        <v-col
+          cols="12"
+          xs="12"
+          sm="6"
+          md="4"
+          lg="3"
+          xl="2"
+          xxl="2"
+          v-for="c in coursesWithMinimalDetails"
+        >
+          <CourseQuickInfo
+            :key="`course-min-det-${c.id}`"
+            :id="c.id"
+            :name="c.name"
+            :description="c.description"
+            :duration="c.duration"
+            :level="c.level"
+            :author="c.author"
+            :released="c.released"
+            :lastupdate="c.lastupdate"
+          />
+        </v-col>
+      </v-row>
     </div>
-  </div>
+  </v-container>
 </template>
