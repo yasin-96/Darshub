@@ -9,7 +9,7 @@ import {
 } from "@/models/user/types";
 import type { UserDetails } from "@/models/user/interfaces";
 
-const BACKEND_API = import.meta.env.VITE_APP_BACKEND_URI;
+const BACKEND_API = import.meta.env.VITE_APP_BACKEND_USER_SERVICE_URI;
 const BACKEND_API_TIMEOUT = 60000;
 
 export const useLoginStore = defineStore("loginStore", {

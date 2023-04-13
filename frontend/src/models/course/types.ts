@@ -1,11 +1,11 @@
 export type Course = {
   id: String;
   name: String;
-  description: String;
+  description: String | null;
   duration: Date | null;
-  level: String;
-  content: Array<String>;
-  author: String;
+  level: String | null;
+  content: Array<String> | null;
+  author: String | null;
   released: Date | null;
   lastupdate: Date | null;
 };

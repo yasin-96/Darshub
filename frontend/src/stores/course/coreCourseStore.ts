@@ -4,7 +4,7 @@ import { useFetch } from "@vueuse/core";
 import type { CoreCourseState } from "@/models/course/interfaces";
 import type { Course } from "@/models/course/types";
 
-const BACKEND_API = import.meta.env.VITE_APP_BACKEND_URI;
+const BACKEND_API = import.meta.env.VITE_APP_BACKEND_COURSE_SERVICE_URI
 
 export const useCoreCourseStore = defineStore("coreCourseStore", {
   state: (): CoreCourseState => ({
@@ -17,10 +17,10 @@ export const useCoreCourseStore = defineStore("coreCourseStore", {
         `${BACKEND_API}/courses`
         // { timeout: BACKEND_API_TIMEOUT }
       ).json();
-
+      
       if (error.value) {
         //TODO: Message popup
-        console.log("err", error.value);
+        console.log("err", error);
         this.$reset();
         return;
       }
