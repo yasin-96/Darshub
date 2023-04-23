@@ -15,7 +15,7 @@ import (
 func InsertCourse(rw http.ResponseWriter, r *http.Request) {
 	course := &data.CreateCourseRequest{}
 
-	if r.Body == nil {
+	if r.Body == http.NoBody {
 		http.Error(rw, "Body is empty", http.StatusBadRequest)
 		return
 	}
@@ -62,7 +62,6 @@ func FindCourse(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, parseErr.Error(), http.StatusInternalServerError)
 		return
 	}
-	rw.WriteHeader(http.StatusOK)
 }
 
 func GetAllCourses(rw http.ResponseWriter, r *http.Request) {
@@ -71,14 +70,12 @@ func GetAllCourses(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	parseErr := util.ToJSON(courses, rw)
 	if parseErr != nil {
 		http.Error(rw, parseErr.Error(), http.StatusInternalServerError)
 		return
 	}
-	rw.WriteHeader(http.StatusOK)
-	util.ToJSON(courses, rw)
+
 }
 
 func UpdateCourse(rw http.ResponseWriter, r *http.Request) {
@@ -111,7 +108,6 @@ func UpdateCourse(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, "The course with the given id was not found", http.StatusNotFound)
 		return
 	}
-	rw.WriteHeader(http.StatusOK)
 	util.ToJSON(course, rw)
 }
 

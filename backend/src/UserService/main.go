@@ -22,7 +22,7 @@ var allowedHeaders = "Origin, Content-Type"
 
 func main() {
 	env.Parse()
-	if err := godotenv.Load(); err != nil {
+	if err := godotenv.Load("../.env"); err != nil {
 		log.Fatalf("Error loading the .env file: %v", err)
 	}
 
@@ -37,12 +37,15 @@ func main() {
 	getRouter.HandleFunc("/users", userHandler.GetAllUsers)
 
 	postRouter := sm.Methods(http.MethodPost, http.MethodOptions).Subrouter()
+	postRouter.Use(middleware.EnsureValidToken())
 	postRouter.HandleFunc("/user", userHandler.RegisterUser)
 
 	putRouter := sm.Methods(http.MethodPut, http.MethodOptions).Subrouter()
+	putRouter.Use(middleware.EnsureValidToken())
 	putRouter.HandleFunc("/user/{userId}", userHandler.UpdateUser)
 
 	deleteRouter := sm.Methods(http.MethodDelete, http.MethodOptions).Subrouter()
+	deleteRouter.Use(middleware.EnsureValidToken())
 	deleteRouter.HandleFunc("/user/{userId}", userHandler.DeleteUser)
 
 	//middleware

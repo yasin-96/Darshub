@@ -10,7 +10,9 @@ import (
 	"time"
 
 	courseHandler "darshub.dev/src/CourseService/handlers"
+	"darshub.dev/src/UserService/middleware"
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	"github.com/nicholasjackson/env"
 )
 
@@ -20,12 +22,16 @@ var allowedHeaders = "Origin, Content-Type"
 
 func main() {
 	env.Parse()
+	if err := godotenv.Load("../.env"); err != nil {
+		log.Fatalf("Error loading the .env file: %v", err)
+	}
 
 	l := log.New(os.Stdout, "darshub-api-user-service", log.LstdFlags)
 
 	sm := mux.NewRouter()
 
 	getRouter := sm.Methods(http.MethodGet, http.MethodOptions).Subrouter()
+	getRouter.Use(middleware.EnsureValidToken())
 	getRouter.HandleFunc("/course/{courseId}", courseHandler.FindCourse)
 	getRouter.HandleFunc("/courseCategory/{courseCategoryId}", courseHandler.FindCourseCategory)
 	getRouter.HandleFunc("/chapter/{chapterId}", courseHandler.FindChapter)
@@ -34,18 +40,21 @@ func main() {
 	getRouter.HandleFunc("/courseCategoryNames/all", courseHandler.GetAllCourseCategoryNames)
 
 	postRouter := sm.Methods(http.MethodPost, http.MethodOptions).Subrouter()
+	postRouter.Use(middleware.EnsureValidToken())
 	postRouter.HandleFunc("/course", courseHandler.InsertCourse)
 	postRouter.HandleFunc("/courseCategory", courseHandler.InsertCourseCategory)
 	postRouter.HandleFunc("/chapter", courseHandler.InsertChapter)
 	postRouter.HandleFunc("/subchapter", courseHandler.InsertSubchapter)
 
 	putRouter := sm.Methods(http.MethodPut, http.MethodOptions).Subrouter()
+	putRouter.Use(middleware.EnsureValidToken())
 	putRouter.HandleFunc("/course/{courseId}", courseHandler.UpdateCourse)
 	putRouter.HandleFunc("/courseCategory/{courseCategoryId}", courseHandler.UpdateCourseCategory)
 	putRouter.HandleFunc("/chapter/{chapterId}", courseHandler.UpdateChapter)
 	putRouter.HandleFunc("/subchapter/{subchapterId}", courseHandler.UpdateSubchapter)
 
 	deleteRouter := sm.Methods(http.MethodDelete, http.MethodOptions).Subrouter()
+	deleteRouter.Use(middleware.EnsureValidToken())
 	deleteRouter.HandleFunc("/course/{courseId}", courseHandler.DeleteCourse)
 	deleteRouter.HandleFunc("/courseCategory/{courseCategoryId}", courseHandler.DeleteCourseCategory)
 	deleteRouter.HandleFunc("/chapter/{chapterId}", courseHandler.DeleteChapter)

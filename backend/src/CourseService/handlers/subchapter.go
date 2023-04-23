@@ -13,7 +13,7 @@ import (
 
 func InsertSubchapter(rw http.ResponseWriter, r *http.Request) {
 
-	if r.Body == nil {
+	if r.Body == http.NoBody {
 		http.Error(rw, "Body is empty", http.StatusBadRequest)
 		return
 	}

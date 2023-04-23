@@ -10,7 +10,9 @@ import (
 	"time"
 
 	courseSearchHandler "darshub.dev/src/CourseSearchService/handlers"
+	"darshub.dev/src/UserService/middleware"
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	"github.com/nicholasjackson/env"
 )
 
@@ -21,7 +23,9 @@ var allowedHeaders = "Origin, Content-Type"
 func main() {
 
 	env.Parse()
-
+	if err := godotenv.Load("../.env"); err != nil {
+		log.Fatalf("Error loading the .env file: %v", err)
+	}
 	//logger
 	l := log.New(os.Stdout, "darshub-api", log.LstdFlags)
 
@@ -31,6 +35,7 @@ func main() {
 	sm := mux.NewRouter()
 
 	getRouter := sm.Methods(http.MethodGet, http.MethodOptions).Subrouter()
+	getRouter.Use(middleware.EnsureValidToken())
 	getRouter.HandleFunc("/course", courseSearchHandler.SearchCourse)
 
 	//middlewar

@@ -14,7 +14,7 @@ import (
 func InsertChapter(rw http.ResponseWriter, r *http.Request) {
 	chapterRequest := &data.CreateChapterRequest{}
 
-	if r.Body == nil {
+	if r.Body == http.NoBody {
 		http.Error(rw, "Body is empty", http.StatusBadRequest)
 		return
 	}
