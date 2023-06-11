@@ -278,7 +278,7 @@ const router = createRouter({
 
 //General Navigation Guards here
 // router.beforeEach(async (to, from, next) => {
-//  const isAuthenticated = store.getters["userStore/user/isAuthenticated"];
+//  const isAuthenticated = useLoginStore.getters["userStore/user/isAuthenticated"];
 //  console.log("to.name:", to.name);
 //  if (!to.authReq) {
 //  next();

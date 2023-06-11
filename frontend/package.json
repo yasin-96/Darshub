@@ -16,10 +16,11 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "@vueuse/core": "^9.6.0",
+    "@auth0/auth0-vue": "^2.2.0",
+    "@vueuse/core": "^9.13.0",
     "gsap": "^3.11.3",
     "pinia": "^2.0.22",
-    "pinia-plugin-persistedstate": "^3.0.1",
+    "pinia-plugin-persistedstate": "^3.1.0",
     "vue": "^3.2.40",
     "vue-i18n": "^9.2.2",
     "vue-meta": "^3.0.0-alpha.10",

@@ -72,7 +72,7 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
       extensions: [".js", ".json", ".jsx", ".mjs", ".ts", ".tsx", ".vue"],
     },
   };
-
+  //TODO: Check if we need GIT VERSION in release?
   // chainWebpack: (config) => {
   //   config
   //   .plugin('define')

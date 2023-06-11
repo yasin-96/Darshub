@@ -1,9 +1,5 @@
 //Startpoint
 import App from "./App.vue";
-
-//CSS (Tailwind)
-import "./assets/main.css";
-
 import { vuetify } from "./plugins/vuetify";
 
 //Vue App Creation
@@ -26,11 +22,6 @@ import router from "./router";
 import { createPinia } from "pinia";
 import { createPersistedState } from "pinia-plugin-persistedstate";
 const pinia = createPinia();
-pinia.use(
-  createPersistedState({
-    key: (id) => `_persisted_darshub_${id}`,
-  })
-);
 
 //I18n Languages
 import { i18nLanguages } from "./plugins/i18nPlugin";
@@ -39,8 +30,18 @@ import { i18nLanguages } from "./plugins/i18nPlugin";
 import { createMetaManager, plugin as metaPlugin } from "vue-meta";
 const metaManager = createMetaManager();
 
+//AUTH0
+import { authClient } from "./plugins/auth0";
+
 //Bind all option
-app.use(router).use(pinia).use(i18nLanguages).use(metaManager).use(metaPlugin).use(vuetify);
+app
+  .use(router)
+  .use(pinia)
+  .use(i18nLanguages)
+  .use(metaManager)
+  .use(metaPlugin)
+  .use(vuetify)
+  .use(authClient);
 
 //Bind to containder #app -> index.html
 app.mount("#app");

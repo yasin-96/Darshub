@@ -13,10 +13,14 @@ const formattedDate = (dateToConvert: string) => {
   return useDateFormat(useNow(), dateToConvert);
 };
 
-const panelOption = ref(["personal", "moreInfo"]);
+const panelOption = ref(["personal"]);
 </script>
 
 <template>
+  <v-avatar class="ml-2 mr-2" >
+    <v-img :src="userInfo.picture" alt="John"></v-img>
+  </v-avatar>
+
   <v-expansion-panels
     variant="popout"
     class="my-4"
@@ -27,13 +31,13 @@ const panelOption = ref(["personal", "moreInfo"]);
       <v-expansion-panel-text>
         <v-container>
           <v-text-field
-            label="Full Name"
-            :model-value="`${userInfo.first_name} ${userInfo.last_name}`"
+            label="Name"
+            :model-value="`${userInfo.name}`"
             variant="outlined"
             disabled
             readonly
           />
-          <v-text-field label="Birthday" variant="outlined" />
+          <!-- <v-text-field label="Birthday" variant="outlined" /> -->
           <v-text-field
             label="Email"
             :model-value="userInfo.email"
@@ -47,45 +51,6 @@ const panelOption = ref(["personal", "moreInfo"]);
             variant="outlined"
             readonly
             disabled
-          />
-        </v-container>
-      </v-expansion-panel-text>
-    </v-expansion-panel>
-    <v-expansion-panel title="More Information" value="moreInfo">
-      <v-expansion-panel-text>
-        <v-container>
-          <v-text-field
-            label="Company"
-            :model-value="userInfo.company"
-            variant="outlined"
-            readonly
-            disabled
-          />
-          <v-text-field
-            label="Occupation"
-            :model-value="userInfo.occupation"
-            variant="outlined"
-            readonly
-            disabled
-          />
-          <v-text-field
-            label="School"
-            :model-value="userInfo.school"
-            variant="outlined"
-            readonly
-            disabled
-          />
-          <v-text-field
-            label="Subject"
-            :model-value="userInfo.subject"
-            variant="outlined"
-            readonly
-          />
-          <v-text-field
-            label="Contry"
-            :model-value="userInfo.country"
-            variant="outlined"
-            readonly
           />
         </v-container>
       </v-expansion-panel-text>

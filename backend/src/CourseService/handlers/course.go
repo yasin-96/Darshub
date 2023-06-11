@@ -78,7 +78,6 @@ func GetAllCourses(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rw.WriteHeader(http.StatusOK)
-	util.ToJSON(courses, rw)
 }
 
 func UpdateCourse(rw http.ResponseWriter, r *http.Request) {

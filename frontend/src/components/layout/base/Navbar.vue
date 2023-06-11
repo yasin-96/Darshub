@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import LocaleSwitcher from "@/components/locale/LocaleSwitcher.vue";
+import UserNavbarQuickInfo from "@/components/user/UserNavbarQuickInfo.vue";
+
+
+
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useBaseLayoutStore } from "@/stores/layout/baseLayout";
@@ -18,9 +22,13 @@ const currentSideName = ref(
 );
 
 const goToLoginPage = () => {
-  baseLayout.act_toggleLoginWindow(true);
+  loginStore.act_logUserIn();
 };
 const goToLogoutPage = () => {
+  loginStore.act_logUserOut();
+ 
+  //loginStore.authClient?.loginWithRedirect();
+
   rr.push({ name: "logout" });
 };
 
@@ -37,7 +45,6 @@ const drawerLeftSide = computed({
     baseLayout.act_toggleSidebarLeft(val);
   },
 });
-
 </script>
 
 <template>
@@ -47,32 +54,13 @@ const drawerLeftSide = computed({
     </v-btn>
     <v-spacer></v-spacer>
     <LocaleSwitcher />
-    <v-btn icon v-if="false">
+    <UserNavbarQuickInfo />
+    <v-btn icon @click="goToLoginPage()" v-if="!isUserLoggedIn">
       <v-icon>mdi-login</v-icon>
     </v-btn>
-    <div v-if="!isUserLoggedIn">
-      <button
-        class="btn btn-outline flex bg-white px-2 py-2 transform hover:scale-105"
-        @click="goToLoginPage()"
-      >
-        <span class="pl-2 pr-2">Login</span>
-        <i
-          class="i-heroicons-arrow-left-on-rectangle h-6 w-6 hover:text-blue-400"
-        ></i>
-      </button>
-    </div>
-    <div v-else>
-      <button
-        class="btn btn-outline flex bg-red-500 px-2 py-2 transform hover:scale-105"
-        @click="goToLogoutPage()"
-      >
-        <span class="pl-2 pr-2">Logout</span>
-        <i
-          class="i-heroicons-arrow-right-on-rectangle h-6 w-6 hover:text-blue-400"
-        ></i>
-      </button>
-    </div>
-  </v-app-bar>
+    <v-btn icon @click="goToLogoutPage()" v-if="isUserLoggedIn">
+      <v-icon>mdi-logout</v-icon>
+    </v-btn>
 
- <!-- <LoginModal /> -->
+  </v-app-bar>
 </template>
