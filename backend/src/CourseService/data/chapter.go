@@ -13,18 +13,21 @@ type Chapter struct {
 	Name        string             `bson:"name"`
 	Description string             `bson:"description"`
 	Skills      string             `bson:"skills"`
+	Subchapters	[]primitive.ObjectID `bson:"subchapters"`
 }
 
 type CreateChapterRequest struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Skills      string `json:"skills"`
+	Subchapters []primitive.ObjectID `json:"subchapters"`
 }
 
 type UpdateChapterRequest struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Skills      string `json:"skills"`
+	Subchapters []primitive.ObjectID `json:"subchapters"`
 }
 
 func CreateChapter(chapterRequest *CreateChapterRequest) error {

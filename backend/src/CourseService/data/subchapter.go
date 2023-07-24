@@ -8,18 +8,18 @@ import (
 
 type Subchapter struct {
 	ID      primitive.ObjectID `bson:"_id"`
-	Content string             `bson:"content"`
+	Content []byte            `bson:"content"`
 	Listing []string           `bson:"listing"`
 }
 
 type CreateSubchapterRequest struct {
 	ID      primitive.ObjectID `json:"id"`
-	Content string             `json:"content"`
+	Content []byte             `json:"content"`
 	Listing []string           `json:"listing"`
 }
 
 type UpdateSubchapterRequest struct {
-	Content string   `bson:"content"`
+	Content []byte   `bson:"content"`
 	Listing []string `bson:"listing"`
 }
 
