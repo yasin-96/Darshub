@@ -14,7 +14,7 @@ type Course struct {
 	Description string               `json:"description" bson:"description"`
 	Duration    time.Time            `json:"duration" bson:"duration"`
 	Level       string               `json:"level" bson:"level"`
-	Chapters     []primitive.ObjectID `json:"chapters" bson:"chapters"`
+	Chapters    []primitive.ObjectID `json:"chapters" bson:"chapters"`
 	Author      string               `json:"author" bson:"author"`
 	Released    time.Time            `json:"released" bson:"released"`
 	LastUpdate  time.Time            `json:"lastUpdate" bson:"lastUpdate"`
@@ -25,7 +25,7 @@ type CreateCourseRequest struct {
 	Description string               `json:"description"`
 	Duration    string               `json:"duration"`
 	Level       int                  `json:"level"`
-	Chapters     []primitive.ObjectID `json:"content"`
+	Chapters    []primitive.ObjectID `json:"content"`
 	Author      string               `json:"author"`
 	Released    time.Time            `json:"released"`
 	LastUpdate  time.Time            `json:"lastUpdate"`
@@ -36,7 +36,7 @@ type UpdateCourseRequest struct {
 	Description string               `json:"description"`
 	Duration    string               `json:"duration"`
 	Level       int                  `json:"level"`
-	Chapters     []primitive.ObjectID `json:"content"`
+	Chapters    []primitive.ObjectID `json:"content"`
 	Author      string               `json:"author"`
 	LastUpdate  time.Time            `json:"lastUpdate"`
 }
@@ -87,7 +87,7 @@ func Update(courseId primitive.ObjectID, updatedCourse *UpdateCourseRequest) (Co
 		"description": updatedCourse.Description,
 		"duration":    updatedCourse.Duration,
 		"level":       updatedCourse.Level,
-		"content":     updatedCourse.Content,
+		"chapters":    updatedCourse.Chapters,
 		"author":      updatedCourse.Author,
 		"lastUpdate":  updatedCourse.LastUpdate,
 	}
