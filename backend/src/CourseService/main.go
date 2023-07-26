@@ -32,6 +32,7 @@ func main() {
 	getRouter.HandleFunc("/subchapter/{subchapterId}", courseHandler.FindSubchapter)
 	getRouter.HandleFunc("/courses", courseHandler.GetAllCourses)
 	getRouter.HandleFunc("/courseCategoryNames/all", courseHandler.GetAllCourseCategoryNames)
+	getRouter.HandleFunc("/course/pdf/generate", courseHandler.GeneratePDF)
 
 	postRouter := sm.Methods(http.MethodPost, http.MethodOptions).Subrouter()
 	postRouter.HandleFunc("/course", courseHandler.InsertCourse)

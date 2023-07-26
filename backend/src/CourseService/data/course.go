@@ -9,12 +9,12 @@ import (
 )
 
 type Course struct {
-	ID          primitive.ObjectID   `json:"id" bson:"_id"`
+	ID          primitive.ObjectID   `json:"_id" bson:"_id"`
 	Name        string               `json:"name" bson:"name"`
 	Description string               `json:"description" bson:"description"`
 	Duration    time.Time            `json:"duration" bson:"duration"`
 	Level       string               `json:"level" bson:"level"`
-	Content     []primitive.ObjectID `json:"content" bson:"content"`
+	Chapters    []primitive.ObjectID `json:"chapters" bson:"chapters"`
 	Author      string               `json:"author" bson:"author"`
 	Released    time.Time            `json:"released" bson:"released"`
 	LastUpdate  time.Time            `json:"lastUpdate" bson:"lastUpdate"`
@@ -25,7 +25,7 @@ type CreateCourseRequest struct {
 	Description string               `json:"description"`
 	Duration    string               `json:"duration"`
 	Level       int                  `json:"level"`
-	Content     []primitive.ObjectID `json:"content"`
+	Chapters    []primitive.ObjectID `json:"chapters"`
 	Author      string               `json:"author"`
 	Released    time.Time            `json:"released"`
 	LastUpdate  time.Time            `json:"lastUpdate"`
@@ -69,7 +69,7 @@ func GetAllCourses() ([]Course, error) {
 	defer cancel()
 	defer client.Disconnect(ctx)
 
-	cur, err := client.Database("darshub").Collection("course").Find(ctx, bson.D{})
+	cur, err := client.Database("darshub").Collection("course").Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err
 	}

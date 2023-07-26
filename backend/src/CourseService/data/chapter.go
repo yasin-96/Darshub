@@ -9,16 +9,18 @@ import (
 )
 
 type Chapter struct {
-	ID          primitive.ObjectID `bson:"_id"`
-	Name        string             `bson:"name"`
-	Description string             `bson:"description"`
-	Skills      string             `bson:"skills"`
+	ID          primitive.ObjectID   `bson:"_id"`
+	Name        string               `bson:"name"`
+	Description string               `bson:"description"`
+	Skills      string               `bson:"skills"`
+	Subchapters []primitive.ObjectID `bson:"subchapters"`
 }
 
 type CreateChapterRequest struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Skills      string `json:"skills"`
+	Name        string               `json:"name"`
+	Description string               `json:"description"`
+	Skills      string               `json:"skills"`
+	Subchapters []primitive.ObjectID `json:"subchapters"`
 }
 
 type UpdateChapterRequest struct {

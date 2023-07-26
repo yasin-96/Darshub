@@ -13,9 +13,8 @@ type Subchapter struct {
 }
 
 type CreateSubchapterRequest struct {
-	ID      primitive.ObjectID `json:"id"`
-	Content string             `json:"content"`
-	Listing []string           `json:"listing"`
+	Content string   `json:"content"`
+	Listing []string `json:"listing"`
 }
 
 type UpdateSubchapterRequest struct {
@@ -28,7 +27,6 @@ func CreateSubchapter(subchapter *CreateSubchapterRequest) error {
 	defer cancel()
 	defer client.Disconnect(ctx)
 
-	subchapter.ID = primitive.NewObjectID()
 	_, err := client.Database("darshub").Collection("subchapter").InsertOne(ctx, subchapter)
 	return err
 }
