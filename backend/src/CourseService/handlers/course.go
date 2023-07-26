@@ -51,6 +51,7 @@ func FindCourse(rw http.ResponseWriter, r *http.Request) {
 	}
 	course, err := data.Find(courseId)
 	if err != nil {
+		println("error here")
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}

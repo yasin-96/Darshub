@@ -24,9 +24,10 @@ type CreateChapterRequest struct {
 }
 
 type UpdateChapterRequest struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Skills      string `json:"skills"`
+	Name        string               `json:"name"`
+	Description string               `json:"description"`
+	Skills      string               `json:"skills"`
+	Subchapters []primitive.ObjectID `json:"subchapters"`
 }
 
 func CreateChapter(chapterRequest *CreateChapterRequest) error {
@@ -43,7 +44,6 @@ func CreateChapter(chapterRequest *CreateChapterRequest) error {
 
 func FindChapter(chapterId primitive.ObjectID) (Chapter, error) {
 	var chapter Chapter
-	log.Printf(chapterId.String())
 	ctx, cancel, client := config.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
@@ -64,6 +64,7 @@ func UpdateChapter(chapterId primitive.ObjectID, updatedChapter *UpdateChapterRe
 		"name":        updatedChapter.Name,
 		"description": updatedChapter.Description,
 		"skills":      updatedChapter.Skills,
+		"subchapters": updatedChapter.Subchapters,
 	}
 
 	_, err := client.Database("darshub").Collection("chapter").ReplaceOne(ctx, bson.M{"_id": chapterId}, update)

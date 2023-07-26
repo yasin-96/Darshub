@@ -60,8 +60,6 @@ func GetAllUsers(rw http.ResponseWriter, r *http.Request) {
 	if parseErr != nil {
 		log.Print(parseErr)
 	}
-	rw.WriteHeader(http.StatusOK)
-
 }
 
 func FindById(rw http.ResponseWriter, r *http.Request) {
