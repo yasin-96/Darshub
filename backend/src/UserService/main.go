@@ -28,7 +28,7 @@ func main() {
 	getRouter := sm.Methods(http.MethodGet, http.MethodOptions).Subrouter()
 	getRouter.HandleFunc("/user/{userId}", userHandler.FindById)
 	getRouter.HandleFunc("/user/{userId}/setInactive", userHandler.SetAccountInactive)
-	getRouter.HandleFunc("/user/all", userHandler.GetAllUsers)
+	getRouter.HandleFunc("/users", userHandler.GetAllUsers)
 
 	postRouter := sm.Methods(http.MethodPost, http.MethodOptions).Subrouter()
 	postRouter.HandleFunc("/user", userHandler.RegisterUser)

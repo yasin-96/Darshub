@@ -50,6 +50,7 @@ func FindCourse(rw http.ResponseWriter, r *http.Request) {
 	}
 	course, err := data.Find(courseId)
 	if err != nil {
+		println("error here")
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -62,7 +63,6 @@ func FindCourse(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, parseErr.Error(), http.StatusInternalServerError)
 		return
 	}
-	rw.WriteHeader(http.StatusOK)
 }
 
 func GetAllCourses(rw http.ResponseWriter, r *http.Request) {
@@ -77,7 +77,6 @@ func GetAllCourses(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, parseErr.Error(), http.StatusInternalServerError)
 		return
 	}
-	rw.WriteHeader(http.StatusOK)
 }
 
 func UpdateCourse(rw http.ResponseWriter, r *http.Request) {
