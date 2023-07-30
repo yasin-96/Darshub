@@ -28,7 +28,8 @@ export const useLoginStore = defineStore("loginStore", {
       //useStorage(STORGE_NAME, useAuth0());
     },
     async act_logUserIn() {
-      await this.authClient?.loginWithRedirect();
+      var response = await this.authClient?.loginWithRedirect();
+      console.log("resp ${response}")
     },
     act_logUserOut() {
       this.authClient.logout();

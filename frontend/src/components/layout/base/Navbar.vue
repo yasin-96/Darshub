@@ -29,7 +29,7 @@ const goToLogoutPage = () => {
  
   //loginStore.authClient?.loginWithRedirect();
 
-  rr.push({ name: "logout" });
+  //rr.push({ name: "logout" });
 };
 
 const isUserLoggedIn = computed(() => {
