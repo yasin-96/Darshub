@@ -117,7 +117,7 @@ const drawerLeftSide = computed({
 
     <v-list
       lines="one"
-      v-if="loginStore.getUserId && loginStore.userHasAdminRights"
+      v-if="loginStore.getUserId && loginStore.isUserAdmin"
     >
       <v-list-item
         v-for="link in state.adminLinks"

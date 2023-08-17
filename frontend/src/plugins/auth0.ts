@@ -1,5 +1,4 @@
 import { createAuth0 } from "@auth0/auth0-vue";
-import { User, useAuth0, type Auth0VueClient } from "@auth0/auth0-vue";
 
 export const authClient = createAuth0({
   domain: import.meta.env.VITE_A0_DOMAIN,

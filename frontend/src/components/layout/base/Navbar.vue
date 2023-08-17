@@ -3,8 +3,6 @@ import { ref, computed } from "vue";
 import LocaleSwitcher from "@/components/locale/LocaleSwitcher.vue";
 import UserNavbarQuickInfo from "@/components/user/UserNavbarQuickInfo.vue";
 
-
-
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useBaseLayoutStore } from "@/stores/layout/baseLayout";
@@ -26,10 +24,6 @@ const goToLoginPage = () => {
 };
 const goToLogoutPage = () => {
   loginStore.act_logUserOut();
- 
-  //loginStore.authClient?.loginWithRedirect();
-
-  //rr.push({ name: "logout" });
 };
 
 const isUserLoggedIn = computed(() => {
@@ -61,6 +55,5 @@ const drawerLeftSide = computed({
     <v-btn icon @click="goToLogoutPage()" v-if="isUserLoggedIn">
       <v-icon>mdi-logout</v-icon>
     </v-btn>
-
   </v-app-bar>
 </template>

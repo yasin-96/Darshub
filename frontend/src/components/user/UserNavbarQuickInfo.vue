@@ -21,17 +21,17 @@ const settingsMenu = [
     <v-menu open-on-hover>
       <template v-slot:activator="{ props }">
         <v-avatar
-          v-if="loginStore.isUserLoggedIn"
+          v-if="loginStore?.isUserLoggedIn"
           class="ml-2 mr-2"
           v-bind="props"
         >
-          <v-img :src="userInfo.picture" alt="John"></v-img>
+          <v-img :src="userInfo?.picture" alt="John"></v-img>
         </v-avatar>
       </template>
 
       <v-list>
         <v-list-item>
-          <v-list-item-title>{{ userInfo.nickname }}</v-list-item-title>
+          <v-list-item-title>{{ userInfo?.nickname }}</v-list-item-title>
         </v-list-item>
         <v-divider></v-divider>
         <v-list-item

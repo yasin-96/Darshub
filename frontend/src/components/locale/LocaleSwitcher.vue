@@ -5,7 +5,6 @@ import { useI18n } from "vue-i18n";
 
 import { onClickOutside } from "@vueuse/core";
 
-//Component state
 const state = reactive({
   selectedValue: "",
   selectedLocal: {},

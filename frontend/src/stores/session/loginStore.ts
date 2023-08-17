@@ -19,8 +19,8 @@ const router = useRouter();
 
 export const useLoginStore = defineStore("loginStore", {
   state: () => ({
-    authClient: useAuth0(),
-    test: null
+    authDetails: useAuth0(),
+    test: null,
   }),
   actions: {
     clear() {
@@ -28,44 +28,57 @@ export const useLoginStore = defineStore("loginStore", {
       //useStorage(STORGE_NAME, useAuth0());
     },
     async act_logUserIn() {
-      var response = await this.authClient?.loginWithRedirect();
-      console.log("resp ${response}")
+      var response = await this.authDetails?.loginWithRedirect();
+
+      console.log("resp ${response}");
     },
-    act_logUserOut() {
-      this.authClient.logout();
+    async act_logUserOut() {
+      await this.authDetails.logout();
       this.clear();
     },
   },
   getters: {
     getAvatar(): string {
-      return this.authClient?.user?.details?.picture || "";
+      return this.authDetails?.user?.details?.picture || "";
     },
     isUserLoggedIn(): boolean {
-      return this.authClient?.isAuthenticated ? true : false;
+      return this.authDetails?.isAuthenticated ? true : false;
     },
     getUserId(): string {
-      return this.authClient?.user?.details?.sub || "";
+      return this.authDetails?.user?.details?.sub || "";
     },
     getUser(): User {
-      return this.authClient?.user?.details;
+      return this.authDetails?.user?.details;
     },
-    userHasAuthorRights(): boolean {
-      return this.authClient?.user.role.includes(UserRoles.AUTHOR, 0)
+    isUserAuthor(): boolean {
+      if (!this.authDetails.user) {
+        return false;
+      }
+      return this.authDetails?.user?.role.includes(UserRoles.AUTHOR, 0)
         ? true
         : false;
     },
-    userHasUserManagementRights(): boolean {
-      return this.authClient?.user.role.includes(UserRoles.AUTHOR, 0)
+    IsUserAccountManager(): boolean {
+      if (!this.authDetails.user) {
+        return false;
+      }
+      return this.authDetails?.user?.role.includes(UserRoles.USER_MANAGER, 0)
         ? true
         : false;
     },
-    userHasCourseManagementRights(): boolean {
-      return this.authClient?.user.role.includes(UserRoles.AUTHOR, 0)
+    isUserCourseManager(): boolean {
+      if (!this.authDetails.user) {
+        return false;
+      }
+      return this.authDetails?.user?.role.includes(UserRoles.COURSE_MANAGER, 0)
         ? true
         : false;
     },
-    userHasAdminRights(): boolean {
-      return this.authClient?.user.role.includes(UserRoles.ADMIN, 0)
+    isUserAdmin(): boolean {
+      if (!this.authDetails.user) {
+        return false;
+      }
+      return this.authDetails?.user?.role.includes(UserRoles.ADMIN, 0)
         ? true
         : false;
     },
