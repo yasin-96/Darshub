@@ -9,6 +9,22 @@ const userInfo = computed(() => {
   return loginStore.getUser;
 });
 
+const isAdmin = computed(() => {
+  return loginStore.isUserAdmin;
+});
+
+const isAuthor = computed(() => {
+  return loginStore.isUserAuthor;
+});
+
+const isUserCourseManager = computed(() => {
+  return loginStore.isUserCourseManager;
+});
+
+const isAccountManager = computed(() => {
+  return loginStore.IsUserAccountManager;
+});
+
 const formattedDate = (dateToConvert: string) => {
   return useDateFormat(useNow(), dateToConvert);
 };
@@ -17,7 +33,7 @@ const panelOption = ref(["personal"]);
 </script>
 
 <template>
-  <v-avatar class="ml-2 mr-2" >
+  <v-avatar class="ml-2 mr-2">
     <v-img :src="userInfo.picture" alt="John"></v-img>
   </v-avatar>
 
@@ -58,10 +74,25 @@ const panelOption = ref(["personal"]);
     <v-expansion-panel title="Roles" value="userRoles">
       <v-expansion-panel-text>
         <v-container>
-          <v-checkbox value="basic">Basic</v-checkbox>
-          <v-checkbox value="basic">Author</v-checkbox>
-          <v-checkbox value="basic">Manager</v-checkbox>
-          <v-checkbox value="basic">Admin</v-checkbox>
+          <v-row>
+            <v-col cols="6">
+              <v-container>
+                <v-checkbox :v-model="true">Basic</v-checkbox>
+                <v-checkbox :v-model="isAuthor">Author</v-checkbox>
+                <v-checkbox :v-model="isAdmin">Admin</v-checkbox>
+              </v-container>
+            </v-col>
+            <v-col cols="6">
+              <v-container>
+                <v-checkbox :v-model="isUserCourseManager"
+                  >Course Manager</v-checkbox
+                >
+                <v-checkbox :v-model="isAccountManager"
+                  >Account Manager</v-checkbox
+                >
+              </v-container>
+            </v-col>
+          </v-row>
         </v-container>
       </v-expansion-panel-text>
     </v-expansion-panel>

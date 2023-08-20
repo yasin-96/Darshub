@@ -1,6 +1,6 @@
 {
-  "name": "vite-project",
-  "version": "0.0.0",
+  "name": "dars-hub-frontend",
+  "version": "0.0.20",
   "scripts": {
     "serve:local": "vite",
     "serve:dev": "vite --mode develop",

@@ -8,7 +8,7 @@ export enum UserRoles {
   USER = 1,
   AUTHOR = 2,
   USER_MANAGER = 3,
-  COURSE_MANAGER = 3,
+  COURSE_MANAGER = 4,
   ADMIN = 99,
 }
 

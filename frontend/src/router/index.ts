@@ -234,7 +234,7 @@ const adminRoutes: Array<RouteRecordRaw> = [
       if (
         metaInfo.requiresAuth &&
         useLoginStore().getUserId &&
-        useLoginStore().userHasAdminRights
+        useLoginStore().isUserAdmin
       ) {
         next();
       } else {

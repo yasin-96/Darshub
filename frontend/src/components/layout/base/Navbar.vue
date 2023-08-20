@@ -35,7 +35,6 @@ const drawerLeftSide = computed({
     return baseLayout.currentStateDrawerSidebarLeft;
   },
   set(val) {
-    console.log("val", val);
     baseLayout.act_toggleSidebarLeft(val);
   },
 });
@@ -44,7 +43,7 @@ const drawerLeftSide = computed({
 <template>
   <v-app-bar :elevation="2">
     <v-btn icon @click="drawerLeftSide = !drawerLeftSide">
-      <v-icon icon="mdi-home" />
+      <v-icon icon="mdi-menu" />
     </v-btn>
     <v-spacer></v-spacer>
     <LocaleSwitcher />

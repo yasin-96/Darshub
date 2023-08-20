@@ -28,9 +28,7 @@ export const useLoginStore = defineStore("loginStore", {
       //useStorage(STORGE_NAME, useAuth0());
     },
     async act_logUserIn() {
-      var response = await this.authDetails?.loginWithRedirect();
-
-      console.log("resp ${response}");
+      await this.authDetails.loginWithRedirect();
     },
     async act_logUserOut() {
       await this.authDetails.logout();
@@ -45,40 +43,40 @@ export const useLoginStore = defineStore("loginStore", {
       return this.authDetails?.isAuthenticated ? true : false;
     },
     getUserId(): string {
-      return this.authDetails?.user?.details?.sub || "";
+      return this.authDetails?.user?.appUID || "";
     },
     getUser(): User {
-      return this.authDetails?.user?.details;
+      return this.authDetails?.user!;
     },
     isUserAuthor(): boolean {
-      if (!this.authDetails.user) {
+      if (!this.authDetails.isAuthenticated) {
         return false;
       }
-      return this.authDetails?.user?.role.includes(UserRoles.AUTHOR, 0)
+      return this.authDetails?.user?.appRoles.includes(UserRoles.AUTHOR, 2)
         ? true
         : false;
     },
     IsUserAccountManager(): boolean {
-      if (!this.authDetails.user) {
+      if (!this.authDetails.isAuthenticated) {
         return false;
       }
-      return this.authDetails?.user?.role.includes(UserRoles.USER_MANAGER, 0)
+      return this.authDetails?.user?.appRoles.includes(UserRoles.USER_MANAGER, 3)
         ? true
         : false;
     },
     isUserCourseManager(): boolean {
-      if (!this.authDetails.user) {
+      if (!this.authDetails.isAuthenticated) {
         return false;
       }
-      return this.authDetails?.user?.role.includes(UserRoles.COURSE_MANAGER, 0)
+      return this.authDetails?.user?.appRoles.includes(UserRoles.COURSE_MANAGER, 4)
         ? true
         : false;
     },
     isUserAdmin(): boolean {
-      if (!this.authDetails.user) {
+      if (!this.authDetails.isAuthenticated) {
         return false;
       }
-      return this.authDetails?.user?.role.includes(UserRoles.ADMIN, 0)
+      return this.authDetails?.user?.appRoles.includes(UserRoles.ADMIN, 99)
         ? true
         : false;
     },

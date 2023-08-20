@@ -21,7 +21,7 @@ const state = reactive({
     },
     {
       name: "sidebar.default.courses",
-      icon: "i-heroicons-academic-cap",
+      icon: "mdi-cast-education",
       disabled: false,
       href: "/course/overview",
     },
@@ -39,36 +39,36 @@ const state = reactive({
     // },
     {
       name: "sidebar.footer.contact",
-      icon: "i-heroicons-envelope",
+      icon: "mdi-email",
       href: "/contact",
     },
   ],
   userLinks: [
     {
       name: "sidebar.user.dashboard",
-      icon: "i-heroicons-rectangle-group",
+      icon: "mdi-view-dashboard",
       href: `/user/overview`,
     },
     {
       name: "sidebar.user.course",
-      icon: "i-heroicons-bookmark-square",
+      icon: "mdi-book",
       href: `/user/course`,
     },
     {
       name: "sidebar.user.settings",
-      icon: "i-heroicons-cog-6-tooth",
+      icon: "mdi-cog",
       href: `/user/settings`,
     },
   ],
   adminLinks: [
     {
       name: "sidebar.admin.userManagement",
-      icon: "i-heroicons-user-group",
+      icon: "mdi-account-group-outline",
       href: `/admin/user/management`,
     },
     {
       name: "sidebar.admin.courseManagement",
-      icon: "i-heroicons-presentation-chart-bar",
+      icon: "mdi-book-account",
       href: `/admin/course/management`,
     },
   ],
@@ -79,7 +79,6 @@ const drawerLeftSide = computed({
     return baseLayout.currentStateDrawerSidebarLeft;
   },
   set(val) {
-    console.log("val", val);
     baseLayout.act_toggleSidebarLeft(val);
   },
 });

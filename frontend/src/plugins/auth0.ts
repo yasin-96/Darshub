@@ -5,6 +5,6 @@ export const authClient = createAuth0({
   clientId: import.meta.env.VITE_A0_CLIENT_ID,
   authorizationParams: {
     redirect_uri: `${window.location.origin}/login`,
-    scope: "openid profile email roles",
+    scope: "openid profile email roles meta",
   },
 });
