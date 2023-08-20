@@ -6,6 +6,7 @@ namespace api.Controllers;
 [Route("[controller]")]
 public class PDFController : ControllerBase
 {
+    private readonly 
     private readonly ILogger<PDFController> _logger;
 
     public PDFController(ILogger<PDFController> logger)
@@ -13,9 +14,9 @@ public class PDFController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
+    [HttpGet(Name = "GetFullPDFById")]
+    public IEnumerable<WeatherForecast> GetFullPDFByIdAsync([QueryParameter] string pdfId)
     {
-
+        
     }
 }
