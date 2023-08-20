@@ -60,6 +60,20 @@ const state = reactive({
       href: `/user/settings`,
     },
   ],
+  userManagement: [
+    {
+      name: "sidebar.admin.userManagement",
+      icon: "mdi-account-group-outline",
+      href: `/admin/user/management`,
+    },
+  ],
+  courseManagement: [
+    {
+      name: "sidebar.admin.courseManagement",
+      icon: "mdi-book-account",
+      href: `/admin/course/management`,
+    },
+  ],
   adminLinks: [
     {
       name: "sidebar.admin.userManagement",
@@ -114,10 +128,35 @@ const drawerLeftSide = computed({
       </v-list-item>
     </v-list>
 
-    <v-list
-      lines="one"
-      v-if="loginStore.getUserId && loginStore.isUserAdmin"
-    >
+    <v-list lines="one" v-if="loginStore.getUserId && loginStore.isUserCourseManager">
+      <v-list-item
+        v-for="link in state.courseManagement"
+        :key="link.name"
+        link
+        :to="link.href"
+      >
+        <template v-slot:prepend>
+          <v-icon :icon="link.icon"></v-icon>
+        </template>
+        <v-list-item-title v-text="$t(link.name)"></v-list-item-title>
+      </v-list-item>
+    </v-list>
+
+    <v-list lines="one" v-if="loginStore.getUserId && loginStore.IsUserAccountManager">
+      <v-list-item
+        v-for="link in state.userManagement"
+        :key="link.name"
+        link
+        :to="link.href"
+      >
+        <template v-slot:prepend>
+          <v-icon :icon="link.icon"></v-icon>
+        </template>
+        <v-list-item-title v-text="$t(link.name)"></v-list-item-title>
+      </v-list-item>
+    </v-list>
+
+    <v-list lines="one" v-if="loginStore.getUserId && loginStore.isUserAdmin">
       <v-list-item
         v-for="link in state.adminLinks"
         :key="link.name"

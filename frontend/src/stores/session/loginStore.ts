@@ -52,7 +52,7 @@ export const useLoginStore = defineStore("loginStore", {
       if (!this.authDetails.isAuthenticated) {
         return false;
       }
-      return this.authDetails?.user?.appRoles.includes(UserRoles.AUTHOR, 2)
+      return this.authDetails?.user?.appRoles.includes(UserRoles.AUTHOR)
         ? true
         : false;
     },
@@ -60,7 +60,7 @@ export const useLoginStore = defineStore("loginStore", {
       if (!this.authDetails.isAuthenticated) {
         return false;
       }
-      return this.authDetails?.user?.appRoles.includes(UserRoles.USER_MANAGER, 3)
+      return this.authDetails?.user?.appRoles.includes(UserRoles.USER_MANAGER)
         ? true
         : false;
     },
@@ -68,7 +68,7 @@ export const useLoginStore = defineStore("loginStore", {
       if (!this.authDetails.isAuthenticated) {
         return false;
       }
-      return this.authDetails?.user?.appRoles.includes(UserRoles.COURSE_MANAGER, 4)
+      return this.authDetails?.user?.appRoles.includes(UserRoles.COURSE_MANAGER)
         ? true
         : false;
     },
@@ -76,7 +76,7 @@ export const useLoginStore = defineStore("loginStore", {
       if (!this.authDetails.isAuthenticated) {
         return false;
       }
-      return this.authDetails?.user?.appRoles.includes(UserRoles.ADMIN, 99)
+      return this.authDetails?.user?.appRoles.includes(UserRoles.ADMIN)
         ? true
         : false;
     },

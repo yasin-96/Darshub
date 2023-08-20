@@ -2,10 +2,10 @@
 export interface CourseInfo {
   id: String;
   name: String;
-  description: String;
+  description: String | null;
   duration: Date | String | null;
-  level: String;
-  author: String;
+  level: String | null;
+  author: String | null;
   released: Date | String | null;
   lastupdate: Date | String | null;
 }

@@ -20,6 +20,7 @@ import CourseOverview from "@/views/course/courseOverview.vue";
 import CoursePreview from "@/views/course/coursePreview.vue";
 import CourseManagement from "@/views/admin/courseManagement.vue";
 import UserManagement from "@/views/admin/userManagement.vue";
+import path from "path";
 
 declare module "vue-router" {
   interface RouteMeta {
@@ -230,15 +231,28 @@ const adminRoutes: Array<RouteRecordRaw> = [
       const params: RouteParams = to.params;
       const metaInfo: RouteMeta = to.meta;
 
-      console.log(params);
-      if (
-        metaInfo.requiresAuth &&
-        useLoginStore().getUserId &&
-        useLoginStore().isUserAdmin
-      ) {
-        next();
-      } else {
-        next({ name: "index" });
+      console.log(metaInfo, to);
+
+      if (metaInfo.requiresAuth && useLoginStore().getUserId.length) {
+        if (
+          to.fullPath == "/admin/course/management" &&
+          useLoginStore().isUserCourseManager
+        ) {
+          next();
+        }
+
+        if (
+          to.fullPath == "/admin/user/management" &&
+          useLoginStore().IsUserAccountManager
+        ) {
+          next();
+        }
+
+        if( useLoginStore().isUserAdmin){
+          next();
+        }
+      } else{
+        next({ name: "login" });
       }
     },
     children: [
