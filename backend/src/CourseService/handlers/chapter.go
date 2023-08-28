@@ -89,8 +89,8 @@ func UpdateChapter(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	rw.WriteHeader(http.StatusOK)
 	util.ToJSON(chapter, rw)
+	rw.WriteHeader(http.StatusOK)
 }
 
 func DeleteChapter(rw http.ResponseWriter, r *http.Request) {
@@ -112,5 +112,4 @@ func DeleteChapter(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rw.WriteHeader(http.StatusNoContent)
-	rw.Write([]byte("Course was deleted successfully"))
 }

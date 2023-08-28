@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
 	"reflect"
 	"time"
@@ -109,8 +108,32 @@ func UpdateCourse(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, "The course with the given id was not found", http.StatusNotFound)
 		return
 	}
-	rw.WriteHeader(http.StatusOK)
-	util.ToJSON(course, rw)
+	jsonErr := util.ToJSON(course, rw)
+	if jsonErr != nil {
+		http.Error(rw, jsonErr.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func GetCoursesByAuthorId(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	if vars == nil || vars["courseId"] == "" {
+		http.Error(rw, "No author id was provided in the path variable", http.StatusBadRequest)
+		return
+	}
+
+	authoriD := vars["authorId"]
+	courses, err := data.GetCoursesByAuthorId(authoriD)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if reflect.ValueOf(courses).IsZero() {
+		http.Error(rw, "The author with the given id has no courses.", http.StatusNotFound)
+		return
+	}
+
 }
 
 func DeleteCourse(rw http.ResponseWriter, r *http.Request) {
@@ -126,12 +149,11 @@ func DeleteCourse(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	rw.WriteHeader(http.StatusNoContent)
 
 	respErr := data.Delete(courseId)
 	if respErr != nil {
 		http.Error(rw, respErr.Error(), http.StatusInternalServerError)
 		return
 	}
-	log.Print("Course was deleted successfully")
+	rw.WriteHeader(http.StatusNoContent)
 }
