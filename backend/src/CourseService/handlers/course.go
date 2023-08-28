@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"reflect"
@@ -9,6 +10,7 @@ import (
 	"darshub.dev/src/CourseService/data"
 	"darshub.dev/src/util"
 	"github.com/gorilla/mux"
+	"github.com/phpdave11/gofpdf"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -124,7 +126,6 @@ func DeleteCourse(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	rw.WriteHeader(http.StatusNoContent)
 
 	respErr := data.Delete(courseId)
 	if respErr != nil {
@@ -135,14 +136,37 @@ func DeleteCourse(rw http.ResponseWriter, r *http.Request) {
 }
 
 func GeneratePDF(rw http.ResponseWriter, r *http.Request) {
-	id, _ := primitive.ObjectIDFromHex("64c0e325199e180b2d94d66d")
-	course, _ := data.Find(id)
-	println(course.Description)
+	vars := mux.Vars(r)
 
-	/*pdf := gofpdf.New("P", "mm", "A4", "")
-	titleStr := "testtitle"
+	if vars == nil || vars["courseId"] == "" {
+		http.Error(rw, "No course id was provided in the path variable", http.StatusBadRequest)
+		return
+	}
+
+	courseId, err := primitive.ObjectIDFromHex(vars["courseId"])
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	course, _ := data.Find(courseId)
+
+	x := make(map[string][]data.Subchapter)
+
+	for _, chapterId := range course.Chapters {
+
+		chapter, _ := data.FindChapter(chapterId)
+
+		for _, subchapterid := range chapter.Subchapters {
+			subchapter, _ := data.FindSubchapter(subchapterid)
+			x[chapter.Name] = append(x[chapter.Name], subchapter)
+		}
+	}
+
+	pdf := gofpdf.New("P", "mm", "A4", "")
+	titleStr := course.Name
 	pdf.SetTitle(titleStr, false)
-	pdf.SetAuthor("Jules Verne", false)
+	pdf.SetAuthor(course.Author, false)
 	pdf.SetHeaderFunc(func() {
 		// Arial bold 15
 		pdf.SetFont("Arial", "B", 15)
@@ -182,48 +206,33 @@ func GeneratePDF(rw http.ResponseWriter, r *http.Request) {
 		// Line break
 		pdf.Ln(4)
 	}
-	chapterBody := func(fileStr string) {
+	chapterBody := func(content string) {
 		// Read text file
-		txtStr, err := ioutil.ReadFile(fileStr)
-		if err != nil {
-			pdf.SetError(err)
-		}
+
 		pdf.AddUTF8Font("dejavu", "", "DejaVuSansCondensed.ttf")
 		pdf.AddUTF8Font("dejavu", "I", "DejaVuSansCondensed-Oblique.ttf")
 
 		// Times 12
 		pdf.SetFont("dejavu", "", 14)
 		// Output justified text
-		pdf.MultiCell(0, 5, string(txtStr), "", "", false)
+		pdf.MultiCell(0, 5, content, "", "", false)
 		// Line break
 		pdf.Ln(-1)
 		// Mention in italics
 		pdf.SetFont("dejavu", "I", 0)
-		pdf.Cell(0, 5, "(end of excerpt)")
 	}
+
 	printChapter := func(chapNum int, titleStr, fileStr string) {
 		pdf.AddPage()
 		chapterTitle(chapNum, titleStr)
 		chapterBody(fileStr)
-	}*/
 
-	var m map[string][]data.Subchapter
-
-	for _, id := range course.Chapters {
-		chapter, _ := data.FindChapter(id)
-		print(chapter.Name)
-		subchapterid := chapter.Subchapters[0]
-		subchapter, _ := data.FindSubchapter(subchapterid)
-		res := append(m[chapter.Name], subchapter)
-		print(res)
 	}
-	/*
-	   printChapter(1, "A RUNAWAY REEF", "test.txt")
-	   printChapter(2, "THE PROS AND CONS", "test1.txt")
-	   err := pdf.OutputFileAndClose("hello.pdf")
 
-	   	if err != nil {
-	   		fmt.Print(err.Error())
-	   	}
-	*/
+	for i, chapter := range x {
+		printChapter(1, i, chapter[0].Content)
+	}
+
+	_ = pdf.OutputFileAndClose(fmt.Sprintf("%s.pdf", course.Name))
+
 }

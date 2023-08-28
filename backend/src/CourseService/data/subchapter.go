@@ -8,7 +8,7 @@ import (
 
 type Subchapter struct {
 	ID      primitive.ObjectID `bson:"_id"`
-	Content []byte             `bson:"content"`
+	Content string             `bson:"content"`
 	Listing []string           `bson:"listing"`
 }
 
