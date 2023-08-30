@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@auth0/auth0-vue": "^2.2.0",
+    "@kangc/v-md-editor": "^2.3.17",
     "@vueuse/core": "^9.13.0",
     "gsap": "^3.11.3",
     "pinia": "^2.0.22",

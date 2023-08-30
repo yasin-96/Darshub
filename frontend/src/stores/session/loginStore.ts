@@ -1,5 +1,10 @@
 import { defineStore } from "pinia";
-import { useFetch, useStorage, useStorageAsync } from "@vueuse/core";
+import {
+  useFetch,
+  useLocalStorage,
+  useStorage,
+  useStorageAsync,
+} from "@vueuse/core";
 import { User, useAuth0, type Auth0VueClient } from "@auth0/auth0-vue";
 
 import { useRoute, useRouter } from "vue-router";
@@ -20,15 +25,17 @@ const router = useRouter();
 export const useLoginStore = defineStore("loginStore", {
   state: () => ({
     authDetails: useAuth0(),
-    test: null,
+    user: null,
   }),
   actions: {
     clear() {
       this.$reset();
-      //useStorage(STORGE_NAME, useAuth0());
+      useStorage(STORGE_NAME, null);
     },
     async act_logUserIn() {
       await this.authDetails.loginWithRedirect();
+
+      this.user = useStorage(STORGE_NAME, this.authDetails.user).value;
     },
     async act_logUserOut() {
       await this.authDetails.logout();
@@ -79,6 +86,12 @@ export const useLoginStore = defineStore("loginStore", {
       return this.authDetails?.user?.appRoles.includes(UserRoles.ADMIN)
         ? true
         : false;
+    },
+    isStorageFilled(): boolean {
+      if (!this.user) {
+        return false;
+      }
+      return true;
     },
   },
 });

@@ -7,7 +7,17 @@ const coreCourseStore = useCoreCourseStore();
 </script>
 
 <template>
-  <div>TODO</div>
+  <v-card elevation="0">
+    <v-container fluid>
+      <v-row>
+        <v-col>
+          <v-btn icon color="green">
+            <v-icon large>mdi-plus-circle-outline</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-card>
 </template>
 
 <style scoped></style>

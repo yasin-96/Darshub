@@ -20,7 +20,8 @@ import CourseOverview from "@/views/course/courseOverview.vue";
 import CoursePreview from "@/views/course/coursePreview.vue";
 import CourseManagement from "@/views/admin/courseManagement.vue";
 import UserManagement from "@/views/admin/userManagement.vue";
-import path from "path";
+import AuthorManagement from "@/views/admin/authorManagement.vue";
+import { useAccountManagementStore } from "@/stores/admin/accountManagementStore";
 
 declare module "vue-router" {
   interface RouteMeta {
@@ -242,16 +243,23 @@ const adminRoutes: Array<RouteRecordRaw> = [
         }
 
         if (
+          to.fullPath == "/admin/author/management" &&
+          useLoginStore().isUserAuthor
+        ) {
+          next();
+        }
+
+        if (
           to.fullPath == "/admin/user/management" &&
           useLoginStore().IsUserAccountManager
         ) {
           next();
         }
 
-        if( useLoginStore().isUserAdmin){
+        if (useLoginStore().isUserAdmin) {
           next();
         }
-      } else{
+      } else {
         next({ name: "login" });
       }
     },
@@ -265,6 +273,20 @@ const adminRoutes: Array<RouteRecordRaw> = [
           from: RouteLocationNormalized,
           next: NavigationGuardNext
         ) => {
+          await useAccountManagementStore().getAllUsersFromAuth0();
+          next();
+        },
+      },
+      {
+        path: "author/management",
+        name: "author-manager",
+        component: AuthorManagement,
+        beforeEnter: async (
+          to: RouteLocationNormalized,
+          from: RouteLocationNormalized,
+          next: NavigationGuardNext
+        ) => {
+          await useCoreCourseStore().act_loadAllCourseAsQuickInfo();
           next();
         },
       },
@@ -290,18 +312,15 @@ const router = createRouter({
   routes: [...generalRoutes, ...userRoutes, ...adminRoutes, ...courseRoutes],
 });
 
+
 //General Navigation Guards here
-// router.beforeEach(async (to, from, next) => {
-//  const isAuthenticated = useLoginStore.getters["userStore/user/isAuthenticated"];
-//  console.log("to.name:", to.name);
-//  if (!to.authReq) {
-//  next();
-//  if (to.authReq && !isAuthenticated) {
-//  next({ name: "Login" });
-//  }
-//  if (to.authReq && isAuthenticated) {
-//  next();
-//  }
-// });
+router.afterEach(async (to, from, next) => {
+  const isStorageLoadFromLocalStorage = useLoginStore().isStorageFilled;
+  const isUserLoggedIn = useLoginStore().isUserLoggedIn;
+  console.log(isStorageLoadFromLocalStorage, !isUserLoggedIn ,isStorageLoadFromLocalStorage && !isUserLoggedIn)
+  if (!isStorageLoadFromLocalStorage && !isUserLoggedIn) {
+    //await useLoginStore().act_logUserIn();
+  }
+});
 
 export default router;
