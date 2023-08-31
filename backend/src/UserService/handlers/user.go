@@ -11,11 +11,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type LoginRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
 func RegisterUser(rw http.ResponseWriter, r *http.Request) {
 
 	if r.Body == http.NoBody {
@@ -31,20 +26,39 @@ func RegisterUser(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	/*if user.Password == "" ||
-		user.First_Name == "" ||
-		user.Last_Name == "" ||
-		&user.Birthday == new(time.Time) ||
-		user.Email == "" ||
-		user.TelNr == "" {
-		rw.WriteHeader(http.StatusBadRequest)
-		rw.Write([]byte("Request is not valid. Required informations are missing"))
-		return
-	}*/
-
 	respErr := data.Create(user)
 	if respErr != nil {
 		http.Error(rw, respErr.Error(), http.StatusInternalServerError)
+		return
+	}
+	rw.WriteHeader(http.StatusCreated)
+}
+
+func RegisterUserToCourse(rw http.ResponseWriter, r *http.Request) {
+	if r.Body == http.NoBody {
+		http.Error(rw, "Request is not valid.", http.StatusBadRequest)
+		return
+	}
+
+	vars := mux.Vars(r)
+
+	if vars == nil || vars["userId"] == "" {
+		http.Error(rw, "Np user id provided in path variable", http.StatusBadRequest)
+		return
+	}
+
+	userId := vars["userId"]
+	request := &data.CourseRegisterRequest{}
+
+	parseErr := util.FromJSON(request, r.Body)
+	if parseErr != nil {
+		http.Error(rw, parseErr.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err := data.RegisterToCourse(userId, request.CourseId)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	rw.WriteHeader(http.StatusCreated)
@@ -66,7 +80,7 @@ func FindById(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	if vars == nil || vars["userId"] == "" {
-		http.Error(rw, "Np user id provided in path variable", http.StatusBadRequest)
+		http.Error(rw, "No user id provided in path variable", http.StatusBadRequest)
 		return
 	}
 
@@ -90,11 +104,32 @@ func FindById(rw http.ResponseWriter, r *http.Request) {
 	rw.WriteHeader(http.StatusOK)
 }
 
+func FindUserAuth0(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	if vars == nil || vars["userId"] == "" {
+		http.Error(rw, "There was no user id provided in the path variable", http.StatusBadRequest)
+		return
+	}
+
+	userId := vars["userId"]
+
+	user, err := data.FindUserAuth0(userId)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+	}
+	parseErr := util.ToJSON(user, rw)
+	if parseErr != nil {
+		http.Error(rw, parseErr.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 func UpdateUser(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	if vars == nil || vars["userId"] == "" {
-		http.Error(rw, "There was no user is provided in the path variable", http.StatusBadRequest)
+		http.Error(rw, "There was no user id provided in the path variable", http.StatusBadRequest)
 		return
 	}
 
@@ -141,46 +176,6 @@ func DeleteUser(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rw.WriteHeader(http.StatusNoContent)
-}
-
-func Login(rw http.ResponseWriter, r *http.Request) {
-
-	if r.Body == http.NoBody {
-		log.Println("Request is not valid. Req Body is not valid or missing information")
-		http.Error(rw, "Request is not valid.", http.StatusBadRequest)
-		rw.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	loginRequest := &LoginRequest{}
-
-	err := util.FromJSON(loginRequest, r.Body)
-	if err != nil {
-		rw.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	if loginRequest.Email == "" || loginRequest.Password == "" {
-		rw.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	user := data.Find(loginRequest.Email)
-
-	if reflect.ValueOf(user).IsZero() {
-		rw.WriteHeader(http.StatusNotFound)
-		rw.Write([]byte("No account found with the entered email address."))
-		return
-	}
-
-	if !data.CheckIfPasswordsMatch(user, loginRequest.Password) {
-		rw.WriteHeader(http.StatusUnauthorized)
-		rw.Write([]byte("The password which was entered is incorrect."))
-		return
-	}
-
-	rw.WriteHeader(http.StatusOK)
-	util.ToJSON(user, rw)
 }
 
 func SetAccountInactive(rw http.ResponseWriter, r *http.Request) {

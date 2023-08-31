@@ -29,9 +29,11 @@ func main() {
 	getRouter.HandleFunc("/user/{userId}", userHandler.FindById)
 	getRouter.HandleFunc("/user/{userId}/setInactive", userHandler.SetAccountInactive)
 	getRouter.HandleFunc("/users", userHandler.GetAllUsers)
+	getRouter.HandleFunc("/auth0/user/{userId}", userHandler.FindUserAuth0)
 
 	postRouter := sm.Methods(http.MethodPost, http.MethodOptions).Subrouter()
 	postRouter.HandleFunc("/user", userHandler.RegisterUser)
+	postRouter.HandleFunc("/user/{userId}/course/register", userHandler.RegisterUserToCourse)
 
 	putRouter := sm.Methods(http.MethodPut, http.MethodOptions).Subrouter()
 	putRouter.HandleFunc("/user/{userId}", userHandler.UpdateUser)

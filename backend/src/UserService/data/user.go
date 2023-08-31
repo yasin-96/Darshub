@@ -1,10 +1,17 @@
 package data
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
+	"strings"
 	"time"
 
 	"darshub.dev/src/UserService/config"
+	"darshub.dev/src/util"
+	"github.com/mitchellh/mapstructure"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
@@ -59,6 +66,27 @@ type UpdateUserRequest struct {
 	Subject    string    `json:"subject"`
 	Country    string    `json:"country"`
 }
+
+type CourseRegisterRequest struct {
+	CourseId string `json:"courseId"`
+}
+
+type Auth0User struct {
+	CreatedAt     string `mapstructure:"created_at"`
+	Email         string
+	EmailVerified bool `mapstructure:"email_verified"`
+	Name          string
+	Nickname      string
+	Picture       string
+	UpdatedAt     string            `mapstructure:"updated_at"`
+	UserId        string            `mapstructure:"user_id"`
+	UserMetadata  map[string]string `mapstructure:"user_metadata"`
+	Username      string
+	AppMetadata   map[string][]string `mapstructure:"app_metadata"`
+	LastLogin     string              `mapstructure:"last_login"`
+}
+
+var token string = ""
 
 func Create(userRequest *UserRequest) error {
 	ctx, cancel, client := config.GetConnection()
@@ -178,6 +206,107 @@ func getUser(email string) User {
 	}
 
 	return user
+}
+
+func FindUserAuth0(userId string) (Auth0User, error) {
+	tokenErr := checkIfTokenIsSet()
+	if tokenErr != nil {
+		return Auth0User{}, tokenErr
+	}
+	auth0Prefix := fmt.Sprintf("auth0|%s", userId)
+
+	url := fmt.Sprintf("https://dev-l726rl1d8x1rw7du.eu.auth0.com/api/v2/users/%s", auth0Prefix)
+	method := "GET"
+
+	client := &http.Client{}
+	req, err := http.NewRequest(method, url, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return Auth0User{}, err
+	}
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
+
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return Auth0User{}, err
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return Auth0User{}, err
+	}
+
+	var result map[string]interface{}
+	var user Auth0User
+	json.Unmarshal([]byte(string(body)), &result)
+	mapstructure.Decode(result, &user)
+	return user, nil
+
+}
+
+func RegisterToCourse(userId string, courseId string) error {
+	tokenErr := checkIfTokenIsSet()
+	if tokenErr != nil {
+		return tokenErr
+	}
+	auth0Prefix := fmt.Sprintf("auth0|%s", userId)
+
+	url := fmt.Sprintf("https://dev-l726rl1d8x1rw7du.eu.auth0.com/api/v2/users/%s", auth0Prefix)
+	method := "PATCH"
+	registeredCourses, _ := getRegisteredCourses(userId)
+	registeredCourses = append(registeredCourses, courseId)
+
+	jsonArray, _ := json.Marshal(registeredCourses)
+
+	payload := strings.NewReader(fmt.Sprintf(`{"app_metadata": {"courses": %s}}`, string(jsonArray)))
+
+	client := &http.Client{}
+	req, reqErr := http.NewRequest(method, url, payload)
+
+	if reqErr != nil {
+		return reqErr
+	}
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
+
+	res, respErr := client.Do(req)
+	if respErr != nil {
+		return respErr
+	}
+	defer res.Body.Close()
+
+	body, readErr := ioutil.ReadAll(res.Body)
+	if readErr != nil {
+		return readErr
+	}
+	fmt.Println(string(body))
+	return nil
+}
+
+func checkIfTokenIsSet() error {
+	if len(token) == 0 {
+		retrievedToken, err := util.GetManagementAPIToken()
+		if err != nil {
+			return err
+		}
+		token = retrievedToken
+	}
+	return nil
+}
+
+func getRegisteredCourses(userId string) ([]string, error) {
+	user, err := FindUserAuth0(userId)
+	if err != nil {
+		return nil, err
+	}
+	courses := user.AppMetadata["courses"]
+	return courses, nil
 }
 
 func getEncryptedPassword(password []byte) []byte {
