@@ -1,9 +1,11 @@
 package data
 
 import (
+	"fmt"
 	"time"
 
 	"darshub.dev/src/UserService/config"
+	"github.com/phpdave11/gofpdf"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -110,4 +112,119 @@ func Delete(courseId primitive.ObjectID) error {
 
 	_, err := client.Database("darshub").Collection("course").DeleteOne(ctx, bson.M{"_id": courseId})
 	return err
+}
+
+func GeneratePDF(courseId primitive.ObjectID) error {
+	course, err := Find(courseId)
+	if err != nil {
+		return err
+	}
+
+	x := make(map[string][]Subchapter)
+
+	for _, chapterId := range course.Chapters {
+
+		chapter, _ := FindChapter(chapterId)
+
+		for _, subchapterid := range chapter.Subchapters {
+			subchapter, _ := FindSubchapter(subchapterid)
+			x[chapter.Name] = append(x[chapter.Name], subchapter)
+		}
+	}
+
+	pdf := gofpdf.New("P", "mm", "A4", "")
+	courseTitle := course.Name
+	pdf.SetTitle(courseTitle, false)
+	pdf.SetAuthor(course.Author, false)
+	pdf.SetHeaderFunc(func() {
+		// Arial bold 15
+		pdf.SetFont("Arial", "B", 15)
+		// Calculate width of title and position
+		wd := pdf.GetStringWidth(courseTitle) + 6
+		pdf.SetX((210 - wd) / 2)
+		// Colors of frame, background and text
+		pdf.SetDrawColor(0, 80, 180)
+		pdf.SetFillColor(230, 230, 0)
+		pdf.SetTextColor(220, 50, 50)
+		// Thickness of frame (1 mm)
+		pdf.SetLineWidth(1)
+		// Title
+		pdf.CellFormat(wd, 9, courseTitle, "1", 1, "C", true, 0, "")
+		// Line break
+		pdf.Ln(10)
+	})
+	pdf.SetFooterFunc(func() {
+		// Position at 1.5 cm from bottom
+		pdf.SetY(-15)
+		// Arial italic 8
+		pdf.SetFont("Arial", "I", 8)
+		// Text color in gray
+		pdf.SetTextColor(128, 128, 128)
+		// Page number
+		pdf.CellFormat(0, 10, fmt.Sprintf("Page %d", pdf.PageNo()),
+			"", 0, "C", false, 0, "")
+	})
+	chapterTitle := func(chapNum int, titleStr string) {
+		// 	// Arial 12
+		pdf.SetFont("Arial", "", 12)
+		// Background color
+		pdf.SetFillColor(200, 220, 255)
+		// Title
+		pdf.CellFormat(0, 6, fmt.Sprintf("Chapter %d : %s", chapNum, titleStr),
+			"", 1, "L", true, 0, "")
+		// Line break
+		pdf.Ln(4)
+	}
+	subchapterTitle := func(subchappNum int, subchapTitle string) {
+		// 	// Arial 12
+		pdf.SetFont("Arial", "", 9)
+		// Background color
+		pdf.SetFillColor(200, 220, 255)
+		// Title
+		pdf.CellFormat(0, 6, fmt.Sprintf("Subchapter %d : %s", subchappNum, subchapTitle),
+			"", 1, "L", true, 0, "")
+		// Line break
+		pdf.Ln(4)
+	}
+	chapterBody := func(content string) {
+		// Read text file
+
+		pdf.AddUTF8Font("dejavu", "", "DejaVuSansCondensed.ttf")
+		pdf.AddUTF8Font("dejavu", "I", "DejaVuSansCondensed-Oblique.ttf")
+
+		// Times 12
+		pdf.SetFont("dejavu", "", 14)
+		// Output justified text
+		pdf.MultiCell(0, 5, content, "", "", false)
+		// Line break
+		pdf.Ln(-1)
+		// Mention in italics
+		pdf.SetFont("dejavu", "I", 0)
+	}
+
+	chapterCounter := 1
+	subchapterCounter := 1
+
+	printSubchapter := func(subhchapter Subchapter, subchapNum int) {
+		subchapterTitle(subchapNum, subhchapter.Name)
+		chapterBody(subhchapter.Content)
+	}
+
+	printChapter := func(chapNum int, titleStr string, subchapters []Subchapter) {
+		pdf.AddPage()
+		chapterTitle(chapNum, titleStr)
+		for _, subchapter := range subchapters {
+			printSubchapter(subchapter, subchapterCounter)
+			subchapterCounter++
+		}
+	}
+
+	for chapterTitle, subchapters := range x {
+		printChapter(chapterCounter, chapterTitle, subchapters)
+		chapterCounter++
+	}
+
+	_ = pdf.OutputFileAndClose(fmt.Sprintf("%s.pdf", course.Name))
+
+	return nil
 }
