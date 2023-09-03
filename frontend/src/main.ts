@@ -33,6 +33,9 @@ const metaManager = createMetaManager();
 //AUTH0
 import { authClient } from "./plugins/auth0";
 
+//MD Editor
+import { mdEditor } from "./plugins/md";
+
 //Bind all option
 app
   .use(router)
@@ -41,7 +44,8 @@ app
   .use(metaManager)
   .use(metaPlugin)
   .use(vuetify)
-  .use(authClient);
+  .use(authClient)
+  .use(mdEditor);
 
 //Bind to containder #app -> index.html
 app.mount("#app");

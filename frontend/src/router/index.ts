@@ -22,6 +22,7 @@ import CourseManagement from "@/views/admin/courseManagement.vue";
 import UserManagement from "@/views/admin/userManagement.vue";
 import AuthorManagement from "@/views/admin/authorManagement.vue";
 import { useAccountManagementStore } from "@/stores/admin/accountManagementStore";
+import { useTokenManagementStore } from "@/stores/admin/tokenManagmentStore";
 
 declare module "vue-router" {
   interface RouteMeta {
@@ -232,8 +233,9 @@ const adminRoutes: Array<RouteRecordRaw> = [
       const params: RouteParams = to.params;
       const metaInfo: RouteMeta = to.meta;
 
-      console.log(metaInfo, to);
+      //console.log(metaInfo, to);
 
+          next();
       if (metaInfo.requiresAuth && useLoginStore().getUserId.length) {
         if (
           to.fullPath == "/admin/course/management" &&
@@ -273,6 +275,7 @@ const adminRoutes: Array<RouteRecordRaw> = [
           from: RouteLocationNormalized,
           next: NavigationGuardNext
         ) => {
+          await useTokenManagementStore().getManagementToken();
           await useAccountManagementStore().getAllUsersFromAuth0();
           next();
         },

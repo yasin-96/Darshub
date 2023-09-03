@@ -1,0 +1,13 @@
+@grant_type=client_credentials
+@client_id=WRcPOLbSqXbRLJRg7lJy6ozm9xO9eXJ6
+@client_sec=tRiQBfqOZfs4CbDtFlPOgACVS2bEQVADO0uSLwV37NUe1yr3vr8xLlwtdqY7_4zg
+@audience=https://dev-l726rl1d8x1rw7du.eu.auth0.com/api/v2/
+
+# DHUB Generate Access Token
+POST https://dev-l726rl1d8x1rw7du.eu.auth0.com/oauth/token
+Content-Type:application/x-www-form-urlencoded
+
+grant_type:{{grant_type}}
+client_id: {{client_id}}
+client_secret: {{client_sec}}
+audience:{{audience}}

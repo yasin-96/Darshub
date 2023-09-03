@@ -93,5 +93,11 @@ export const useLoginStore = defineStore("loginStore", {
       }
       return true;
     },
+    getNickName(): String {
+      if (!this.authDetails || !this.authDetails.user) {
+        return "";
+      }
+      return this.authDetails.user?.nickname;
+    },
   },
 });

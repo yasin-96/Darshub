@@ -7,6 +7,8 @@ export const authClient = createAuth0({
     redirect_uri: `${window.location.origin}/login`,
     scope: "openid profile email roles meta",
   },
+  useRefreshTokens: true,
   legacySameSiteCookie: true,
   authorizeTimeoutInSeconds: 60000,
+  
 });

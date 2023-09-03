@@ -24,15 +24,18 @@ export const useAccountManagementStore = defineStore("accountManagementStore", {
       const tokenStore = useTokenManagementStore();
       console.log("Start fetching data for users");
       let currentDateInTicks: number = Date.parse(new Date().toString());
+      await tokenStore.getManagementTokenV2();
       if (currentDateInTicks > tokenStore.getExpiredTimeInTicks) {
-        await tokenStore.getManagementToken();
+        await tokenStore.getManagementTokenV2();
       }
-
+        
+      console.log(`${AUTH0_API}/api/v2/users`)
       const { isFetching, error, data } = await useFetch<
-        Array<Auth0UserExtendedObject>
+        Array<any>
       >(`${AUTH0_API}/api/v2/users`, {
         async beforeFetch({ url, options, cancel }) {
           if (!tokenStore.getToken) cancel();
+          console.log(tokenStore.getToken);
           options.method = "GET";
           options.redirect = 'follow';
           options.headers = {
@@ -47,11 +50,9 @@ export const useAccountManagementStore = defineStore("accountManagementStore", {
         },
       });
 
-      console.log("Result of fetch");
-      console.log([error, data])
 
       if (error.value) {
-        console.log("err", error);
+        console.log("Error: Data from auth0 was not fetched", error);
         this.$reset();
         return;
       }
