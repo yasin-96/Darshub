@@ -11,15 +11,18 @@ import (
 
 	userHandler "darshub.dev/src/UserService/handlers"
 	"github.com/gorilla/mux"
-	"github.com/nicholasjackson/env"
+	"github.com/joho/godotenv"
 )
 
-var bindAddress = env.String("BIND_ADDRESS", false, ":8080", "Bind address for the server")
+var bindAddress = ":8080"
 var allowedMethods = "OPTIONS,POST,PUT,DELETE,GET"
 var allowedHeaders = "Origin, Content-Type"
 
 func main() {
-	env.Parse()
+	err := godotenv.Load()
+	if err != nil {
+		println("Enviroment variables could not be loaded.")
+	}
 
 	l := log.New(os.Stdout, "darshub-api-user-service", log.LstdFlags)
 
@@ -29,7 +32,6 @@ func main() {
 	getRouter.HandleFunc("/user/{userId}", userHandler.FindById)
 	getRouter.HandleFunc("/user/{userId}/setInactive", userHandler.SetAccountInactive)
 	getRouter.HandleFunc("/users", userHandler.GetAllUsers)
-	getRouter.HandleFunc("/auth0/user/{userId}", userHandler.FindUserAuth0)
 
 	postRouter := sm.Methods(http.MethodPost, http.MethodOptions).Subrouter()
 	postRouter.HandleFunc("/user", userHandler.RegisterUser)
@@ -46,7 +48,7 @@ func main() {
 
 	// create a new server
 	s := http.Server{
-		Addr:         *bindAddress,      // configure the bind address
+		Addr:         bindAddress,       // configure the bind address
 		Handler:      sm,                // set the default handler
 		ErrorLog:     l,                 // set the logger for the server
 		ReadTimeout:  5 * time.Second,   // max time to read request from the client

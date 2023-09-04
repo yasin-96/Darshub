@@ -61,7 +61,6 @@ func RegisterUserToCourse(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	rw.WriteHeader(http.StatusCreated)
 }
 
 func GetAllUsers(rw http.ResponseWriter, r *http.Request) {
@@ -102,27 +101,6 @@ func FindById(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rw.WriteHeader(http.StatusOK)
-}
-
-func FindUserAuth0(rw http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-
-	if vars == nil || vars["userId"] == "" {
-		http.Error(rw, "There was no user id provided in the path variable", http.StatusBadRequest)
-		return
-	}
-
-	userId := vars["userId"]
-
-	user, err := data.FindUserAuth0(userId)
-	if err != nil {
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
-	}
-	parseErr := util.ToJSON(user, rw)
-	if parseErr != nil {
-		http.Error(rw, parseErr.Error(), http.StatusInternalServerError)
-		return
-	}
 }
 
 func UpdateUser(rw http.ResponseWriter, r *http.Request) {

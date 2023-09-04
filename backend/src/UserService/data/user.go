@@ -208,7 +208,59 @@ func getUser(email string) User {
 	return user
 }
 
-func FindUserAuth0(userId string) (Auth0User, error) {
+func RegisterToCourse(userId string, courseId string) error {
+	tokenErr := checkIfTokenIsSet()
+	if tokenErr != nil {
+		return tokenErr
+	}
+	auth0Prefix := fmt.Sprintf("auth0|%s", userId)
+
+	formattedUrl := fmt.Sprintf("https://dev-l726rl1d8x1rw7du.eu.auth0.com/api/v2/users/%s", auth0Prefix)
+	method := "PATCH"
+	registeredCourses, err := getRegisteredCourses(userId)
+	if err != nil {
+		return err
+	}
+	registeredCourses = append(registeredCourses, courseId)
+
+	jsonArray, marshalErr := json.Marshal(registeredCourses)
+	if marshalErr != nil {
+		return marshalErr
+	}
+
+	payload := strings.NewReader(fmt.Sprintf(`{"app_metadata": {"courses": %s}}`, string(jsonArray)))
+
+	client := &http.Client{}
+	req, reqErr := http.NewRequest(method, formattedUrl, payload)
+
+	if reqErr != nil {
+		return reqErr
+	}
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
+
+	res, respErr := client.Do(req)
+	if respErr != nil {
+		return respErr
+	}
+	defer res.Body.Close()
+
+	return nil
+}
+
+func checkIfTokenIsSet() error {
+	if len(token) == 0 {
+		retrievedToken, err := util.GetManagementAPIToken()
+		if err != nil {
+			return err
+		}
+		token = retrievedToken
+	}
+	return nil
+}
+
+func findAuth0User(userId string) (Auth0User, error) {
 	tokenErr := checkIfTokenIsSet()
 	if tokenErr != nil {
 		return Auth0User{}, tokenErr
@@ -222,7 +274,6 @@ func FindUserAuth0(userId string) (Auth0User, error) {
 	req, err := http.NewRequest(method, url, nil)
 
 	if err != nil {
-		fmt.Println(err)
 		return Auth0User{}, err
 	}
 	req.Header.Add("Accept", "application/json")
@@ -246,62 +297,10 @@ func FindUserAuth0(userId string) (Auth0User, error) {
 	json.Unmarshal([]byte(string(body)), &result)
 	mapstructure.Decode(result, &user)
 	return user, nil
-
-}
-
-func RegisterToCourse(userId string, courseId string) error {
-	tokenErr := checkIfTokenIsSet()
-	if tokenErr != nil {
-		return tokenErr
-	}
-	auth0Prefix := fmt.Sprintf("auth0|%s", userId)
-
-	url := fmt.Sprintf("https://dev-l726rl1d8x1rw7du.eu.auth0.com/api/v2/users/%s", auth0Prefix)
-	method := "PATCH"
-	registeredCourses, _ := getRegisteredCourses(userId)
-	registeredCourses = append(registeredCourses, courseId)
-
-	jsonArray, _ := json.Marshal(registeredCourses)
-
-	payload := strings.NewReader(fmt.Sprintf(`{"app_metadata": {"courses": %s}}`, string(jsonArray)))
-
-	client := &http.Client{}
-	req, reqErr := http.NewRequest(method, url, payload)
-
-	if reqErr != nil {
-		return reqErr
-	}
-	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Accept", "application/json")
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
-
-	res, respErr := client.Do(req)
-	if respErr != nil {
-		return respErr
-	}
-	defer res.Body.Close()
-
-	body, readErr := ioutil.ReadAll(res.Body)
-	if readErr != nil {
-		return readErr
-	}
-	fmt.Println(string(body))
-	return nil
-}
-
-func checkIfTokenIsSet() error {
-	if len(token) == 0 {
-		retrievedToken, err := util.GetManagementAPIToken()
-		if err != nil {
-			return err
-		}
-		token = retrievedToken
-	}
-	return nil
 }
 
 func getRegisteredCourses(userId string) ([]string, error) {
-	user, err := FindUserAuth0(userId)
+	user, err := findAuth0User(userId)
 	if err != nil {
 		return nil, err
 	}

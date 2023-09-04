@@ -11,15 +11,13 @@ import (
 
 	courseHandler "darshub.dev/src/CourseService/handlers"
 	"github.com/gorilla/mux"
-	"github.com/nicholasjackson/env"
 )
 
-var bindAddress = env.String("BIND_ADDRESS", false, ":8081", "Bind address for the server")
+var bindAddress = ":8081"
 var allowedMethods = "OPTIONS,POST,PUT,DELETE,GET"
 var allowedHeaders = "Origin, Content-Type"
 
 func main() {
-	env.Parse()
 
 	l := log.New(os.Stdout, "darshub-api-user-service", log.LstdFlags)
 
@@ -56,7 +54,7 @@ func main() {
 
 	// create a new server
 	s := http.Server{
-		Addr:         *bindAddress,      // configure the bind address
+		Addr:         bindAddress,       // configure the bind address
 		Handler:      sm,                // set the default handler
 		ErrorLog:     l,                 // set the logger for the server
 		ReadTimeout:  5 * time.Second,   // max time to read request from the client
