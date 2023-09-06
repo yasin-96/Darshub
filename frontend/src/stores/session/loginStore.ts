@@ -23,6 +23,7 @@ const BACKEND_API_TIMEOUT = 60000;
 const router = useRouter();
 
 export const useLoginStore = defineStore("loginStore", {
+  persist: true,
   state: () => ({
     authDetails: useAuth0(),
     user: null,
@@ -50,7 +51,7 @@ export const useLoginStore = defineStore("loginStore", {
       return this.authDetails?.isAuthenticated ? true : false;
     },
     getUserId(): string {
-      return this.authDetails?.user?.appUID || "";
+      return this.authDetails?.user?.appUID?.substring(6) || "";
     },
     getUser(): User {
       return this.authDetails?.user!;
@@ -88,7 +89,7 @@ export const useLoginStore = defineStore("loginStore", {
         : false;
     },
     isStorageFilled(): boolean {
-      if (!this.user) {
+      if (!this.authDetails) {
         return false;
       }
       return true;

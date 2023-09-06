@@ -16,7 +16,7 @@ const drawerLeftSide = computed(() => {
 </script>
 
 <template>
-  <v-container>
+  <v-container fluid>
     <UserEmailVerifer />
     <Navbar />
     <SidebarLeft />

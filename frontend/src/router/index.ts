@@ -117,6 +117,7 @@ const userRoutes: Array<RouteRecordRaw> = [
       from: RouteLocationNormalized,
       next: NavigationGuardNext
     ) => {
+      next();
       const metaInfo: RouteMeta = to.meta;
       if (metaInfo.requiresAuth && useLoginStore().getUserId) {
         next();
@@ -320,9 +321,8 @@ const router = createRouter({
 router.afterEach(async (to, from, next) => {
   const isStorageLoadFromLocalStorage = useLoginStore().isStorageFilled;
   const isUserLoggedIn = useLoginStore().isUserLoggedIn;
-  console.log(isStorageLoadFromLocalStorage, !isUserLoggedIn ,isStorageLoadFromLocalStorage && !isUserLoggedIn)
-  if (!isStorageLoadFromLocalStorage && !isUserLoggedIn) {
-    //await useLoginStore().act_logUserIn();
+  if (isStorageLoadFromLocalStorage && !isUserLoggedIn) {
+    await useLoginStore().act_logUserIn();
   }
 });
 

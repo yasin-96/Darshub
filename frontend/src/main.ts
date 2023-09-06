@@ -20,8 +20,9 @@ import router from "./router";
 
 //Store def.
 import { createPinia } from "pinia";
-import { createPersistedState } from "pinia-plugin-persistedstate";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
 
 //I18n Languages
 import { i18nLanguages } from "./plugins/i18nPlugin";
