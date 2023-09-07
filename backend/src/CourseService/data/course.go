@@ -5,9 +5,13 @@ import (
 	"time"
 
 	"darshub.dev/src/UserService/config"
-	"github.com/phpdave11/gofpdf"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+
+	"github.com/gomarkdown/markdown"
+	"github.com/gomarkdown/markdown/html"
+	"github.com/gomarkdown/markdown/parser"
+	"github.com/phpdave11/gofpdf"
 )
 
 type Course struct {
@@ -20,6 +24,7 @@ type Course struct {
 	Author      string               `json:"author" bson:"author"`
 	Released    time.Time            `json:"released" bson:"released"`
 	LastUpdate  time.Time            `json:"lastUpdate" bson:"lastUpdate"`
+	Markdown    bool                 `json:"markdown" bson:"markdown"`
 }
 
 type CreateCourseRequest struct {
@@ -31,6 +36,7 @@ type CreateCourseRequest struct {
 	Author      string               `json:"author"`
 	Released    time.Time            `json:"released"`
 	LastUpdate  time.Time            `json:"lastUpdate"`
+	Markdown    bool                 `json:"markdown"`
 }
 
 type UpdateCourseRequest struct {
@@ -41,6 +47,7 @@ type UpdateCourseRequest struct {
 	Chapters    []primitive.ObjectID `json:"content"`
 	Author      string               `json:"author"`
 	LastUpdate  time.Time            `json:"lastUpdate"`
+	Markdown    bool                 `json:"markdown"`
 }
 
 func Create(course *CreateCourseRequest) error {
@@ -92,6 +99,7 @@ func Update(courseId primitive.ObjectID, updatedCourse *UpdateCourseRequest) (Co
 		"chapters":    updatedCourse.Chapters,
 		"author":      updatedCourse.Author,
 		"lastUpdate":  updatedCourse.LastUpdate,
+		"markdown":    updatedCourse.Markdown,
 	}
 
 	_, err := client.Database("darshub").Collection("course").ReplaceOne(ctx, bson.M{"_id": courseId}, update)
@@ -116,6 +124,7 @@ func Delete(courseId primitive.ObjectID) error {
 
 func GeneratePDF(courseId primitive.ObjectID) error {
 	course, err := Find(courseId)
+
 	if err != nil {
 		return err
 	}
@@ -133,37 +142,8 @@ func GeneratePDF(courseId primitive.ObjectID) error {
 	}
 
 	pdf := gofpdf.New("P", "mm", "A4", "")
-	courseTitle := course.Name
-	pdf.SetTitle(courseTitle, false)
-	pdf.SetAuthor(course.Author, false)
-	pdf.SetHeaderFunc(func() {
-		// Arial bold 15
-		pdf.SetFont("Arial", "B", 15)
-		// Calculate width of title and position
-		wd := pdf.GetStringWidth(courseTitle) + 6
-		pdf.SetX((210 - wd) / 2)
-		// Colors of frame, background and text
-		pdf.SetDrawColor(0, 80, 180)
-		pdf.SetFillColor(230, 230, 0)
-		pdf.SetTextColor(220, 50, 50)
-		// Thickness of frame (1 mm)
-		pdf.SetLineWidth(1)
-		// Title
-		pdf.CellFormat(wd, 9, courseTitle, "1", 1, "C", true, 0, "")
-		// Line break
-		pdf.Ln(10)
-	})
-	pdf.SetFooterFunc(func() {
-		// Position at 1.5 cm from bottom
-		pdf.SetY(-15)
-		// Arial italic 8
-		pdf.SetFont("Arial", "I", 8)
-		// Text color in gray
-		pdf.SetTextColor(128, 128, 128)
-		// Page number
-		pdf.CellFormat(0, 10, fmt.Sprintf("Page %d", pdf.PageNo()),
-			"", 0, "C", false, 0, "")
-	})
+	//courseTitle := course.Name
+
 	chapterTitle := func(chapNum int, titleStr string) {
 		// 	// Arial 12
 		pdf.SetFont("Arial", "", 12)
@@ -212,8 +192,21 @@ func GeneratePDF(courseId primitive.ObjectID) error {
 
 	printChapter := func(chapNum int, titleStr string, subchapters []Subchapter) {
 		pdf.AddPage()
+		pdf.SetFont("Helvetica", "", 20)
 		chapterTitle(chapNum, titleStr)
 		for _, subchapter := range subchapters {
+			if course.Markdown {
+				_, lineHt := pdf.GetFontSize()
+				html := pdf.HTMLBasicNew()
+				convertedHTML := convertMarkdown(subchapter.Content)
+				println(string(convertedHTML))
+				html.Write(lineHt, string(convertedHTML))
+				err := pdf.OutputFileAndClose(fmt.Sprintf("%s.pdf", course.Name))
+				if err != nil {
+					println(err)
+				}
+				return
+			}
 			printSubchapter(subchapter, subchapterCounter)
 			subchapterCounter++
 		}
@@ -224,7 +217,17 @@ func GeneratePDF(courseId primitive.ObjectID) error {
 		chapterCounter++
 	}
 
-	_ = pdf.OutputFileAndClose(fmt.Sprintf("%s.pdf", course.Name))
-
 	return nil
+}
+
+func convertMarkdown(subchapterContent string) []byte {
+	extensions := parser.CommonExtensions | parser.OrderedListStart | parser.NoEmptyLineBeforeBlock
+	p := parser.NewWithExtensions(extensions)
+	doc := p.Parse([]byte(subchapterContent))
+
+	htmlFlags := html.CommonFlags | html.HrefTargetBlank
+	opts := html.RendererOptions{Flags: htmlFlags}
+	renderer := html.NewRenderer(opts)
+
+	return markdown.Render(doc, renderer)
 }
