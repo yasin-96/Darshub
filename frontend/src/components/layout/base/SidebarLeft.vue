@@ -46,38 +46,45 @@ const state = reactive({
   userLinks: [
     {
       name: "sidebar.user.dashboard",
-      icon: "mdi-view-dashboard",
+      icon: "mdi-book-open-page-variant",
       href: `/user/overview`,
     },
     {
       name: "sidebar.user.course",
-      icon: "mdi-book",
+      icon: "mdi-bookshelf",
       href: `/user/course`,
     },
     {
       name: "sidebar.user.settings",
-      icon: "mdi-cog",
+      icon: "mdi-account-cog",
       href: `/user/settings`,
+    },
+  ],
+  authorLinks: [
+    {
+      name: "sidebar.admin.authorManagement",
+      icon: "mdi-book-edit",
+      href: `/admin/author/management`,
     },
   ],
   userManagement: [
     {
       name: "sidebar.admin.userManagement",
-      icon: "mdi-account-group-outline",
+      icon: "mdi-account-group",
       href: `/admin/user/management`,
     },
   ],
   courseManagement: [
     {
       name: "sidebar.admin.courseManagement",
-      icon: "mdi-book-account",
+      icon: "mdi-book-cog",
       href: `/admin/course/management`,
     },
   ],
   adminLinks: [
     {
       name: "sidebar.admin.userManagement",
-      icon: "mdi-account-group-outline",
+      icon: "mdi-account-group",
       href: `/admin/user/management`,
     },
     {
@@ -128,7 +135,27 @@ const drawerLeftSide = computed({
       </v-list-item>
     </v-list>
 
-    <v-list lines="one" v-if="loginStore.getUserId && loginStore.isUserCourseManager">
+    <v-list
+      lines="one"
+      v-if="loginStore.getUserId && loginStore.isUserAuthor"
+    >
+      <v-list-item
+        v-for="link in state.authorLinks"
+        :key="link.name"
+        link
+        :to="link.href"
+      >
+        <template v-slot:prepend>
+          <v-icon :icon="link.icon"></v-icon>
+        </template>
+        <v-list-item-title v-text="$t(link.name)"></v-list-item-title>
+      </v-list-item>
+    </v-list>
+
+    <v-list
+      lines="one"
+      v-if="loginStore.getUserId && loginStore.isUserCourseManager"
+    >
       <v-list-item
         v-for="link in state.courseManagement"
         :key="link.name"
@@ -142,7 +169,10 @@ const drawerLeftSide = computed({
       </v-list-item>
     </v-list>
 
-    <v-list lines="one" v-if="loginStore.getUserId && loginStore.IsUserAccountManager">
+    <v-list
+      lines="one"
+      v-if="loginStore.getUserId && loginStore.IsUserAccountManager"
+    >
       <v-list-item
         v-for="link in state.userManagement"
         :key="link.name"

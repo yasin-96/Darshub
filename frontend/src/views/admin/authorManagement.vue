@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { useCoreCourseStore } from "@/stores/course/coreCourseStore";
+import { useAuthorCourseStore } from "@/stores/course/authorCourseStore";
 import { computed, ref} from "vue";
 
-const coreCourseStore = useCoreCourseStore();
+const coreCourseStore = useAuthorCourseStore();
 
 async function loadCourses() {
   await coreCourseStore.act_loadAllCourseAsQuickInfo();

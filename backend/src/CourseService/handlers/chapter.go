@@ -87,6 +87,7 @@ func UpdateChapter(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 	util.ToJSON(chapter, rw)
+	rw.WriteHeader(http.StatusOK)
 }
 
 func DeleteChapter(rw http.ResponseWriter, r *http.Request) {

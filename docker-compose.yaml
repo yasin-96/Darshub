@@ -1,13 +1,5 @@
 version: "3.8"
 services:
-  backend-user-service:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile.UserService
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./backend/src/UserService:/app/src
   backend-course-service:
     build:
       context: ./backend

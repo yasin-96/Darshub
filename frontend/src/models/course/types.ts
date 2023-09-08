@@ -32,3 +32,17 @@ export type UpdateCourseRequest = {
   released: Date;
   lastupdate: Date;
 };
+
+export type Chapter = {
+  id: String;
+  name: String;
+  description: String;
+  skills: String;
+  subchapters: Array<String>;
+};
+
+export type SubChapter = {
+  id: String;
+  content: String;
+  listing: String;
+};

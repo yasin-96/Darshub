@@ -19,7 +19,7 @@ type Course struct {
 	Duration    string               `json:"duration" bson:"duration"`
 	Level       int32                `json:"level" bson:"level"`
 	Chapters    []primitive.ObjectID `json:"chapters" bson:"chapters"`
-	Author      string               `json:"author" bson:"author"`
+	AuthorId    string               `json:"authorId" bson:"authorId"`
 	Released    time.Time            `json:"released" bson:"released"`
 	LastUpdate  time.Time            `json:"lastUpdate" bson:"lastUpdate"`
 }
@@ -30,7 +30,7 @@ type CreateCourseRequest struct {
 	Duration    string               `json:"duration"`
 	Level       int                  `json:"level"`
 	Chapters    []primitive.ObjectID `json:"chapters"`
-	Author      string               `json:"author"`
+	AuthorId    string               `json:"authorId"`
 	Released    time.Time            `json:"released"`
 	LastUpdate  time.Time            `json:"lastUpdate"`
 }
@@ -41,7 +41,7 @@ type UpdateCourseRequest struct {
 	Duration    string               `json:"duration"`
 	Level       int                  `json:"level"`
 	Chapters    []primitive.ObjectID `json:"content"`
-	Author      string               `json:"author"`
+	AuthorId    string               `json:"authorId"`
 	LastUpdate  time.Time            `json:"lastUpdate"`
 }
 
@@ -75,6 +75,21 @@ func Find(courseId primitive.ObjectID) (Course, error) {
 	return course, nil
 }
 
+func GetCoursesByAuthorId(authorId string) ([]Course, error) {
+	var courses []Course
+	ctx, cancel, client := config.GetConnection()
+	defer cancel()
+	defer client.Disconnect(ctx)
+
+	filter := bson.D{{Key: "authorid", Value: authorId}}
+	cur, err := client.Database("darshub").Collection("course").Find(ctx, filter)
+	if err != nil {
+		return []Course{}, err
+	}
+	cur.All(ctx, &courses)
+	return courses, nil
+}
+
 func GetAllCourses() ([]Course, error) {
 	var courses []Course
 	ctx, cancel, client := util.GetConnection()
@@ -100,7 +115,7 @@ func Update(courseId primitive.ObjectID, updatedCourse *UpdateCourseRequest) (Co
 		"duration":    updatedCourse.Duration,
 		"level":       updatedCourse.Level,
 		"chapters":    updatedCourse.Chapters,
-		"author":      updatedCourse.Author,
+		"authorId":    updatedCourse.AuthorId,
 		"lastUpdate":  updatedCourse.LastUpdate,
 	}
 

@@ -20,8 +20,9 @@ import router from "./router";
 
 //Store def.
 import { createPinia } from "pinia";
-import { createPersistedState } from "pinia-plugin-persistedstate";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
 
 //I18n Languages
 import { i18nLanguages } from "./plugins/i18nPlugin";
@@ -33,6 +34,9 @@ const metaManager = createMetaManager();
 //AUTH0
 import { authClient } from "./plugins/auth0";
 
+//MD Editor
+import { mdEditor } from "./plugins/md";
+
 //Bind all option
 app
   .use(router)
@@ -41,7 +45,8 @@ app
   .use(metaManager)
   .use(metaPlugin)
   .use(vuetify)
-  .use(authClient);
+  .use(authClient)
+  .use(mdEditor);
 
 //Bind to containder #app -> index.html
 app.mount("#app");

@@ -15,4 +15,5 @@ export const vuetify = createVuetify({
       mdi,
     }
   },
+  ssr: false
 })
