@@ -77,7 +77,7 @@ func Find(courseId primitive.ObjectID) (Course, error) {
 
 func GetCoursesByAuthorId(authorId string) ([]Course, error) {
 	var courses []Course
-	ctx, cancel, client := config.GetConnection()
+	ctx, cancel, client := util.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 

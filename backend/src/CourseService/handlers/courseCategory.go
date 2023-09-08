@@ -111,6 +111,7 @@ func DeleteCourseCategory(rw http.ResponseWriter, r *http.Request) {
 	respErr := data.DeleteCourseCategory(courseCategoryId)
 	if respErr != nil {
 		http.Error(rw, respErr.Error(), http.StatusInternalServerError)
+		return
 	}
 	rw.WriteHeader(http.StatusNoContent)
 }
