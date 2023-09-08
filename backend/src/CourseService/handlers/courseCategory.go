@@ -29,7 +29,6 @@ func InsertCourseCategory(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rw.WriteHeader(http.StatusCreated)
-	log.Print("Course category was created successfully")
 }
 
 func FindCourseCategory(rw http.ResponseWriter, r *http.Request) {
@@ -57,7 +56,6 @@ func FindCourseCategory(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, parseErr.Error(), http.StatusInternalServerError)
 		return
 	}
-	rw.WriteHeader(http.StatusOK)
 }
 
 func GetAllCourseCategoryNames(rw http.ResponseWriter, r *http.Request) {
@@ -66,7 +64,6 @@ func GetAllCourseCategoryNames(rw http.ResponseWriter, r *http.Request) {
 	for _, v := range courseCategories {
 		courseCategoryNames = append(courseCategoryNames, v.Name)
 	}
-	rw.WriteHeader(http.StatusOK)
 	parseErr := util.ToJSON(courseCategoryNames, rw)
 	if parseErr != nil {
 		log.Print(parseErr)
@@ -96,7 +93,6 @@ func UpdateCourseCategory(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	course := data.UpdateCourseCategory(courseCategoryId, updatedCourseCategory)
-	rw.WriteHeader(http.StatusOK)
 	util.ToJSON(course, rw)
 }
 

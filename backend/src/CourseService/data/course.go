@@ -1,9 +1,13 @@
 package data
 
 import (
+	"context"
+	"fmt"
 	"time"
 
-	"darshub.dev/src/UserService/config"
+	"darshub.dev/src/util"
+	"github.com/auth0/go-auth0/management"
+	"github.com/mitchellh/mapstructure"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -41,8 +45,16 @@ type UpdateCourseRequest struct {
 	LastUpdate  time.Time            `json:"lastUpdate"`
 }
 
+type CourseRegisterRequest struct {
+	UserId string `json:"userId"`
+}
+
+type AppMetadataCourses struct {
+	Courses []string `json:"courses"`
+}
+
 func Create(course *CreateCourseRequest) error {
-	ctx, cancel, client := config.GetConnection()
+	ctx, cancel, client := util.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
@@ -52,7 +64,7 @@ func Create(course *CreateCourseRequest) error {
 
 func Find(courseId primitive.ObjectID) (Course, error) {
 	var course Course
-	ctx, cancel, client := config.GetConnection()
+	ctx, cancel, client := util.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
@@ -65,7 +77,7 @@ func Find(courseId primitive.ObjectID) (Course, error) {
 
 func GetAllCourses() ([]Course, error) {
 	var courses []Course
-	ctx, cancel, client := config.GetConnection()
+	ctx, cancel, client := util.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
@@ -78,7 +90,7 @@ func GetAllCourses() ([]Course, error) {
 }
 
 func Update(courseId primitive.ObjectID, updatedCourse *UpdateCourseRequest) (Course, error) {
-	ctx, cancel, client := config.GetConnection()
+	ctx, cancel, client := util.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
@@ -104,10 +116,61 @@ func Update(courseId primitive.ObjectID, updatedCourse *UpdateCourseRequest) (Co
 }
 
 func Delete(courseId primitive.ObjectID) error {
-	ctx, cancel, client := config.GetConnection()
+	ctx, cancel, client := util.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
 	_, err := client.Database("darshub").Collection("course").DeleteOne(ctx, bson.M{"_id": courseId})
 	return err
+}
+
+func RegisterUserToCourse(userId string, courseId string) error {
+	client, err := util.GetManagementClient()
+	if err != nil {
+		return err
+	}
+	registeredCourses, err := getRegisteredCourses(userId)
+	if err != nil {
+		return err
+	}
+	registeredCourses = append(registeredCourses, courseId)
+	updateduser := management.User{}
+	updateduser.AppMetadata = &map[string]interface{}{
+		"courses": registeredCourses,
+	}
+	updateErr := client.User.Update(context.TODO(), fmt.Sprintf("auth0|%s", userId), &updateduser)
+	if err != nil {
+		return updateErr
+	}
+	return nil
+}
+
+func getRegisteredCourses(userId string) ([]string, error) {
+	user, err := findAuth0User(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	if user.AppMetadata == nil {
+		return []string{}, nil
+	}
+	appMetadata := user.GetAppMetadata()
+	appMetadataCourses := &AppMetadataCourses{}
+	decodeErr := mapstructure.Decode(appMetadata, appMetadataCourses)
+	if decodeErr != nil {
+		return nil, err
+	}
+	return appMetadataCourses.Courses, nil
+}
+
+func findAuth0User(userId string) (*management.User, error) {
+	client, err := util.GetManagementClient()
+	if err != nil {
+		return nil, err
+	}
+	user, getUserErr := client.User.Read(context.TODO(), fmt.Sprintf("auth0|%s", userId))
+	if getUserErr != nil {
+		return nil, getUserErr
+	}
+	return user, nil
 }
