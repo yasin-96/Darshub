@@ -1,14 +1,14 @@
 package data
 
 import (
-	"darshub.dev/src/UserService/config"
+	"darshub.dev/src/util"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Subchapter struct {
 	ID      primitive.ObjectID `bson:"_id"`
-	Content []byte            `bson:"content"`
+	Content []byte             `bson:"content"`
 	Listing []string           `bson:"listing"`
 }
 
@@ -24,7 +24,7 @@ type UpdateSubchapterRequest struct {
 }
 
 func CreateSubchapter(subchapter *CreateSubchapterRequest) error {
-	ctx, cancel, client := config.GetConnection()
+	ctx, cancel, client := util.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
@@ -35,7 +35,7 @@ func CreateSubchapter(subchapter *CreateSubchapterRequest) error {
 
 func FindSubchapter(subchapterId primitive.ObjectID) (Subchapter, error) {
 	var subchapter Subchapter
-	ctx, cancel, client := config.GetConnection()
+	ctx, cancel, client := util.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
@@ -47,7 +47,7 @@ func FindSubchapter(subchapterId primitive.ObjectID) (Subchapter, error) {
 }
 
 func UpdateSubchapter(subchapterId primitive.ObjectID, updatedSubchapter *UpdateSubchapterRequest) (Subchapter, error) {
-	ctx, cancel, client := config.GetConnection()
+	ctx, cancel, client := util.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
@@ -68,7 +68,7 @@ func UpdateSubchapter(subchapterId primitive.ObjectID, updatedSubchapter *Update
 }
 
 func DeleteSubchapter(subchapterId primitive.ObjectID) error {
-	ctx, cancel, client := config.GetConnection()
+	ctx, cancel, client := util.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 

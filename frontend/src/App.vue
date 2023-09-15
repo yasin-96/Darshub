@@ -5,6 +5,11 @@ import { useLoginStore } from "./stores/session/loginStore";
 
 //Init Auth Client
 const loginClient = useLoginStore();
+
+if(loginClient.isStorageFilled){
+ //async () => await loginClient.act_logUserIn()
+}
+
 </script>
 
 <template>

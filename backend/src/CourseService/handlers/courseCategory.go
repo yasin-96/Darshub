@@ -29,7 +29,6 @@ func InsertCourseCategory(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rw.WriteHeader(http.StatusCreated)
-	log.Print("Course category was created successfully")
 }
 
 func FindCourseCategory(rw http.ResponseWriter, r *http.Request) {
@@ -57,7 +56,6 @@ func FindCourseCategory(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, parseErr.Error(), http.StatusInternalServerError)
 		return
 	}
-	rw.WriteHeader(http.StatusOK)
 }
 
 func GetAllCourseCategoryNames(rw http.ResponseWriter, r *http.Request) {
@@ -66,11 +64,9 @@ func GetAllCourseCategoryNames(rw http.ResponseWriter, r *http.Request) {
 	for _, v := range courseCategories {
 		courseCategoryNames = append(courseCategoryNames, v.Name)
 	}
-	rw.WriteHeader(http.StatusOK)
 	parseErr := util.ToJSON(courseCategoryNames, rw)
 	if parseErr != nil {
-		log.Print(parseErr)
-		rw.WriteHeader(http.StatusInternalServerError)
+		http.Error(rw, parseErr.Error(), http.StatusInternalServerError)
 	}
 }
 
@@ -93,10 +89,10 @@ func UpdateCourseCategory(rw http.ResponseWriter, r *http.Request) {
 	parseErr := util.FromJSON(updatedCourseCategory, r.Body)
 	if parseErr != nil {
 		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
+		return
 	}
 
 	course := data.UpdateCourseCategory(courseCategoryId, updatedCourseCategory)
-	rw.WriteHeader(http.StatusOK)
 	util.ToJSON(course, rw)
 }
 
@@ -110,9 +106,12 @@ func DeleteCourseCategory(rw http.ResponseWriter, r *http.Request) {
 
 	courseCategoryId, err := primitive.ObjectIDFromHex(vars["courseCategoryId"])
 	if err != nil {
-		log.Print(err)
 		return
 	}
-	data.DeleteCourseCategory(courseCategoryId)
+	respErr := data.DeleteCourseCategory(courseCategoryId)
+	if respErr != nil {
+		http.Error(rw, respErr.Error(), http.StatusInternalServerError)
+		return
+	}
 	rw.WriteHeader(http.StatusNoContent)
 }

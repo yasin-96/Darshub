@@ -1,8 +1,9 @@
-package config
+package util
 
 import (
 	"context"
 	"log"
+	"os"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -11,7 +12,7 @@ import (
 
 func GetConnection() (context.Context, context.CancelFunc, *mongo.Client) {
 	client, err := mongo.NewClient(options.Client().
-		ApplyURI("mongodb+srv://dhub:OiPe7pU8kxaIVhBx@dhcluster001.c17aj.mongodb.net/?retryWrites=true&w=majority"))
+		ApplyURI(os.Getenv("MONGO_CONNECTION_STRING")))
 
 	if err != nil {
 		log.Fatal(err)

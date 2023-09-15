@@ -14,6 +14,7 @@ export default {
       sidebarMenuTitel: "Admin",
       userManagement: "User Management",
       courseManagement: "Course Management",
+      authorManagement: "Author Management",
     },
     user: {
       sidebarMenuTitel: "User",

@@ -1,5 +1,10 @@
 import { defineStore } from "pinia";
-import { useFetch, useStorage, useStorageAsync } from "@vueuse/core";
+import {
+  useFetch,
+  useLocalStorage,
+  useStorage,
+  useStorageAsync,
+} from "@vueuse/core";
 import { User, useAuth0, type Auth0VueClient } from "@auth0/auth0-vue";
 
 import { useRoute, useRouter } from "vue-router";
@@ -18,17 +23,20 @@ const BACKEND_API_TIMEOUT = 60000;
 const router = useRouter();
 
 export const useLoginStore = defineStore("loginStore", {
+  persist: true,
   state: () => ({
     authDetails: useAuth0(),
-    test: null,
+    user: null,
   }),
   actions: {
     clear() {
       this.$reset();
-      //useStorage(STORGE_NAME, useAuth0());
+      useStorage(STORGE_NAME, null);
     },
     async act_logUserIn() {
       await this.authDetails.loginWithRedirect();
+
+      this.user = useStorage(STORGE_NAME, this.authDetails.user).value;
     },
     async act_logUserOut() {
       await this.authDetails.logout();
@@ -43,7 +51,7 @@ export const useLoginStore = defineStore("loginStore", {
       return this.authDetails?.isAuthenticated ? true : false;
     },
     getUserId(): string {
-      return this.authDetails?.user?.appUID || "";
+      return this.authDetails?.user?.appUID?.substring(6) || "";
     },
     getUser(): User {
       return this.authDetails?.user!;
@@ -52,7 +60,7 @@ export const useLoginStore = defineStore("loginStore", {
       if (!this.authDetails.isAuthenticated) {
         return false;
       }
-      return this.authDetails?.user?.appRoles.includes(UserRoles.AUTHOR, 2)
+      return this.authDetails?.user?.appRoles.includes(UserRoles.AUTHOR)
         ? true
         : false;
     },
@@ -60,7 +68,7 @@ export const useLoginStore = defineStore("loginStore", {
       if (!this.authDetails.isAuthenticated) {
         return false;
       }
-      return this.authDetails?.user?.appRoles.includes(UserRoles.USER_MANAGER, 3)
+      return this.authDetails?.user?.appRoles.includes(UserRoles.USER_MANAGER)
         ? true
         : false;
     },
@@ -68,7 +76,7 @@ export const useLoginStore = defineStore("loginStore", {
       if (!this.authDetails.isAuthenticated) {
         return false;
       }
-      return this.authDetails?.user?.appRoles.includes(UserRoles.COURSE_MANAGER, 4)
+      return this.authDetails?.user?.appRoles.includes(UserRoles.COURSE_MANAGER)
         ? true
         : false;
     },
@@ -76,9 +84,21 @@ export const useLoginStore = defineStore("loginStore", {
       if (!this.authDetails.isAuthenticated) {
         return false;
       }
-      return this.authDetails?.user?.appRoles.includes(UserRoles.ADMIN, 99)
+      return this.authDetails?.user?.appRoles.includes(UserRoles.ADMIN)
         ? true
         : false;
+    },
+    isStorageFilled(): boolean {
+      if (!this.authDetails) {
+        return false;
+      }
+      return true;
+    },
+    getNickName(): String {
+      if (!this.authDetails || !this.authDetails.user) {
+        return "";
+      }
+      return this.authDetails.user?.nickname;
     },
   },
 });

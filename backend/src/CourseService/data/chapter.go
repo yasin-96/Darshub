@@ -1,9 +1,7 @@
 package data
 
 import (
-	"log"
-
-	"darshub.dev/src/UserService/config"
+	"darshub.dev/src/util"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -31,7 +29,7 @@ type UpdateChapterRequest struct {
 }
 
 func CreateChapter(chapterRequest *CreateChapterRequest) error {
-	ctx, cancel, client := config.GetConnection()
+	ctx, cancel, client := util.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
@@ -44,7 +42,7 @@ func CreateChapter(chapterRequest *CreateChapterRequest) error {
 
 func FindChapter(chapterId primitive.ObjectID) (Chapter, error) {
 	var chapter Chapter
-	ctx, cancel, client := config.GetConnection()
+	ctx, cancel, client := util.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
@@ -56,7 +54,7 @@ func FindChapter(chapterId primitive.ObjectID) (Chapter, error) {
 }
 
 func UpdateChapter(chapterId primitive.ObjectID, updatedChapter *UpdateChapterRequest) (Chapter, error) {
-	ctx, cancel, client := config.GetConnection()
+	ctx, cancel, client := util.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
@@ -79,19 +77,10 @@ func UpdateChapter(chapterId primitive.ObjectID, updatedChapter *UpdateChapterRe
 }
 
 func DeleteChapter(chapterId primitive.ObjectID) error {
-	ctx, cancel, client := config.GetConnection()
+	ctx, cancel, client := util.GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)
 
 	_, err := client.Database("darshub").Collection("chapter").DeleteOne(ctx, bson.M{"_id": chapterId})
-	log.Print("Chapter was deleted successfully")
 	return err
-}
-
-func (chapterRequest *CreateChapterRequest) toChapter() Chapter {
-	chapter := Chapter{}
-	chapter.Description = chapterRequest.Description
-	chapter.Name = chapterRequest.Name
-	chapter.Skills = chapterRequest.Skills
-	return chapter
 }

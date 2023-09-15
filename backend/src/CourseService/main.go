@@ -11,17 +11,20 @@ import (
 
 	courseHandler "darshub.dev/src/CourseService/handlers"
 	"github.com/gorilla/mux"
-	"github.com/nicholasjackson/env"
+	"github.com/joho/godotenv"
 )
 
-var bindAddress = env.String("BIND_ADDRESS", false, ":8081", "Bind address for the server")
 var allowedMethods = "OPTIONS,POST,PUT,DELETE,GET"
 var allowedHeaders = "Origin, Content-Type"
 
 func main() {
-	env.Parse()
+	err := godotenv.Load("../.env")
+	if err != nil {
+		println("Enviroment variables could not be loaded.")
+	}
 
-	l := log.New(os.Stdout, "darshub-api-user-service", log.LstdFlags)
+	var bindAddress = os.Getenv("COURSE_SERVICE_PORT")
+	l := log.New(os.Stdout, "darshub-api-course-service", log.LstdFlags)
 
 	sm := mux.NewRouter()
 
@@ -38,6 +41,7 @@ func main() {
 	postRouter.HandleFunc("/courseCategory", courseHandler.InsertCourseCategory)
 	postRouter.HandleFunc("/chapter", courseHandler.InsertChapter)
 	postRouter.HandleFunc("/subchapter", courseHandler.InsertSubchapter)
+	postRouter.HandleFunc("/course/{courseId}/register", courseHandler.RegisterUserToCourse)
 
 	putRouter := sm.Methods(http.MethodPut, http.MethodOptions).Subrouter()
 	putRouter.HandleFunc("/course/{courseId}", courseHandler.UpdateCourse)
@@ -56,7 +60,7 @@ func main() {
 
 	// create a new server
 	s := http.Server{
-		Addr:         *bindAddress,      // configure the bind address
+		Addr:         bindAddress,       // configure the bind address
 		Handler:      sm,                // set the default handler
 		ErrorLog:     l,                 // set the logger for the server
 		ReadTimeout:  5 * time.Second,   // max time to read request from the client
@@ -92,7 +96,7 @@ func main() {
 // TODO Specify the origins ans methods from const variable
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
+		w.Header().Set("Access-Control-Allow-Origin", os.Getenv("FRONTEND_IP"))
 		w.Header().Set("Access-Control-Allow-Methods", allowedMethods)
 		w.Header().Set("Access-Control-Allow-Headers", allowedHeaders)
 

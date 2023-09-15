@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
 	"reflect"
 
@@ -30,7 +29,6 @@ func InsertChapter(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rw.WriteHeader(http.StatusCreated)
-	log.Print("Chapter was created successfully")
 }
 
 func FindChapter(rw http.ResponseWriter, r *http.Request) {
@@ -60,7 +58,6 @@ func FindChapter(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, parseErr.Error(), http.StatusInternalServerError)
 		return
 	}
-	rw.WriteHeader(http.StatusOK)
 }
 
 func UpdateChapter(rw http.ResponseWriter, r *http.Request) {
@@ -89,8 +86,8 @@ func UpdateChapter(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	rw.WriteHeader(http.StatusOK)
 	util.ToJSON(chapter, rw)
+	rw.WriteHeader(http.StatusOK)
 }
 
 func DeleteChapter(rw http.ResponseWriter, r *http.Request) {
@@ -112,5 +109,4 @@ func DeleteChapter(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rw.WriteHeader(http.StatusNoContent)
-	rw.Write([]byte("Course was deleted successfully"))
 }

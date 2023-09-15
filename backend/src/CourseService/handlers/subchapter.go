@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
 	"reflect"
 
@@ -32,7 +31,6 @@ func InsertSubchapter(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rw.WriteHeader(http.StatusCreated)
-	log.Print("Subchapter was created successfully")
 }
 
 func FindSubchapter(rw http.ResponseWriter, r *http.Request) {
@@ -62,7 +60,6 @@ func FindSubchapter(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	rw.WriteHeader(http.StatusOK)
 }
 
 func UpdateSubchapter(rw http.ResponseWriter, r *http.Request) {
@@ -95,7 +92,6 @@ func UpdateSubchapter(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 	util.ToJSON(subchapter, rw)
-	rw.WriteHeader(http.StatusOK)
 }
 
 func DeleteSubchapter(rw http.ResponseWriter, r *http.Request) {

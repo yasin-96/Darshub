@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
 	"reflect"
 	"time"
@@ -109,7 +108,6 @@ func UpdateCourse(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, "The course with the given id was not found", http.StatusNotFound)
 		return
 	}
-	rw.WriteHeader(http.StatusOK)
 	util.ToJSON(course, rw)
 }
 
@@ -126,12 +124,35 @@ func DeleteCourse(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	rw.WriteHeader(http.StatusNoContent)
 
 	respErr := data.Delete(courseId)
 	if respErr != nil {
 		http.Error(rw, respErr.Error(), http.StatusInternalServerError)
 		return
 	}
-	log.Print("Course was deleted successfully")
+
+	rw.WriteHeader(http.StatusNoContent)
+}
+
+func RegisterUserToCourse(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	if vars == nil || vars["courseId"] == "" {
+		http.Error(rw, "No course id was provided in the path variable", http.StatusBadRequest)
+		return
+	}
+	request := &data.CourseRegisterRequest{}
+
+	err := util.FromJSON(request, r.Body)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	courseId := vars["courseId"]
+	registerErr := data.RegisterUserToCourse(request.UserId, courseId)
+	if registerErr != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }

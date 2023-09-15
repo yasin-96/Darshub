@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { useCoreCourseStore } from "@/stores/course/coreCourseStore";
+import { useAccountManagementStore } from "@/stores/admin/accountManagementStore";
 import { computed } from "vue";
 
-const coreCourseStore = useCoreCourseStore();
+const accountManagementStore = useAccountManagementStore();
 
 const tHeaders = computed(() => {
   return [
@@ -24,7 +24,7 @@ const tHeaders = computed(() => {
     </thead>
     <tbody>
       <tr
-        v-for="(td, index) in coreCourseStore.allCourseInMinimalForm"
+        v-for="(td, index) in accountManagementStore.users"
         :key="`user-manager-d-${index}`"
       >
         <td>{{td.id}}</td>

@@ -3,7 +3,7 @@ export type Course = {
   name: String;
   description: String | null;
   duration: Date | null;
-  level: String | null;
+  level: Number | null;
   content: Array<String> | null;
   author: String | null;
   released: Date | null;
@@ -31,4 +31,18 @@ export type UpdateCourseRequest = {
   author: String;
   released: Date;
   lastupdate: Date;
+};
+
+export type Chapter = {
+  id: String;
+  name: String;
+  description: String;
+  skills: String;
+  subchapters: Array<String>;
+};
+
+export type SubChapter = {
+  id: String;
+  content: String;
+  listing: String;
 };

@@ -11,23 +11,23 @@ import (
 
 	courseSearchHandler "darshub.dev/src/CourseSearchService/handlers"
 	"github.com/gorilla/mux"
-	"github.com/nicholasjackson/env"
+	"github.com/joho/godotenv"
 )
 
-var bindAddress = env.String("BIND_ADDRESS", false, ":8082", "Bind address for the server")
 var allowedMethods = "OPTIONS,POST,PUT,DELETE,GET"
 var allowedHeaders = "Origin, Content-Type"
 
 func main() {
 
-	env.Parse()
+	l := log.New(os.Stdout, "darshub-search-course-api", log.LstdFlags)
 
-	//logger
-	l := log.New(os.Stdout, "darshub-api", log.LstdFlags)
+	err := godotenv.Load("../.env")
+	if err != nil {
+		println("Enviroment variables could not be loaded.")
+	}
 
-	// create the handlers
+	var bindAddress = os.Getenv("COURSE_SERVICE_PORT")
 
-	// create a new serve mux and register the handlers
 	sm := mux.NewRouter()
 
 	getRouter := sm.Methods(http.MethodGet, http.MethodOptions).Subrouter()
@@ -38,7 +38,7 @@ func main() {
 
 	// create a new server
 	s := http.Server{
-		Addr:         *bindAddress,      // configure the bind address
+		Addr:         bindAddress,       // configure the bind address
 		Handler:      sm,                // set the default handler
 		ErrorLog:     l,                 // set the logger for the server
 		ReadTimeout:  5 * time.Second,   // max time to read request from the client
@@ -74,7 +74,7 @@ func main() {
 // TODO Specify the origins ans methods from const variable
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
+		w.Header().Set("Access-Control-Allow-Origin", os.Getenv("FRONTEND_IP"))
 		w.Header().Set("Access-Control-Allow-Methods", allowedMethods)
 		w.Header().Set("Access-Control-Allow-Headers", allowedHeaders)
 
