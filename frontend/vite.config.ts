@@ -10,14 +10,18 @@ import { resolve, dirname } from "node:path";
 import vue from "@vitejs/plugin-vue";
 import vueI18n from "@intlify/vite-plugin-vue-i18n";
 import vuetify from "vite-plugin-vuetify";
+import basicSsl from '@vitejs/plugin-basic-ssl'
 
 // https://vitejs.dev/config/
 export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
   const config: UserConfig = {
+    
     server: {
       port: 5173,
+      //https: false 
     },
     plugins: [
+      //basicSsl(),
       vue(),
       splitVendorChunkPlugin(),
       vuetify(),
