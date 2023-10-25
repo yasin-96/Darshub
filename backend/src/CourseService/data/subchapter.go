@@ -8,17 +8,19 @@ import (
 
 type Subchapter struct {
 	ID      primitive.ObjectID `bson:"_id"`
+	Title   string             `bson:"title"`
 	Content []byte             `bson:"content"`
 	Listing []string           `bson:"listing"`
 }
 
 type CreateSubchapterRequest struct {
-	ID      primitive.ObjectID `json:"id"`
-	Content []byte             `json:"content"`
-	Listing []string           `json:"listing"`
+	Title   string   `bson:"title"`
+	Content []byte   `json:"content"`
+	Listing []string `json:"listing"`
 }
 
 type UpdateSubchapterRequest struct {
+	Title   string   `bson:"title"`
 	Content []byte   `bson:"content"`
 	Listing []string `bson:"listing"`
 }
@@ -28,7 +30,6 @@ func CreateSubchapter(subchapter *CreateSubchapterRequest) error {
 	defer cancel()
 	defer client.Disconnect(ctx)
 
-	subchapter.ID = primitive.NewObjectID()
 	_, err := client.Database("darshub").Collection("subchapter").InsertOne(ctx, subchapter)
 	return err
 }
@@ -52,6 +53,7 @@ func UpdateSubchapter(subchapterId primitive.ObjectID, updatedSubchapter *Update
 	defer client.Disconnect(ctx)
 
 	update := bson.M{
+		"title":   updatedSubchapter.Title,
 		"content": updatedSubchapter.Content,
 		"listing": updatedSubchapter.Listing,
 	}

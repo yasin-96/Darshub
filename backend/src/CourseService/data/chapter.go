@@ -8,21 +8,21 @@ import (
 
 type Chapter struct {
 	ID          primitive.ObjectID   `bson:"_id"`
-	Name        string               `bson:"name"`
+	Title       string               `bson:"title"`
 	Description string               `bson:"description"`
 	Skills      string               `bson:"skills"`
 	Subchapters []primitive.ObjectID `bson:"subchapters"`
 }
 
 type CreateChapterRequest struct {
-	Name        string               `json:"name"`
+	Title       string               `json:"title"`
 	Description string               `json:"description"`
 	Skills      string               `json:"skills"`
 	Subchapters []primitive.ObjectID `json:"subchapters"`
 }
 
 type UpdateChapterRequest struct {
-	Name        string               `json:"name"`
+	Title       string               `json:"title"`
 	Description string               `json:"description"`
 	Skills      string               `json:"skills"`
 	Subchapters []primitive.ObjectID `json:"subchapters"`
@@ -59,7 +59,7 @@ func UpdateChapter(chapterId primitive.ObjectID, updatedChapter *UpdateChapterRe
 	defer client.Disconnect(ctx)
 
 	update := bson.M{
-		"name":        updatedChapter.Name,
+		"title":       updatedChapter.Title,
 		"description": updatedChapter.Description,
 		"skills":      updatedChapter.Skills,
 		"subchapters": updatedChapter.Subchapters,
