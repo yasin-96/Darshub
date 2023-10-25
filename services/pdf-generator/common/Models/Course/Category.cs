@@ -1,7 +1,8 @@
-using pdfGen.common.Models.Base;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace pdfGen.common.Models.Course;
-public class Category : BaseContent
+[BsonIgnoreExtraElements]
+public class Category 
 {
     [BsonElement("name")]
     public string Name { get; set; }

@@ -1,26 +1,47 @@
-using pdfGen.common.Models.Base;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace pdfGen.common.Models.Course;
-public class Chapter : BaseContent
+
+[BsonIgnoreExtraElements]
+public class Chapter
 {
-    [BsonElement("name")]
-    public string Name { get; set; }
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; } = string.Empty;
 
-    [BsonElement("description")]
-    public string Description { get; set; }
+    [BsonElement("title")] public string Title { get; set; }
 
-    [BsonElement("skills")]
-    public string Skills { get; set; }
+    [BsonElement("description")] public string Description { get; set; }
 
-    [BsonElement("subchapters")]
-    public List<string> SubChapterReferences { get; set; }
+    [BsonElement("skills")] public string Skills { get; set; }
+
+    [BsonElement("subchapters")] public List<ObjectId> SubChapterReferences { get; set; }
 }
 
-public class SubChapter : BaseContent 
+public class ChapterWithSubChapters
 {
-    [BsonElement("content")]
-    public byte[] Content { get; set; }
+    public string Id { get; set; } = string.Empty;
 
-    [BsonElement("listing")]
-    public void Listing { get; set; }
+    public string Title { get; set; } = string.Empty;
+
+    public string Description { get; set; } = string.Empty;
+
+    public string Skills { get; set; } = string.Empty;
+
+    public List<SubChapter> SubChapterReferences { get; set; } = new List<SubChapter>();
+}
+
+
+public class ChapterWithSubChaptersInHTML
+{
+    public string Id { get; set; } = string.Empty;
+
+    public string Name { get; set; } = string.Empty;
+
+    public string Description { get; set; } = string.Empty;
+
+    public string Skills { get; set; } = string.Empty;
+
+    public List<SubChapterInHtml> SubChapterReferences { get; set; } = new List<SubChapterInHtml>();
 }

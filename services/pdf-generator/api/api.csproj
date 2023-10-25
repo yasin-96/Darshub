@@ -8,7 +8,14 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0-rc.1.23419.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\service.mongo\service.mongo.csproj" />
+    <ProjectReference Include="..\service.parser\service.parser.csproj" />
+    <ProjectReference Include="..\service.pdf\service.pdf.csproj" />
   </ItemGroup>
 
 </Project>
