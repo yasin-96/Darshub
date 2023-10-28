@@ -46,3 +46,9 @@ export type SubChapter = {
   content: String;
   listing: String;
 };
+
+export type NewChapterWithSubChapters = {
+  chapter: Chapter,
+  subChapter: Array<SubChapter>
+  subChaptersCounter: number
+}

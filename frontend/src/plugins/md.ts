@@ -7,6 +7,11 @@ import enUS from '@kangc/v-md-editor/lib/lang/en-US';
 // highlightjs
 import hljs from 'highlight.js';
 
-export const mdEditor = VMdEditor.use(githubTheme, {
+const mdEditor = VMdEditor.use(githubTheme, {
     Hljs: hljs,
-}).lang.use('en-US', enUS);
+    
+})
+
+mdEditor.lang.use('en-US', enUS);
+
+export {mdEditor};

@@ -27,15 +27,15 @@ const tHeaders = computed(() => {
         v-for="(td, index) in accountManagementStore.users"
         :key="`user-manager-d-${index}`"
       >
-        <td>{{td.id}}</td>
-        <td>{{td.name}}</td>
-        <td>{{td.description}}</td>
-        <td>{{td.duration}}</td>
-        <td>{{td.level}}</td>
-        <td>{{td.content}}</td>
-        <td>{{td.author}}</td>
-        <td>{{td.released}}</td>
-        <td>{{td.lastupdate}}</td>
+        <td>{{ td.id }}</td>
+        <td>{{ td.name }}</td>
+        <td>{{ td.description }}</td>
+        <td>{{ td.duration }}</td>
+        <td>{{ td.level }}</td>
+        <td>{{ td.content }}</td>
+        <td>{{ td.author }}</td>
+        <td>{{ td.released }}</td>
+        <td>{{ td.lastupdate }}</td>
       </tr>
     </tbody>
   </v-table>

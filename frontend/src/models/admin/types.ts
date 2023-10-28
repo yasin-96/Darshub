@@ -18,3 +18,8 @@ export type Auth0TokenDetails = {
     token_type: String;
     expires_in: number;
 }
+
+export type TokenResponseDetails = {
+  tokenDetails: Auth0TokenDetails,
+  lastCreation: number,
+}
