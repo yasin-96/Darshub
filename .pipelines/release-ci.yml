@@ -31,7 +31,7 @@ steps:
     repository: $(imageRepository)
     dockerfile: frontend/Dockerfile
     containerRegistry: $(dockerRegistryServiceConnection)
-    arguments: '--build-arg ENVNAME=$(buidlConfig)'
+    arguments: '--build-arg ENVNAME=$(buildConfig)'
     tags: |
       $(tag)
 - task: Docker@2
