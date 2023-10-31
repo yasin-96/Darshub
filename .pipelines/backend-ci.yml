@@ -30,7 +30,7 @@ steps:
   inputs:
     command: build
     repository: $(imageRepository)
-    dockerfile: backend/Dockerfile
+    dockerfile: backend/Dockerfile.CourseService
     containerRegistry: $(dockerRegistryServiceConnection)
     tags: |
       $(tag)
