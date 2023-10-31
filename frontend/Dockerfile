@@ -1,6 +1,6 @@
 #==================== Building Stage ================================================
 # base image
-FROM node:16.18.0-alpine as node
+FROM node:18.12.0-alpine as node
 
 # clean working directory
 RUN mkdir -p /usr/src/app
