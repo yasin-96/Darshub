@@ -16,7 +16,7 @@ variables:
     tag: prod
   # develop branch --> dev builds
   ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
-    buildConfig: develop
+    buildConfig: dev
     tag: dev
 
 pool:
