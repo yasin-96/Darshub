@@ -44,6 +44,7 @@ func main() {
 	postRouter.HandleFunc("/course/{courseId}/register", courseHandler.RegisterUserToCourse)
 
 	putRouter := sm.Methods(http.MethodPut, http.MethodOptions).Subrouter()
+	putRouter.HandleFunc("/course/progress", courseHandler.SetCourseProgress)
 	putRouter.HandleFunc("/course/{courseId}", courseHandler.UpdateCourse)
 	putRouter.HandleFunc("/courseCategory/{courseCategoryId}", courseHandler.UpdateCourseCategory)
 	putRouter.HandleFunc("/chapter/{chapterId}", courseHandler.UpdateChapter)

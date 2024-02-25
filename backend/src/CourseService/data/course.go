@@ -2,7 +2,10 @@ package data
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"time"
 
 	"darshub.dev/src/util"
@@ -49,8 +52,21 @@ type CourseRegisterRequest struct {
 	UserId string `json:"userId"`
 }
 
-type AppMetadataCourses struct {
-	Courses []string `json:"courses"`
+type AppMetadata struct {
+	Courses         []string               `json:"courses"`
+	CoursesProgress map[string]interface{} `json:"coursesProgress"`
+}
+
+type CourseProgressRequest struct {
+	UserId       string `json:"userId"`
+	CourseId     string `json:"courseId"`
+	ChapterId    string `json:"chapterId"`
+	SubchapterId string `json:"subchapterId"`
+}
+
+type Chapterdata struct {
+	ChapterId    string `json:"chapterId"`
+	SubchapterId string `json:"subchapterId"`
 }
 
 func Create(course *CreateCourseRequest) error {
@@ -144,48 +160,103 @@ func RegisterUserToCourse(userId string, courseId string) error {
 	if err != nil {
 		return err
 	}
-	registeredCourses, err := getRegisteredCourses(userId)
-	if err != nil {
-		return err
+	user, findUserErr := findAuth0User(userId)
+	if findUserErr != nil {
+		return findUserErr
 	}
+	metadata, getMetadataErr := getUserAppMetadata(userId)
+	if getMetadataErr != nil {
+		return getMetadataErr
+	}
+
+	registeredCourses := metadata.Courses
 	registeredCourses = append(registeredCourses, courseId)
 	updateduser := management.User{}
-	updateduser.AppMetadata = &map[string]interface{}{
-		"courses": registeredCourses,
-	}
-	updateErr := client.User.Update(context.TODO(), fmt.Sprintf("auth0|%s", userId), &updateduser)
+	metadataMap := make(map[string]interface{})
+	metadataMap["courses"] = &registeredCourses
+	updateduser.AppMetadata = &metadataMap
+	updateErr := client.User.Update(context.TODO(), user.GetID(), &updateduser)
 	if err != nil {
 		return updateErr
 	}
 	return nil
 }
 
-func getRegisteredCourses(userId string) ([]string, error) {
-	user, err := findAuth0User(userId)
-	if err != nil {
-		return nil, err
+func SetCourseProgress(courseProgressRequest *CourseProgressRequest) error {
+	client, clientErr := util.GetManagementClient()
+	if clientErr != nil {
+		return clientErr
+	}
+	user, getUserErr := findAuth0User(courseProgressRequest.UserId)
+	if getUserErr != nil {
+		return getUserErr
+	}
+	metadata, getMetadataErr := getUserAppMetadata(courseProgressRequest.UserId)
+	if getMetadataErr != nil {
+		return getMetadataErr
 	}
 
-	if user.AppMetadata == nil {
-		return []string{}, nil
+	chapterdata := Chapterdata{}
+	chapterdata.ChapterId = courseProgressRequest.ChapterId
+	chapterdata.SubchapterId = courseProgressRequest.SubchapterId
+	metadata.CoursesProgress[courseProgressRequest.CourseId] = chapterdata
+
+	newUser := management.User{}
+	metadataMap := make(map[string]interface{})
+	metadataMap["coursesProgress"] = &metadata.CoursesProgress
+	newUser.AppMetadata = &metadataMap
+
+	err := client.User.Update(context.TODO(), user.GetID(), &newUser)
+	if err != nil {
+		println(err.Error())
 	}
-	appMetadata := user.GetAppMetadata()
-	appMetadataCourses := &AppMetadataCourses{}
-	decodeErr := mapstructure.Decode(appMetadata, appMetadataCourses)
-	if decodeErr != nil {
-		return nil, err
+
+	return nil
+}
+
+func getUserAppMetadata(userId string) (AppMetadata, error) {
+	user, getUserErr := findAuth0User(userId)
+	if getUserErr != nil {
+		return AppMetadata{}, getUserErr
 	}
-	return appMetadataCourses.Courses, nil
+	metadata := AppMetadata{}
+	mapstructure.Decode(user.GetAppMetadata(), &metadata)
+
+	return metadata, nil
 }
 
 func findAuth0User(userId string) (*management.User, error) {
-	client, err := util.GetManagementClient()
+	url := "https://dev-l726rl1d8x1rw7du.eu.auth0.com/api/v2/users/auth0%7C" + userId
+	method := "GET"
+	token, err := util.GetAccesToken()
 	if err != nil {
 		return nil, err
 	}
-	user, getUserErr := client.User.Read(context.TODO(), fmt.Sprintf("auth0|%s", userId))
-	if getUserErr != nil {
-		return nil, getUserErr
+
+	client := &http.Client{}
+	req, err := http.NewRequest(method, url, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
 	}
-	return user, nil
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
+
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	user := management.User{}
+	json.Unmarshal(body, &user)
+
+	return &user, nil
 }

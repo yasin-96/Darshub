@@ -156,3 +156,20 @@ func RegisterUserToCourse(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func SetCourseProgress(rw http.ResponseWriter, r *http.Request) {
+	request := &data.CourseProgressRequest{}
+
+	err := util.FromJSON(request, r.Body)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	setCourseProgressErr := data.SetCourseProgress(request)
+	if setCourseProgressErr != nil {
+		http.Error(rw, setCourseProgressErr.Error(), http.StatusInternalServerError)
+		return
+	}
+
+}
