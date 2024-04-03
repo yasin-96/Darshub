@@ -44,3 +44,10 @@ steps:
       pathtoPublish: $(Build.ArtifactStagingDirectory)
       ArtifactName: 'dist_$(buildConfig)'
     displayName: 'Publish artifact'
+
+  - task: Docker@2
+    inputs:
+      containerRegistry: 'dhacr01'
+      repository: 'ca-frontend'
+      command: 'buildAndPush'
+      Dockerfile: '$(Build.SourcesDirectory)/frontend/Dockerfile'
